@@ -284,3 +284,102 @@ class ascreen_info
     
   }
 }
+
+
+
+void Cart2Polar3D(PVector in_cart,PVector out_polar)
+{
+  float x= in_cart.x;
+  float y= in_cart.y;
+  float z= in_cart.z;
+  out_polar.x = sqrt(x * x + y * y + z * z);
+  float mag_xy = sqrt(x * x + y * y);
+  out_polar.y = (mag_xy<0.0001)?0:acos(x / mag_xy) * (y < 0 ? -1 : 1);//long
+  out_polar.z = acos(z / out_polar.x);//lat
+
+}
+  
+void drawRod(PVector p1,PVector p2,float thickness,float xrotate)
+{
+
+  pushMatrix();
+  PVector pv1 = new PVector(p2.x,p2.y,p2.z);
+  pv1.sub(p1);
+  
+  Cart2Polar3D(pv1,pv1);
+  
+  
+   
+  translate((p1.x+p2.x)/2, (p1.y+p2.y)/2, (p1.z+p2.z)/2);
+  rotateZ(pv1.y);
+  rotateY(pv1.z-PI/2);
+  rotateX(xrotate);
+  box(pv1.x,thickness,thickness); 
+  //sphere(thickness);
+  //drawCylinder( 3, thickness, thickness, pv1.x);
+  popMatrix();
+}
+
+
+float vec_idx(PVector vec,int idx)
+{
+  if(idx==0)return vec.x;
+  if(idx==1)return vec.y;
+  if(idx==2)return vec.z;
+  return Float.NaN;
+}
+void axisSwap(PVector vec,int x_idx,int y_idx,int z_idx)
+{
+  float nx;
+  float ny;
+  float nz;
+  
+  if(x_idx<0)nx=-vec_idx(vec,-x_idx);
+  else       nx=vec_idx(vec,x_idx);
+  if(y_idx<0)ny=-vec_idx(vec,-y_idx);
+  else       ny=vec_idx(vec,y_idx);
+  if(z_idx<0)nz=-vec_idx(vec,-z_idx);
+  else       nz=vec_idx(vec,z_idx);
+  
+  vec.x = nx;
+  vec.y = ny;
+  vec.z = nz;
+  
+}
+
+
+void axisSwap(float[] vec,int x_idx,int y_idx,int z_idx)
+{
+  float nx;
+  float ny;
+  float nz;
+  
+  if(x_idx<0)nx=-vec[-x_idx];
+  else       nx= vec[ x_idx];
+  if(y_idx<0)ny=-vec[-y_idx];
+  else       ny= vec[ y_idx];
+  if(z_idx<0)nz=-vec[-z_idx];
+  else       nz= vec[ z_idx];
+  
+  vec[0] = nx;
+  vec[1] = ny;
+  vec[2] = nz;
+}
+
+void axisSwap(double[] vec,int x_idx,int y_idx,int z_idx,boolean x_flip,boolean y_flip,boolean z_flip)
+{
+  double nx;
+  double ny;
+  double nz;
+  
+  if(x_flip) nx=-vec[x_idx];
+  else       nx= vec[x_idx];
+  if(y_flip) ny=-vec[y_idx];
+  else       ny= vec[y_idx];
+  if(z_flip) nz=-vec[z_idx];
+  else       nz= vec[z_idx];
+  
+  vec[0] = nx;
+  vec[1] = ny;
+  vec[2] = nz;
+}

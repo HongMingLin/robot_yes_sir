@@ -16,14 +16,39 @@ void movieEvent(Movie m) {
 
 ascreen_info []ascArr;
 
+
+    
+double[][][] geometries = new double[][][]{
+  {
+    {100, 280, 0},
+    {0, 770,0},
+    {232, 0, 0},
+    {454, 0, 0},
+    {0, -200, 0},
+  },
+  {
+    {1, 1, 1},
+    {0, 8, 2},
+    {0, 10, 0},
+    {5, 0, 0},
+    {0, -6, 0},
+  },
+};
+    
+
+
+Kinematics kinma;
 void setup() {
   
+  kinma=new Kinematics(geometries[0]);
+ 
   size(600, 600,P3D);
   cam = new PeasyCam(this, 100);
   cam.setMinimumDistance(10);
   cam.setMaximumDistance(5000);
+  cam.setWheelScale(0.1);
   cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "Untitled2.m4v"); 
+  myMovie = new Movie(this, "XYZ.m4v"); 
   //hint(DISABLE_DEPTH_TEST); 
   
   myMovie.loop();
@@ -66,6 +91,7 @@ void drawFrame()
   rect(-2400/2, -2740/2, 2400, 2740);
 }
 
+
 void drawBoard()
 {
   float size=1000;
@@ -80,10 +106,10 @@ void drawBoard()
   sphere(1);  */ 
 }
 
-
+float inc_X=0;
 void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 {
-  
+  inc_X+=0.01;
   myImage.loadPixels();
   PVector R=new PVector();
   PVector G=new PVector();
@@ -141,18 +167,67 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     pushMatrix();
     
     final PVector origin = asc_arr[i].getOrigin();
-    translate(origin.x,origin.y,origin.z);
+    translate(-origin.x,origin.z,-origin.y);
     
+    //O[X]  V[Y] >[Z] processing world
+    
+    
+    //>X ^y  @Z (toward you) Kinematics world
+    
+    //
+    
+    PVector pXYZ=new PVector(1300*XYZ.x,1300*(XYZ.z+1),1300*XYZ.y);
+    double[] pose=new double[]{
+      pXYZ.x, pXYZ.y,pXYZ.z,RYP.x,RYP.y,RYP.z
+    };
+    //axisSwap(pose,0,1,2);
+    
+    /*pose[0]=400;
+    pose[1]=786;
+    pose[2]=950;*/
+    axisSwap(pose,1,2,0,false,true,true);
+    double[] angles =kinma.inverse(pose);
+    //double[] angles =new double[]{0,0,0,sin(inc_X)+1,0,0};
+    double[][] calcPose = kinma.forward(angles);
+    double[] calcPose5 = calcPose[5];
+
+
     pushMatrix();
-    translate(1000*XYZ.x, 1000*XYZ.y, 4000*XYZ.z);
-    rotateZ(RYP.x);
-    rotateX(RYP.y);
-    rotateY(RYP.z);
     
-    drawBoard();
+    rotateX(PI/2);
+    rotateY(PI/2);
+    for(int j=0;j<calcPose.length-1;j++)
+    {
+      double[] p0 = calcPose[j];
+      double[] p1 = calcPose[j+1];
+      stroke(255);
+      fill(128);
+      drawRod(
+      new PVector((float)p0[0],(float)p0[1],(float)p0[2]),
+      new PVector((float)p1[0],(float)p1[1],(float)p1[2]),200,0);
+    }
+    
     
     popMatrix();
+    
+    
+    pushMatrix();
+    rotateX(PI/2);
+    translate((float)calcPose5[2], (float)calcPose5[1], -(float)calcPose5[0]);
+    //translate(-pXYZ.x,-pXYZ.z,-pXYZ.y);
+    rotateX((float)calcPose5[5]);
+    rotateY((float)calcPose5[4]);
+    rotateZ((float)calcPose5[3]);
+    println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
+    drawBoard();
+    popMatrix();
+    
+    pushMatrix();
+    translate(0,880,739-200);
+    rotateX(PI/2);
     drawFrame();
+    popMatrix();
+    
     popMatrix();
   }
   /*
@@ -209,18 +284,19 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 void draw() {
   
   background(0);
-  scale(0.1,0.1,0.1);
+  scale(0.1,-0.1,0.1);
   strokeWeight(10); 
-  //rotateX(PI);
+  rotateZ(PI);
+  rotateX(PI/2);
   ambientLight(100, 100, 100);
   lightSpecular(100, 100, 100);shininess(15.0);
   directionalLight(150, 150,150, 1, 1, -1);
   {
-    stroke(255,0,0,0.3);
+    stroke(255,0,0);
     line(0, 0, 0, 10000, 0, 0);
-    stroke(0,255,0,0.3);
+    stroke(0,255,0);
     line(0, 0, 0, 0, 10000, 0);
-    stroke(0,0,255,0.3);
+    stroke(0,0,255);
     line(0, 0, 0, 0, 0, 10000);
   }
   sectionFinding(myMovie,ascArr);
