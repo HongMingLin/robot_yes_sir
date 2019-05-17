@@ -24,7 +24,7 @@ double[][][] geometries = new double[][][]{
     {0, 770,0},
     {232, 0, 0},
     {454, 0, 0},
-    {0, -200, 0},
+    {0, -110, 0},
   },
   {
     {1, 1, 1},
@@ -218,7 +218,9 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     rotateX((float)calcPose5[5]);
     rotateY((float)calcPose5[4]);
     rotateZ((float)calcPose5[3]);
-    println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
+    translate(0,0,-50);
+    
+    //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
     drawBoard();
     popMatrix();
     
