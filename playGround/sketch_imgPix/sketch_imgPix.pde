@@ -6,110 +6,6 @@ import peasy.*;
 PeasyCam cam;
 Movie myMovie;
 
-class ascreen_info
-{
-  
-  PVector R=new PVector();
-  PVector G=new PVector();
-  PVector B=new PVector();
-  
-  
-  PVector XYZ=new PVector();
-  PVector RYP=new PVector();
-  
-  PVector idx_on_video=new PVector();
-  
-  
-  PVector pos_in_world=new PVector();
-  ascreen_info(int idx_x,int idx_y,PVector pos_in_world)
-  {
-    idx_on_video.x = idx_x;
-    idx_on_video.y = idx_y;
-    this.pos_in_world.set(pos_in_world);
-  }
-  
-  void setIdx(int idx_x,int idx_y)
-  {
-    idx_on_video.x = idx_x;
-    idx_on_video.y = idx_y;
-  }
-  
-  final PVector getR()
-  {
-    return R;
-  }
-  
-  
-  final PVector getG()
-  {
-    return G;
-  }
-  
-  
-  final PVector getB()
-  {
-    return B;
-  }
-  
-  
-  final PVector getIdx()
-  {
-    return idx_on_video;
-  }
-  
-  final PVector getXYZ()
-  {
-    return XYZ;
-  }
-  
-  final PVector getRYP()
-  {
-    return RYP;
-  }
-  
-  final PVector getOrigin()
-  {
-    return pos_in_world;
-  }
-  
-  
-  int setRGBInfo(PVector R,PVector G,PVector B)
-  {
-    this.R.set(R);
-    this.G.set(G);
-    this.B.set(B);
-    CorrdTrans(this.R,this.G,this.B,XYZ,RYP);
-    return 0;
-  }
-  
-  
-  void CorrdTrans( PVector R,PVector G,PVector B,PVector ret_XYZ,PVector ret_RYP)
-  {
-    ret_XYZ.x = (G.x+B.x)/2;
-    ret_XYZ.y = (G.y+B.y)/2;
-    
-    
-    ret_XYZ.z = (float)Math.hypot(G.x-B.x,G.y-B.y)-0.5;
-    
-    
-    float roll = atan2(G.y-B.y,G.x-B.x);
-    //The x y is for image coordnate, x axis is upside down, ie, positive angle is CW
-    //println(roll*180/PI);
-    ret_RYP.x = roll;
-    
-    float Ry = -R.y;
-    float rX = R.x * cos(roll) - Ry * sin(roll);
-    float rY = Ry * cos(roll) + R.x * sin(roll);
-    
-    float rotateMap=PI/4;
-    ret_RYP.y = rY*rotateMap;
-    ret_RYP.z = rX*rotateMap;
-    
-  }
-}
-
-
-
 
 
 // Called every time a new frame is available to read
@@ -127,7 +23,8 @@ void setup() {
   cam.setMinimumDistance(10);
   cam.setMaximumDistance(5000);
   cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "UntitledSingle_LOW.m4v");
+  myMovie = new Movie(this, "Untitled2.m4v"); 
+  //hint(DISABLE_DEPTH_TEST); 
   
   myMovie.loop();
   ascArr=new ascreen_info[12];
@@ -156,17 +53,15 @@ void setup() {
   ascArr[11]=new ascreen_info(3,2,new PVector(+w1+w2/2,-h,0));
   
   //ascArr[1]=new ascreen_info(1,1,new PVector(10,10,0));
-  for(int i=0;i<ascArr.length;i++)
-  {
-    ascArr[i].setIdx(1,1);
-  }
+
 }
 
 void drawFrame()
 {
   float size=1000;
   //rect(-5, -5, 10, 10);
-  noFill();
+  //noFill();
+  fill(255,0,0,100);
   stroke(255,0,0);
   rect(-2400/2, -2740/2, 2400, 2740);
 }
@@ -247,7 +142,8 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     final PVector origin = asc_arr[i].getOrigin();
     translate(origin.x,origin.y,origin.z);
-    drawFrame();
+    
+    pushMatrix();
     translate(1000*XYZ.x, 1000*XYZ.y, 4000*XYZ.z);
     rotateZ(RYP.x);
     rotateX(RYP.y);
@@ -255,6 +151,8 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     drawBoard();
     
+    popMatrix();
+    drawFrame();
     popMatrix();
   }
   /*
