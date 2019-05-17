@@ -277,8 +277,9 @@ class ascreen_info
     float Ry = -R.y;
     float rX = R.x * cos(roll) - Ry * sin(roll);
     float rY = Ry * cos(roll) + R.x * sin(roll);
-    
-    float rotateMap=PI/4;
+    rX = Ry;
+    rY = R.x;
+    float rotateMap=PI/6;
     ret_RYP.y = rY*rotateMap;
     ret_RYP.z = rX*rotateMap;
     

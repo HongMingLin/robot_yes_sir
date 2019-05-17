@@ -24,15 +24,8 @@ double[][][] geometries = new double[][][]{
     {0, 770,0},
     {232, 0, 0},
     {454, 0, 0},
-    {0, -110, 0},
-  },
-  {
-    {1, 1, 1},
-    {0, 8, 2},
-    {0, 10, 0},
-    {5, 0, 0},
-    {0, -6, 0},
-  },
+    {0, 110, 0},
+  }
 };
     
 
@@ -109,7 +102,7 @@ void drawBoard()
 float inc_X=0;
 void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 {
-  inc_X+=0.01;
+  inc_X+=0.1;
   myImage.loadPixels();
   PVector R=new PVector();
   PVector G=new PVector();
@@ -173,25 +166,46 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     
     //>X ^y  @Z (toward you) Kinematics world
-    
-    //
-    
     PVector pXYZ=new PVector(1300*XYZ.x,1300*(XYZ.z+1),1300*XYZ.y);
     double[] pose=new double[]{
       pXYZ.x, pXYZ.y,pXYZ.z,RYP.x,RYP.y,RYP.z
     };
     //axisSwap(pose,0,1,2);
     
-    /*pose[0]=400;
-    pose[1]=786;
-    pose[2]=950;*/
     axisSwap(pose,1,2,0,false,true,true);
+    
+    
+    
+    /*float xx=100;
+    float yy=-165+1000+100;
+    float zz=425+500;
+    pose[0]=yy;
+    pose[1]=zz;
+    pose[2]=xx;
+    
+    pose[3]=1;
+    pose[4]=2;
+    pose[5]=-PI/2;*/
     double[] angles =kinma.inverse(pose);
-    //double[] angles =new double[]{0,0,0,sin(inc_X)+1,0,0};
+    //angles =new double[]{0,0,0,0,-PI,0};
     double[][] calcPose = kinma.forward(angles);
     double[] calcPose5 = calcPose[5];
 
-
+    
+    /*print("A:");
+    for(int k=0;k<angles.length;k++)
+    {
+      print(angles[k]*180/PI+",");
+    }
+    print(" P:");
+    for(int k=0;k<calcPose5.length;k++)
+    {
+      print(calcPose5[k]+",");
+    }
+    println();*/
+    
+  
+  
     pushMatrix();
     
     rotateX(PI/2);
@@ -215,9 +229,9 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     rotateX(PI/2);
     translate((float)calcPose5[2], (float)calcPose5[1], -(float)calcPose5[0]);
     //translate(-pXYZ.x,-pXYZ.z,-pXYZ.y);
-    rotateX((float)calcPose5[5]);
-    rotateY((float)calcPose5[4]);
-    rotateZ((float)calcPose5[3]);
+    rotateX(RYP.z);
+    rotateY(RYP.y);
+    rotateZ(RYP.x);
     translate(0,0,-50);
     
     //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
