@@ -176,7 +176,7 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     
     
-    float xx=100;
+    /*float xx=100;
     float yy=-165+1000+100;
     float zz=425+500;
     pose[0]=yy;
@@ -185,7 +185,7 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     pose[3]=1;
     pose[4]=2;
-    pose[5]=-PI/2;
+    pose[5]=-PI/2;*/
     double[] angles =kinma.inverse(pose);
     //angles =new double[]{0,0,0,0,-PI,0};
     double[][] calcPose = kinma.forward(angles);
