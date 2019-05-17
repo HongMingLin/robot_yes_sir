@@ -123,9 +123,11 @@ void draw()
   }
   double[] pose = new double[]{0,0,0, 0,0,0};
   pose[0]=786;
-  pose[1]=940-2*(mouseY-height/2);
-  pose[2]=+(mouseX-width/2);
-  pose[5]=-PI/4;
+  pose[1]=940;
+  pose[2]=0;
+  pose[3]=(mouseY-width/2)/100f;
+  pose[4]=0.1;
+  pose[5]=-PI/2;
   
   
   double[] angles = kin.inverse(pose);

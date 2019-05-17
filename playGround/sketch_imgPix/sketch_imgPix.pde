@@ -102,7 +102,7 @@ void drawBoard()
 float inc_X=0;
 void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 {
-  inc_X+=0.01;
+  inc_X+=0.1;
   myImage.loadPixels();
   PVector R=new PVector();
   PVector G=new PVector();
@@ -192,7 +192,7 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     double[] calcPose5 = calcPose[5];
 
     
-    print("A:");
+    /*print("A:");
     for(int k=0;k<angles.length;k++)
     {
       print(angles[k]*180/PI+",");
@@ -202,7 +202,7 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     {
       print(calcPose5[k]+",");
     }
-    println();
+    println();*/
     
   
   
@@ -229,10 +229,10 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     rotateX(PI/2);
     translate((float)calcPose5[2], (float)calcPose5[1], -(float)calcPose5[0]);
     //translate(-pXYZ.x,-pXYZ.z,-pXYZ.y);
-    rotateX((float)calcPose5[5]);
-    rotateY((float)calcPose5[4]);
-    rotateZ(-(float)calcPose5[3]);
-    translate(0,0,50);
+    rotateX(RYP.z);
+    rotateY(RYP.y);
+    rotateZ(RYP.x);
+    translate(0,0,-50);
     
     //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
     drawBoard();
