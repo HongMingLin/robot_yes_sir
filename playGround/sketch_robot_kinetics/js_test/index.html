@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+<body>    
+<script src="InverseKinematic.js"></script>
+<script>
+let kine =new InverseKinematic(
+    [[100, 0, 280],
+    [0,   0, 770],
+    [232, 0,   0],
+    [454, 0,   0],
+    [0,   0,-110],]);
+
+let pose = [];
+pose[0]=786;
+pose[1]=0;
+pose[2]=940;
+
+pose[3]=0;//+sin(inc_X*10);
+pose[4]=Math.PI/2;
+pose[5]=0;
+  
+let angles=[0,0,0,0,0,0];
+kine.calculateAngles(pose[0],pose[1],pose[2],pose[3],pose[4],pose[5],angles);
+//angles=[0,0,0,0,0,0];
+let pose_calc=[0,0,0,0,0,0];
+kine.calculateTCP(angles[0],angles[1],angles[2],angles[3],angles[4],angles[5],pose_calc);
+
+
+console.log(pose);
+console.log(kine,angles);
+console.log(pose_calc);
+
+
+</script>
+</body>
+</html>
