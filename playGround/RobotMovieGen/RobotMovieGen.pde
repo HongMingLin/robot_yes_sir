@@ -13,6 +13,7 @@ PVector ledSize=new PVector(100, 100);
 
 PVector mSize;//=new PVector(windowSize.x*robotArray.x,windowSize.y*robotArray.y);
 GBbox[] gbBoxs;//=new gbBoxs[robotArray.x*robotArray.y];
+RedDot[] redDots;
 void settings() {
   ledSize.x*=SCALE_WH.x;
   ledSize.y*=SCALE_WH.y;
@@ -29,6 +30,10 @@ void setup() {
   println("mSize.x"+mSize.x+", mSize.y"+mSize.y);
   println("windowSize.x"+windowSize.x+", windowSize.y"+windowSize.y);
   println();  
+  redDots=new RedDot[(int)(robotArray.x*robotArray.y)];
+  for (int i=0; i<redDots.length; i++)
+    redDots[i]=new RedDot(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), new PVector(10,10));
+    
   gbBoxs=new GBbox[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<gbBoxs.length; i++)
     gbBoxs[i]=new GBbox(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), SCALE_WH);
@@ -44,12 +49,16 @@ void draw() {
     videoExport.saveFrame();
   }
   server.sendImage(get());
+  fill(255);
+  text(mouseX+","+mouseY,mouseX,mouseY);
 }
 
 void drawGBbox() {
-
   for (int i=0; i<gbBoxs.length; i++) {
     gbBoxs[i].update();
+  }
+  for (int i=0; i<redDots.length; i++) {
+    redDots[i].update();
   }
 }
 boolean recording = false;
@@ -69,6 +78,25 @@ void keyPressed() {
     videoExport=null;
   }
 }
+class RedDot {
+  PVector boxPosOffset;
+  PVector dotSize;//=new PVector(100, 100);
+
+  RedDot(PVector bPO, PVector size) {
+    boxPosOffset=bPO;
+    dotSize=size;
+    println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
+  }
+  void update() {
+    noStroke();
+    pushMatrix();
+    translate(boxPosOffset.x, boxPosOffset.y);
+    translate(windowSize.x/2, windowSize.y/2);
+    fill(255,0,0,255);
+    ellipse(0,0,dotSize.x,dotSize.y);
+    popMatrix();
+  }
+}
 class GBbox {
   PVector boxSize;//=new PVector(100, 100);
   PVector boxPosOffset; 
@@ -78,17 +106,14 @@ class GBbox {
     boxSize=new PVector(100*scale.x, 100*scale.y);
     println("boxPosOffset.x"+boxPosOffset.x+", boxPosOffset.y"+boxPosOffset.y);
   }
-
   void update() {
-    noStroke();
-    
-    
+    noStroke(); 
     pushMatrix();
-    rectMode(CORNER);
-    translate(boxPosOffset.x, boxPosOffset.y);
-    //boxPos.x+=50*sin(millis()*TWO_PI/3000.0);
-    fill(0, 255, 0);
     translate(-boxSize.x/2, -boxSize.y/2);
+    translate(boxPosOffset.x, boxPosOffset.y);    
+    translate(windowSize.x/2, windowSize.y/2);
+    rectMode(CORNER);
+    fill(0, 255, 0);
     rect(0,0, boxSize.x/2, boxSize.y);
     fill(0, 0, 255);
     translate(boxSize.x/2, 0);

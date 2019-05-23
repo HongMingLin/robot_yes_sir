@@ -2,9 +2,10 @@
 
 
 UDP u;
-String R_IP="127.0.0.1";
+String R_IP="10.10.10.88";
 int R_PORT=6666;
-JSONObject json;
+JSONObject json;//,jsonStop;
+String jsonStopStr="";
 int Window_X=240;
 int Window_Y=274;
 int Window_Z=500;
@@ -15,6 +16,13 @@ boolean justOne=true;
 java.util.TimerTask statusTimer33 = new java.util.TimerTask() {
   public void run() {
     if (REALTIME) {
+      
+      //json.setString("Robot", "1");
+      //send2robot();
+      //json.setString("Robot", "2");
+      //send2robot();
+      
+      json.setString("Robot", "3");
       send2robot();
       //justOne=false;
     }
@@ -26,16 +34,24 @@ void setup() {
   u = new UDP( this, 7777 );
   u.log( false );
   u.listen( true );
+  
+  //jsonStop= new JSONObject();
+  //jsonStop.setString("Command", "Clear");
+  //jsonStop.setString("Robot", "3");
+  //jsonStopStr=jsonStop.toString().replaceAll(" ", "");
+  //jsonStopStr=jsonStopStr.replaceAll("[^\\x20-\\x7e]", "");
+  
   json = new JSONObject();
-
   json.setString("Command", "ptp_pose");
+  json.setString("Robot", "3");
   json.setString("X", "0");
   json.setString("Y", "0");
   json.setString("Z", "0");
   json.setString("A", "0");
   json.setString("B", "0");
   json.setString("C", "0");  
-  new java.util.Timer().scheduleAtFixedRate(statusTimer33, 0, 100);
+  new java.util.Timer().scheduleAtFixedRate(statusTimer33, 0, 10);
+  exec("/usr/bin/say", "HIWIN Robot online");
 }
 //PVector robotXYZ(PVector XYZ) {
 //  XYZ.x-=(Window_X/2);
@@ -43,6 +59,7 @@ void setup() {
 //  return XYZ;
 //}
 PVector ROBOT_XYZ=new PVector(0, 0, 0);
+PVector ROBOT_pre_XYZ=new PVector(0, 0, 0);
 PVector ROBOT_ABC=new PVector(0, 0, 0);
 void draw() {
   //rect(0,0,);
@@ -93,6 +110,11 @@ void runCircle() {
   ROBOT_XYZ.z=mouseY+(CRICLE_R*cos(nowSin));
 }
 
+void run100cm() {
+  nowSin=millis()*TWO_PI/1000;
+  ROBOT_XYZ.x=mouseX+(CRICLE_R*sin(nowSin));
+  //ROBOT_XYZ.z=mouseY+(CRICLE_R*cos(nowSin));
+}
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
 
