@@ -27,16 +27,10 @@ public class UDP implements Runnable {
   // the parent object (could be an application, a componant, etc...)
   Object owner    = null;
   
-  // the default "receive handler" and "timeout handler" methods name.
-  // these methods must be implemented (by the owner) to be called 
-  // automatically when the socket receive incoming datas or a timeout event
-  String receiveHandler    = "receive";
+   String receiveHandler    = "receive";
   String timeoutHandler    = "timeout";
   
-  // the log "header" to be set for debugging. Because log is disable by 
-  // default, this value is automatically replaced by the principal socket 
-  // settings when a new instance of UDP is created.
-  String header    = "";
+   String header    = "";
   
   ///////////////////////////////// fields ///////////////////////////////
   
@@ -74,21 +68,7 @@ public class UDP implements Runnable {
   public UDP( Object owner, int port,int delay ) {
     this( owner, port, null );
   }
-  /**
-   * Create a new datagram socket and binds it to the specified port on the  
-   * specified local address or multicast group address.
-   * <p>
-   * Pass <code>zero</code> as port number, will let the system choose an 
-   * available port. The absence of an address, explicitly <code>null</code> 
-   * as IP address will assign the socket to the Unspecified Address (Also 
-   * called anylocal or wildcard address). To set up the socket as multicast 
-   * socket, pass the group address to be joined. If this address is not a 
-   * valid multicast address, a broadcast socket will be created by default.
-   *
-   * @param owner  the target object to be call by the receive handler
-   * @param port  local port to bind
-   * @param ip  host address or group address
-   */
+  
   public UDP( Object owner, int port, String ip ) {
     
     this.owner = owner;
@@ -282,42 +262,12 @@ public class UDP implements Runnable {
     return send( buffer, ip, port() );
   }
   
-  /**
-   * Send message to the requested IP address and port.
-   * <p>
-   * A <code>null</code> IP address will assign the packet address to the 
-   * local host. Use this method to send message to another application by
-   * passing <code>null</code> as the destination address.
-   *
-   * @param message  the message to be send
-   * @param ip    the destination host's IP address
-   * @param port    the destination host's port
-   *
-   * @see  UDP#send(String message)
-   * @see  UDP#send(String message, String ip)
-   *
-   * @return boolean
-   */
+  
   public boolean send( String message, String ip, int port ) {
     return send( message.getBytes(), ip, port );
   }
   
-  /**
-   * Send data to the requested IP address and port.
-   * <p>
-   * A <code>null</code> IP address will assign the packet address to the 
-   * local host. Use this method to send data to another application by
-   * passing <code>null</code> as the destination address.
-   *
-   * @param buffer  data to be send
-   * @param ip    the destination host's IP address
-   * @param port    the destination host's port
-   *
-   * @see  UDP#send(byte[] buffer, String ip)
-   * @see  UDP#send(byte[] buffer, String ip, int port)
-   *
-   * @return boolean
-   */
+  
   public boolean send( byte[] buffer, String ip, int port ) {
     
     boolean success  = false;
@@ -438,16 +388,7 @@ public class UDP implements Runnable {
     }
   }
   
-  /**
-   * Set the socket reception timeout and wait one time for incoming data. 
-   * If the timeout period occured, the owner timeout() method is 
-   * automatically called.
-   *
-   * @param millis  the required timeout value in milliseconds.
-   *
-   * @see UDP#listen()
-   * @see UDP#listen(boolean on)
-   */
+  
   public void listen( int millis ) {
     if ( isClosed() ) return;
     
@@ -550,24 +491,7 @@ public class UDP implements Runnable {
     while ( listen ) listen();
   }
   
-  /**
-   * Register the target's receive handler.
-   * <p>
-   * By default, this method name is "receive" with one argument 
-   * representing the received data as <code>byte[]</code>. For more 
-   * flexibility, you can change this method with another useful method by 
-   * passing his name. You could get more informations by implementing two 
-   * additional arguments, a <code>String</code> representing the sender IP 
-   * address and a <code>int</code> representing the sender port :
-   * <p><blockquote><pre>
-   * void myCustomReceiveHandler(byte[] message, String ip, int port) {
-   *  // do something here...
-   * }
-   * </blockquote></pre>
-   *
-   * @param name  the receive handler name
-   * @see UDP#setTimeoutHandler(String name)
-   */
+  
   public void setReceiveHandler( String name ) {
     this.receiveHandler = name;
   }
@@ -696,15 +620,7 @@ public class UDP implements Runnable {
     finally { return done; }
   }
   
-  /**
-   * Enable or disable the multicast socket loopback mode. By default loopback
-   * is enable.
-   * <br>
-   * Setting loopback to false means this multicast socket does not want to 
-   * receive the data that it sends to the multicast group.
-   *
-   * @param on  local loopback of multicast datagrams
-   */
+  
   public void loopback( boolean on ) {
     try {
       if ( isMulticast() ) mcSocket.setLoopbackMode( !on );
@@ -729,30 +645,7 @@ public class UDP implements Runnable {
     return false;
   }
   
-  /**
-   * Control the life-time of a datagram in the network for multicast packets 
-   * in order to indicates the scope of the multicasts (ie how far the packet 
-   * will travel).
-   * <p>
-   * The TTL value must be in range of 0 to 255 inclusive. The larger the 
-   * number, the farther the multicast packets will travel (by convention):
-   * <blockquote><pre>
-   * 0  -> restricted to the same host
-   * 1  -> restricted to the same subnet (default)
-   * &lt;32  -> restricted to the same site
-   * &lt;64  -> restricted to the same region
-   * &lt;128  -> restricted to the same continent
-   * &lt;255  -> no restriction
-   * </blockquote></pre>
-   * The default value is 1, meaning that the datagram will not go beyond the 
-   * local subnet.
-      * <p>
-   * return <code>true</code> if no error occured.
-   *
-   * @param ttl the "Time to Live" value
-   * @return boolean
-   * @see UDP#getTimeToLive()
-   */
+  
   public boolean setTimeToLive( int ttl ) {
     try {
       if ( isMulticast() && !isClosed() ) mcSocket.setTimeToLive( ttl );

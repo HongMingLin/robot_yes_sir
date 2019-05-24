@@ -1,7 +1,7 @@
 boolean runCircle=false;
 public RunMODE mode=RunMODE.M_XYZ;
 enum RunMODE {
-  M_XYZ, M_ABC;
+  M_XYZ,M1000mm,M_ABC;
   private static RunMODE[] vals = values();
   public RunMODE next()
   {
@@ -28,6 +28,10 @@ void keyPressed() {
 float Bpercent=0.5;
 void send2robot() {
   switch(mode) {
+  case M1000mm:
+      //float x=500*sin(millis()*(TWO_PI/5000.0));
+      
+    break;
   case M_XYZ:
     if (runCircle) {
       float y=lerp(-200, 200, Bpercent);
@@ -49,7 +53,6 @@ void send2robot() {
       json.setString("Z", String.valueOf(ROBOT_XYZ.z));
       
     }
-
 
     break;
   case M_ABC:

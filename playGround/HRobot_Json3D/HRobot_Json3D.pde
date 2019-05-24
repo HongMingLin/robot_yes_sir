@@ -1,31 +1,31 @@
 import peasy.PeasyCam;
+ALLMODE AM=ALLMODE.PLAY;
 PeasyCam cam;
 final int M_SCALE=1;
 final int Center_XYZLineLen=100*M_SCALE;
 PVector robotArray=new PVector(4, 3);
 PVector ROOM_W_D_H=new PVector(425, 425, 321);
 PVector ROOM=new PVector(ROOM_W_D_H.x*M_SCALE, ROOM_W_D_H.y*M_SCALE, ROOM_W_D_H.z*M_SCALE);
-String R_IP="192.168.0.17";
+String R_IP="10.10.10.88";
 int R_PORT=6666;
 JSONObject json;
 int MinD=0;
 int MaxD=(int)ROOM.x*100*M_SCALE;
 float CamD=(int)ROOM.x*2*M_SCALE;
 
-int Window_W=140;
-int Window_D=104;
-int Window_H=274;
+float Window_W=140.0;
+float Window_D=104.0;
+float Window_H=274.0;
 PVector windowSize=new PVector(Window_W, Window_D, Window_H);
 
-float CRICLE_R=50;
-float CRICLE_Time=3000;
-float nowSin=0;
+float CRICLE_R=1;
+float globalCRICLE_Time=5000.0;
+float globalNowSin=0;
 int appH=700;
 int appW=900;
 UDP u;
 boolean REALTIME=false;
-boolean runCircle=false;
-public RunMODE mode=RunMODE.M_XYZ;
+
 HRobot[] HRs; 
 int whichRobot=0;
 LEDPanel[] LEDPs;
@@ -52,7 +52,7 @@ void setup() {
 
   setupJson();
 
-  new java.util.Timer().scheduleAtFixedRate(statusTimer33, 0, 100);
+  new java.util.Timer().scheduleAtFixedRate(statusTimer33, 0, 33);
 }
 void draw() {
   background(10);
@@ -60,12 +60,12 @@ void draw() {
   drawWindow();
   beginHUD();
   drawToolBox();
-  if (runCircle) {
-    runCircle();
-  }
-  for (int i=0; i<LEDPs.length; i++) {
-    LEDPs[i].update();
-  }
+  for (int i=0; i<HRs.length; i++)
+    HRs[i].UPDATE();
+  
+  //for (int i=0; i<LEDPs.length; i++) {
+  //  LEDPs[i].update();
+  //}
 }
 void  drawToolBox() {
 

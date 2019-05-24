@@ -59,7 +59,6 @@ void setup() {
 //  return XYZ;
 //}
 PVector ROBOT_XYZ=new PVector(0, 0, 0);
-PVector ROBOT_pre_XYZ=new PVector(0, 0, 0);
 PVector ROBOT_ABC=new PVector(0, 0, 0);
 void draw() {
   //rect(0,0,);
@@ -100,14 +99,14 @@ float limit_x=500;
 float limit_y=200;
 float limit_z=300;
 
-float CRICLE_R=50;
+float CRICLE_R=500;
 float CRICLE_Time=TWO_PI/3000;
 float nowSin=0;
 
 void runCircle() {
   nowSin=millis()*CRICLE_Time;
-  ROBOT_XYZ.x=mouseX+(CRICLE_R*sin(nowSin));
-  ROBOT_XYZ.z=mouseY+(CRICLE_R*cos(nowSin));
+  ROBOT_XYZ.x=(CRICLE_R*sin(nowSin));
+  //ROBOT_XYZ.z=mouseY+(CRICLE_R*cos(nowSin));
 }
 
 void run100cm() {

@@ -1,44 +1,34 @@
 PVector ROBOT_XYZ_Cxyz=new PVector(0, 0, 0);
 void mouseWheel(MouseEvent event) {
-  float e = event.getCount();
-  if(runCircle){
-    CRICLE_Time+=e*10;
-    println("CRICLE_Time="+CRICLE_Time);
-  }else{
-  PVector tempXYZ=new PVector(HRs[0].XYZ.x,HRs[0].XYZ.y,HRs[0].XYZ.z);
-  tempXYZ.y+=e*0.1;
-  HRs[0].setXYZ(tempXYZ);
-  
-  }
-  
+  //float e = event.getCount();
+  HRs[whichRobot].handleMouseEvent(event);
 }
 void keyPressed() {
   if (key == 'r' || key == 'R') {
     REALTIME=!REALTIME;
+    exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
     println(REALTIME);
   } else if (key == 'c' || key == 'C') {
     HRs[whichRobot].setCC_XYZ_NOW();
+    HRs[whichRobot].RM=HRs[whichRobot].RM.next();
     
-    runCircle=!runCircle;
   } else if (key == 'm' || key == 'M') {
-    mode=mode.next();
+    //AM=ALLMODE.next();
   }
   motorWalk();
 }
 void motorWalk() {
-  PVector walkXYZ=new PVector(0,0,0);
+  PVector walkXYZ=new PVector(0, 0, 0);
   if (key == CODED) {
     if (keyCode == SHIFT) {
-      
-    }else if (keyCode == UP) {
-       HRs[whichRobot].addXYZ(new PVector(0,0,10));
+    } else if (keyCode == UP) {
+      HRs[whichRobot].addXYZ(new PVector(0, 0, 10));
     } else if (keyCode == DOWN) {
-      HRs[whichRobot].addXYZ(new PVector(0,0,-10));
+      HRs[whichRobot].addXYZ(new PVector(0, 0, -10));
     } else if (keyCode == LEFT) {
-       HRs[whichRobot].addXYZ(new PVector(-10,0,0));
+      HRs[whichRobot].addXYZ(new PVector(-10, 0, 0));
     } else if (keyCode == RIGHT) {
-      HRs[whichRobot].addXYZ(new PVector(10,0,0));
-    } 
-    
+      HRs[whichRobot].addXYZ(new PVector(10, 0, 0));
+    }
   }
 }
