@@ -16,7 +16,7 @@ void movieEvent(Movie m) {
 
 ascreen_info []ascArr;
 
-
+PVector[] identityBoxV;
     
 double[][][] geometries = new double[][][]{
   {
@@ -28,11 +28,13 @@ double[][][] geometries = new double[][][]{
   }
 };
     
-
-
+Vector<PVector> obj1v=new Vector<PVector>();
+Vector<PVector> obj2v=new Vector<PVector>();
+PMatrix invCameraMat;
+PMatrix CameraMat;
 Kinematics kinma;
 void setup() {
-  
+  identityBoxV=boxVertices(1,1,1);
   kinma=new Kinematics(geometries[0]);
  
   size(600, 600,P3D);
@@ -74,6 +76,20 @@ void setup() {
 
 }
 
+
+//float frameW=2400;
+//float frameH=2740;
+
+float frameW=2000;
+float frameH=2000;
+
+PVector[] frameRodPts={
+  new PVector(frameW/2,frameH/2,0),new PVector(-frameW/2,frameH/2,0),
+  new PVector(frameW/2,frameH/2,0),new PVector(frameW/2,-frameH/2,0),
+  new PVector(-frameW/2,-frameH/2,0),new PVector(-frameW/2,frameH/2,0),
+  new PVector(-frameW/2,-frameH/2,0),new PVector(frameW/2,-frameH/2,0),
+};
+
 void drawFrame()
 {
   float size=1000;
@@ -85,7 +101,7 @@ void drawFrame()
 }
 
 
-void drawBoard()
+void drawBoard_keepTranse()
 {
   float size=1000;
   //rect(-5, -5, 10, 10);
@@ -94,10 +110,169 @@ void drawBoard()
   rect(-size/2, -size/2, size/2, size);
   fill(0,255,0);
   rect(0, -size/2, size/2, size);
+  
+  scale(size,size,10);
   /*noStroke();
   scale(10,10,2);
   sphere(1);  */ 
+  
 }
+
+boolean CollisionDetection(Vector<PVector> obj1_v,Vector<PVector> obj2_v)
+{
+  for(int i=0;i<obj1_v.size();i+=3)
+  {
+    PVector v00=obj1_v.get(i);
+    PVector v01=obj1_v.get(i+1);
+    PVector v02=obj1_v.get(i+2);
+    
+    for(int j=0;j<obj2_v.size();j+=3)
+    {
+      PVector v10=obj2_v.get(j);
+      PVector v11=obj2_v.get(j+1);
+      PVector v12=obj2_v.get(j+2);
+      
+      boolean c =triangleCollision(v00,v01,v02,v10,v11,v12);
+      if(c)return c;
+    }
+    
+  }
+  return false;
+}
+
+void drawRobotWorld(double[] pose)
+{
+  obj1v.clear();
+  obj2v.clear();
+  double[] angles =kinma.inverse(pose);
+  //angles =new double[]{0,0,0,0,-PI,0};
+  double[][] calcPose = kinma.forward(angles);
+  double[] calcPose5 = calcPose[5];
+
+  pushMatrix();
+  
+  rotateX(PI/2);
+  rotateY(PI/2);
+  for(int j=0;j<calcPose.length-1;j++)
+  {
+    double[] p0 = calcPose[j];
+    double[] p1 = calcPose[j+1];
+    stroke(255);
+    fill(128);
+    
+  
+    pushMatrix();
+    drawRod_keepTranse(
+    new PVector((float)p0[0],(float)p0[1],(float)p0[2]),
+    new PVector((float)p1[0],(float)p1[1],(float)p1[2]),200,0);
+    
+    PMatrix WxO = getMatrix();//CxWxO
+    
+    WxO.preApply(invCameraMat);
+    for(PVector v:identityBoxV)
+    {
+      PVector pt=new PVector();
+      WxO.mult(v,pt);
+      obj1v.add(pt);
+      
+    }
+    
+    popMatrix();
+  }
+  
+  
+  popMatrix();
+  
+  
+  pushMatrix();
+  rotateX(PI/2);
+  translate((float)calcPose5[2], (float)calcPose5[1], -(float)calcPose5[0]);
+  //translate(-pXYZ.x,-pXYZ.z,-pXYZ.y);
+  rotateX((float)pose[5]);
+  rotateY((float)pose[4]);
+  rotateZ((float)pose[3]);
+  translate(0,0,-50);
+  
+  //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
+  drawBoard_keepTranse();
+  {
+    PMatrix WxO = getMatrix();//CxWxO
+    WxO.preApply(invCameraMat);
+    for(PVector v:identityBoxV)
+    {
+      PVector pt=new PVector();
+      WxO.mult(v,pt);
+      obj1v.add(pt);
+    }
+  }
+  
+  popMatrix();
+  
+  pushMatrix();
+  translate(0,880,739-200);
+  rotateX(PI/2);
+  
+  
+  fill(255,0,0,100);
+  stroke(255,0,0);
+  for(int i=0;i<frameRodPts.length;i+=2)
+  {
+    pushMatrix();
+    drawRod_keepTranse(
+    frameRodPts[i],frameRodPts[i+1],200,0);
+    PMatrix WxO = getMatrix();//CxWxO
+    WxO.preApply(invCameraMat);
+    for(PVector v:identityBoxV)
+    {
+      PVector pt=new PVector();
+      WxO.mult(v,pt);
+      obj2v.add(pt);
+    }
+    popMatrix();
+  }
+  
+  boolean drawModelPoints=false;
+  if(drawModelPoints)
+  {  
+    pushMatrix();
+    resetMatrix();
+    applyMatrix(CameraMat);
+    
+    fill(255,0,0,100);
+    stroke(255,0,0);
+    for(PVector v:obj2v)
+    {
+      pushMatrix();
+      translate(v.x,v.y,v.z);
+      box(1);
+      popMatrix();
+    }
+    
+    
+    fill(0,255,0,100);
+    stroke(0,255,0);
+    for(PVector v:obj1v)
+    {
+      pushMatrix();
+      translate(v.x,v.y,v.z);
+      box(1);
+      popMatrix();
+    }
+    
+    popMatrix();
+      
+      
+  }
+
+  boolean collision = CollisionDetection(obj1v,obj2v);
+  if(collision)
+    box(1000,1000,1000);
+  println(collision);
+  
+  popMatrix();
+    
+}
+
 
 float inc_X=0;
 void sectionFinding( PImage myImage,ascreen_info []asc_arr )
@@ -175,74 +350,7 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     axisSwap(pose,1,2,0,false,true,true);
     
     
-    
-    /*float xx=100;
-    float yy=-165+1000+100;
-    float zz=425+500;
-    pose[0]=yy;
-    pose[1]=zz;
-    pose[2]=xx;
-    
-    pose[3]=1;
-    pose[4]=2;
-    pose[5]=-PI/2;*/
-    double[] angles =kinma.inverse(pose);
-    //angles =new double[]{0,0,0,0,-PI,0};
-    double[][] calcPose = kinma.forward(angles);
-    double[] calcPose5 = calcPose[5];
-
-    
-    /*print("A:");
-    for(int k=0;k<angles.length;k++)
-    {
-      print(angles[k]*180/PI+",");
-    }
-    print(" P:");
-    for(int k=0;k<calcPose5.length;k++)
-    {
-      print(calcPose5[k]+",");
-    }
-    println();*/
-    
-  
-  
-    pushMatrix();
-    
-    rotateX(PI/2);
-    rotateY(PI/2);
-    for(int j=0;j<calcPose.length-1;j++)
-    {
-      double[] p0 = calcPose[j];
-      double[] p1 = calcPose[j+1];
-      stroke(255);
-      fill(128);
-      drawRod(
-      new PVector((float)p0[0],(float)p0[1],(float)p0[2]),
-      new PVector((float)p1[0],(float)p1[1],(float)p1[2]),200,0);
-    }
-    
-    
-    popMatrix();
-    
-    
-    pushMatrix();
-    rotateX(PI/2);
-    translate((float)calcPose5[2], (float)calcPose5[1], -(float)calcPose5[0]);
-    //translate(-pXYZ.x,-pXYZ.z,-pXYZ.y);
-    rotateX(RYP.z);
-    rotateY(RYP.y);
-    rotateZ(RYP.x);
-    translate(0,0,-50);
-    
-    //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
-    drawBoard();
-    popMatrix();
-    
-    pushMatrix();
-    translate(0,880,739-200);
-    rotateX(PI/2);
-    drawFrame();
-    popMatrix();
+    drawRobotWorld(pose);
     
     popMatrix();
   }
@@ -299,6 +407,9 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 
 void draw() {
   
+  CameraMat=getMatrix();
+  invCameraMat = CameraMat.get();
+  invCameraMat.invert();
   background(0);
   scale(0.1,-0.1,0.1);
   strokeWeight(10); 

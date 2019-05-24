@@ -1,4 +1,4 @@
-
+import java.util.*;
 
 void RGBtoHSV( PVector rgb , PVector hsv )
 {
@@ -113,6 +113,71 @@ int FindRGBLocation_(PImage img,int x,int y,int w,int h,PVector ret_RPos,PVector
 }
 
 
+
+boolean triangleCollision(
+  PVector v00, PVector v01, PVector v02,
+  PVector v10, PVector v11, PVector v12)
+  {
+    float t;
+    PVector vec=new PVector();
+    vec.set(v01);
+    vec.sub(v00);
+    t=rayIntersectsTriangle(v00, vec, v10,v11,v12);
+    if(t==t && t<1 && t>0)return true;
+    
+    
+    vec.set(v02);
+    vec.sub(v01);
+    t=rayIntersectsTriangle(v01, vec, v10,v11,v12);
+    if(t==t && t<1 && t>0)return true;
+    
+    
+    vec.set(v00);
+    vec.sub(v02);
+    t=rayIntersectsTriangle(v02, vec, v10,v11,v12);
+    if(t==t && t<1 && t>0)return true;
+    
+    return false;
+  }
+  
+
+
+float rayIntersectsTriangle(PVector p, PVector d, 
+  PVector v0, PVector v1, PVector v2) {
+    
+       //println("----\n"+p+" "+d+" "+v0+" "+v1+" "+v2);
+  float t =java.lang.Float.NaN;
+  PVector e1=v1.copy();
+  e1.sub(v0);
+  PVector e2=v2.copy();
+  e2.sub(v0);
+  PVector h=d.cross(e2);
+
+  float a = e1.dot(h);
+
+  if (a > -0.00001 && a < 0.00001)
+    return(t);
+
+  float f, u, v;
+  f = 1/a;
+  PVector s=new PVector();
+  PVector.sub(p, v0, s);
+  u = f * (s.dot(h));
+
+  if (u < 0.0 || u > 1.0)
+    return(t);
+
+  PVector q=s.cross(e1);
+
+  v = f * (d.dot(q));
+
+  if (v < 0.0 || u + v > 1.0)
+    return(t);
+
+  // at this stage we can compute t to find out where
+  // the intersection point is on the line
+  return f * (e2.dot(q));
+}
 
 
 
@@ -299,11 +364,10 @@ void Cart2Polar3D(PVector in_cart,PVector out_polar)
   out_polar.z = acos(z / out_polar.x);//lat
 
 }
-  
-void drawRod(PVector p1,PVector p2,float thickness,float xrotate)
+
+void drawRod_keepTranse(PVector p1,PVector p2,float thickness,float xrotate)
 {
 
-  pushMatrix();
   PVector pv1 = new PVector(p2.x,p2.y,p2.z);
   pv1.sub(p1);
   
@@ -316,9 +380,61 @@ void drawRod(PVector p1,PVector p2,float thickness,float xrotate)
   rotateY(pv1.z-PI/2);
   rotateX(xrotate);
   box(pv1.x,thickness,thickness); 
+  scale(pv1.x,thickness,thickness);
   //sphere(thickness);
   //drawCylinder( 3, thickness, thickness, pv1.x);
-  popMatrix();
+}
+
+
+
+
+
+PVector[] boxVertices(float w,float h, float d)
+{
+  PVector[] v={
+    new PVector(1,1,1),
+    new PVector(1,1,0),
+    new PVector(1,0,0),
+    new PVector(1,0,1),
+    
+    new PVector(0,1,1),
+    new PVector(0,1,0),
+    new PVector(0,0,0),
+    new PVector(0,0,1),
+  };
+  
+  for(PVector sv:v)
+  {
+    sv.sub(0.5,0.5,0.5);
+    sv.x*=w;
+    sv.y*=h;
+    sv.z*=d;
+  }
+  
+  PVector[] vs={
+    v[0],v[1],v[2],
+    v[2],v[3],v[0],
+    
+    v[0],v[4],v[7],
+    v[7],v[3],v[0],
+    
+    v[4],v[5],v[6],
+    v[6],v[4],v[7],
+    
+    
+    v[1],v[5],v[6],
+    v[6],v[2],v[1],
+    
+    v[0],v[1],v[5],
+    v[5],v[4],v[0],
+    
+    v[3],v[7],v[6],
+    v[6],v[2],v[3],
+  };
+  
+  
+  
+  return vs;
 }
 
 
