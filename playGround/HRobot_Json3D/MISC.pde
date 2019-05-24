@@ -22,11 +22,7 @@ void runCircle() {
   HRs[whichRobot].setXYZ(tempXYZ);
   
 }
-void drawWindow() {
-  noFill();
-  stroke(255, 255, 0);
-  box(Window_W, Window_D, Window_H);
-}
+
 void drawXYZ() {
   stroke(255, 0, 0);
   line(0, 0, 0, Center_XYZLineLen, 0, 0);

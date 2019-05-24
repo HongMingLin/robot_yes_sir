@@ -1,17 +1,21 @@
 enum WHICHROBOT {
-  R4F1(1), R4F2(2), R4F3(3), R4F4(4), 
-    R3F1(5), R3F2(6), R3F3(7), R3F4(8), 
-    R2F1(9), R2F2(10), R2F3(11), R2F4(12);
-  private int value;
-  private WHICHROBOT(int value) {
-    this.value = value;
+  R4F1(0,'q'), R4F2(1,'w'), R4F3(2,'e'), R4F4(3,'r'), 
+    R3F1(4,'a'), R3F2(5,'s'), R3F3(6,'d'), R3F4(7,'f'), 
+    R2F1(8,'z'), R2F2(9,'x'), R2F3(10,'c'), R2F4(11,'v');
+  private int idid;
+  private char HOTKEY;
+  private WHICHROBOT(int v,char c) {
+    this.idid = v;
+    this.HOTKEY=c;
   }
-  public int value() {
-    return value;
+  public int ID() {
+    return idid;
+  }
+  public char hotKey() {
+    return HOTKEY;
   }
   private static WHICHROBOT[] vals = values();
-  public WHICHROBOT next()
-  {
+  public WHICHROBOT next(){
     int now = this.ordinal()+1;
     return vals[(now) % vals.length];
   }
@@ -26,7 +30,7 @@ enum ALLMODE {
   }
 }
 enum RunMODE {
-  STOP, M_MOUSE_XYZ, M_MOUSE_ABC, XYZ_CIRCLE,ABC_CIRCLE;
+  STOP, M_MOUSE_XYZ, M_MOUSE_ABC, XYZ_CIRCLE, ABC_CIRCLE;
   private static RunMODE[] vals = values();
   public RunMODE next()
   {
@@ -35,11 +39,8 @@ enum RunMODE {
   }
 }
 class HRobot {
-
   PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);
   PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
-
-
   private PVector realXYZ=new PVector();
   private PVector XYZ=new PVector(0, 0, 0);
   private PVector normalizeXYZ=new PVector();
@@ -50,8 +51,14 @@ class HRobot {
   String sZ="";
   PVector CC_XYZ=new PVector();
   private PVector ABC=new PVector();
-  RunMODE RM=RunMODE.M_MOUSE_XYZ;
+   private PVector ABC_PI=new PVector();
+  RunMODE RM=RunMODE.STOP;
   float mouseWheele_e=0;
+  
+  int ID=0;
+  HRobot(int wr) {
+    ID=wr;
+  }
   void handleMouseEvent(MouseEvent event) {
     mouseWheele_e=event.getCount();
   }
@@ -67,32 +74,29 @@ class HRobot {
       xx=CC_XYZ.x+(15*sin(globalNowSin));
       zz=CC_XYZ.z+(15*cos(globalNowSin));
       yy=XYZ.y+(mouseWheele_e*0.1);
-      setXYZ_lowPassFilter(new PVector(xx, yy, zz));
+      setXYZ_lowPassFilter(new PVector(xx, zz, yy));
       break;
     case M_MOUSE_XYZ:
 
       xx=lerp(SAFEx0y0z0.x, SAFEx1y1z1.x, (mouseX/(float)appW));
       zz=lerp(SAFEx1y1z1.z, SAFEx0y0z0.z, (mouseY/(float)appH));
       yy=XYZ.y+(mouseWheele_e*0.1);
-      setXYZ_lowPassFilter(new PVector(xx, yy, zz));
+      setXYZ_lowPassFilter(new PVector(xx, zz, yy));
       break;
     case ABC_CIRCLE:
-
-      zz=(10*sin(globalNowSin));
-      xx=(10*cos(globalNowSin));
-      ABC.x=xx;
-      ABC.z=zz;
-      
+      ABC.x=(10*cos(globalNowSin));
+      ABC.z=(10*sin(globalNowSin));
+      ABC_PI.x=ABC.x/360.0*TWO_PI;
+      ABC_PI.z=ABC.z/360.0*TWO_PI;
       break;
     case M_MOUSE_ABC:
-      zz=lerp(-10, 10, (mouseX/(float)appW));
-      xx=lerp(10, -10, (mouseY/(float)appH));
-
-      ABC.x=xx;
-      ABC.z=zz;
-
+      ABC.x=lerp(100, -100, (mouseY/(float)appH));
+      ABC.z=lerp(-100, 100, (mouseX/(float)appW));
+      ABC_PI.x=ABC.x/360.0*TWO_PI;
+      ABC_PI.z=ABC.z/360.0*TWO_PI;
       break;
     }
+    LEDPs[ID].drawx();
   }
   PVector transXYZformat() {
     sX=(XYZ.x<=0?"":"+")+nf(XYZ.x, 3, 2);
@@ -151,27 +155,38 @@ class HRobot {
 class LEDPanel {
   PVector boxPosOffset;
   PVector dotSize;//=new PVector(100, 100);
-
-  LEDPanel(PVector bPO, PVector size) {
+  HRobot HR;
+  
+  LEDPanel(HRobot hr, PVector bPO, PVector size) {
+    HR=hr;
     boxPosOffset=bPO;
     dotSize=size;
     println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
   }
-  float yyy=0;
-  void update() {
+ 
+  void drawx() {
     noStroke();
     pushMatrix();
+    translate(GLOBAL_OFFSET.x,GLOBAL_OFFSET.y,GLOBAL_OFFSET.z);
     translate(boxPosOffset.x, 0, boxPosOffset.y);
-    translate(windowSize.x/2, 0, windowSize.y/2);
-
+    drawToolBox();
     fill(255, 0, 0, 255);
     ellipse(0, 0, dotSize.x, dotSize.y);
     noFill();
     stroke(255);
-    drawToolBox();
-    rotateX(HALF_PI);
-    rect(0, 0, windowSize.x, windowSize.z);
-
+    
+    rotateX(GLOBAL_ROTATE.x);
+    translate(HR.XYZ.x, HR.XYZ.y, HR.XYZ.z);
+    
+    rotateX(HR.ABC_PI.z);
+    rotateY(HR.ABC_PI.y);
+    rotateZ(HR.ABC_PI.x);
+    
+    
+    sphere(10);
+    box(100, 100, 10);
+    
+    text(HR.ID,0,0);
     popMatrix();
   }
 }

@@ -4,18 +4,29 @@ void mouseWheel(MouseEvent event) {
   HRs[whichRobot].handleMouseEvent(event);
 }
 void keyPressed() {
-  if (key == 'r' || key == 'R') {
+  motorWalk();
+  switch(key) {
+  case 'R':
     REALTIME=!REALTIME;
     exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
     println(REALTIME);
-  } else if (key == 'c' || key == 'C') {
+    break;
+  case 'M':
     HRs[whichRobot].setCC_XYZ_NOW();
     HRs[whichRobot].RM=HRs[whichRobot].RM.next();
-    
-  } else if (key == 'm' || key == 'M') {
-    //AM=ALLMODE.next();
+    break;
+  default:
+    for (int i=0; i<WHICHROBOT.values().length; i++) {
+      WR=WR.next();
+      //println(i+" temp="+WR.ID()+", "+WR.hotKey());
+      if (key == WR.hotKey()) {
+        whichRobot=WR.ID();
+        println("whichRobot="+whichRobot);
+        break;
+      }
+    }
+    break;
   }
-  motorWalk();
 }
 void motorWalk() {
   PVector walkXYZ=new PVector(0, 0, 0);
