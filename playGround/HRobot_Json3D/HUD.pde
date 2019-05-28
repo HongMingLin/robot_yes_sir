@@ -18,30 +18,39 @@ void beginHUD() {
   text("MinD"+MinD+", MaxD="+MaxD+", CamD"+CamD, 10, START_Y+=OFFSET_Y);
   xyz=cam.getLookAt();
   text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
-
-  text("M="+AM, 5, 20);
+  
+  START_Y=560;
+  text("{q w e r} = 4F ", 5, START_Y-60);
+  text("{a s d f} = 3F ", 5, START_Y-40);
+  text("{z x c v} = 2F ", 5, START_Y-20);
+  text("[P] ALL_Mode(ES,STOP,PAUSE,PLAY)="+AM, 5, START_Y);
+  text("[M] 1Robot RunMode@"+whichRobot+"="+HRs[whichRobot].RM, 5, START_Y+=20);
   text("SafeXYZ=±"
     +HRs[whichRobot].SAFEx0y0z0.x+" - "+HRs[whichRobot].SAFEx1y1z1.x
     +HRs[whichRobot].SAFEx0y0z0.y+" - "+HRs[whichRobot].SAFEx1y1z1.y
     +HRs[whichRobot].SAFEx0y0z0.z+" - "+HRs[whichRobot].SAFEx1y1z1.z
-    , 5, appH-20);
+    , 5, START_Y+=20);
   HRs[whichRobot].transXYZformat();
-  text("XYZ="+HRs[whichRobot].sX+", "+HRs[whichRobot].sY+", "+HRs[whichRobot].sZ, 5, appH-40);
-  text("ABC="+HRs[whichRobot].ABC.x+", "+HRs[whichRobot].ABC.y+", "+HRs[whichRobot].ABC.z, 5, appH-60);
-  text("RM@"+whichRobot+"="+HRs[whichRobot].RM, 5, appH-80);
+  text("XYZ="+HRs[whichRobot].sX+", "+HRs[whichRobot].sY+", "+HRs[whichRobot].sZ, 5, START_Y+=20);
+  text("ABC="+HRs[whichRobot].ABC.x+", "+HRs[whichRobot].ABC.y+", "+HRs[whichRobot].ABC.z, 5, START_Y+=20);
+  fill(255,255,0);
+  text("TX_JSON="+outJ , 5, START_Y+=20);
+  text("RX_JSON="+inJstr , 5, START_Y+=16);
   
-  START_Y=520;
-  fill(0, 222, 0);
+  fill(255);
 
-  //if (XMODE==RunMODE.XYZ_CIRCLE) {
-  //  fill(255, 0, 0);
-  //  stroke(255);
-  //  ellipse(HRs[whichRobot].XYZ.x, HRs[whichRobot].XYZ.z, 5, 5);
-  //} 
+  stroke(255);
+  strokeWeight(1);
+  line(0,appH-20,appW,appH-20);
+  text("REALTIME(R)     TX/RX        | TX_mS="+TX_mS, 6, appH-5);
   fill(REALTIME?0:255, REALTIME?255:0, 0);
-  ellipse(73, appH-10, 8, 8);
-
-  text("REALTIME     HIMC RX/TX       | ALIGN_BALL     |   IsSystemOper     |WIFI", 6, appH-5);
+  ellipse(88, appH-10, 8, 8);
+  
+  fill(TXLED?0:255, TXLED?255:0, 0);
+  ellipse(145, appH-10, 8, 8);
+  fill(RXLED?0:255, RXLED?255:0, 0);
+  ellipse(155, appH-10, 8, 8);
+  
 
   cam.endHUD();
 }

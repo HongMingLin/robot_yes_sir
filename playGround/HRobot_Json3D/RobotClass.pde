@@ -1,10 +1,23 @@
+TXRATE TXms=TXRATE.s33;
+enum TXRATE {
+  s33(33), s50(50), s100(100), s500(500), s1000(1000);
+  int ms;
+  TXRATE(int s) {
+    ms=s;
+  }
+  private static TXRATE[] all = values();
+  public TXRATE next() {
+    int now = this.ordinal()+1;
+    return all[(now) % all.length];
+  }
+}
 enum WHICHROBOT {
-  R4F1(0,'q'), R4F2(1,'w'), R4F3(2,'e'), R4F4(3,'r'), 
-    R3F1(4,'a'), R3F2(5,'s'), R3F3(6,'d'), R3F4(7,'f'), 
-    R2F1(8,'z'), R2F2(9,'x'), R2F3(10,'c'), R2F4(11,'v');
+  R4F1(8, 'q'), R4F2(9, 'w'), R4F3(10, 'e'), R4F4(11, 'r'), 
+    R3F1(4, 'a'), R3F2(5, 's'), R3F3(6, 'd'), R3F4(7, 'f'), 
+    R2F1(0, 'z'), R2F2(1, 'x'), R2F3(2, 'c'), R2F4(3, 'v');
   private int idid;
   private char HOTKEY;
-  private WHICHROBOT(int v,char c) {
+  private WHICHROBOT(int v, char c) {
     this.idid = v;
     this.HOTKEY=c;
   }
@@ -15,7 +28,7 @@ enum WHICHROBOT {
     return HOTKEY;
   }
   private static WHICHROBOT[] vals = values();
-  public WHICHROBOT next(){
+  public WHICHROBOT next() {
     int now = this.ordinal()+1;
     return vals[(now) % vals.length];
   }
@@ -30,7 +43,7 @@ enum ALLMODE {
   }
 }
 enum RunMODE {
-  STOP, M_MOUSE_XYZ, M_MOUSE_ABC, XYZ_CIRCLE, ABC_CIRCLE;
+  STOP, XYZ_50CM_1Sec, M_MOUSE_XYZ, M_MOUSE_ABC, XYZ_CIRCLE, ABC_CIRCLE;
   private static RunMODE[] vals = values();
   public RunMODE next()
   {
@@ -38,9 +51,13 @@ enum RunMODE {
     return vals[(now) % vals.length];
   }
 }
+
 class HRobot {
-  PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);
-  PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
+  //PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);
+  //PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
+  PVector SAFEx0y0z0=new PVector(-32.5, 5, -16.2);
+  PVector SAFEx1y1z1=new PVector( 32.5, 93.2, 78);
+
   private PVector realXYZ=new PVector();
   private PVector XYZ=new PVector(0, 0, 0);
   private PVector normalizeXYZ=new PVector();
@@ -51,10 +68,10 @@ class HRobot {
   String sZ="";
   PVector CC_XYZ=new PVector();
   private PVector ABC=new PVector();
-   private PVector ABC_PI=new PVector();
+  private PVector ABC_PI=new PVector();
   RunMODE RM=RunMODE.STOP;
   float mouseWheele_e=0;
-  
+
   int ID=0;
   HRobot(int wr) {
     ID=wr;
@@ -69,19 +86,23 @@ class HRobot {
     switch(RM) {
     case STOP:
       break;
+    case XYZ_50CM_1Sec:
+      xx=25*sin(millis()*TWO_PI/1000);
+      setXYZ(new PVector(xx, 0, 0));
+      break;
     case XYZ_CIRCLE:
 
       xx=CC_XYZ.x+(15*sin(globalNowSin));
       zz=CC_XYZ.z+(15*cos(globalNowSin));
       yy=XYZ.y+(mouseWheele_e*0.1);
-      setXYZ_lowPassFilter(new PVector(xx, zz, yy));
+      setXYZ_lowPassFilter(new PVector(xx, yy, zz));
       break;
     case M_MOUSE_XYZ:
 
       xx=lerp(SAFEx0y0z0.x, SAFEx1y1z1.x, (mouseX/(float)appW));
       zz=lerp(SAFEx1y1z1.z, SAFEx0y0z0.z, (mouseY/(float)appH));
       yy=XYZ.y+(mouseWheele_e*0.1);
-      setXYZ_lowPassFilter(new PVector(xx, zz, yy));
+      setXYZ_lowPassFilter(new PVector(xx, yy, zz));
       break;
     case ABC_CIRCLE:
       ABC.x=(10*cos(globalNowSin));
@@ -90,8 +111,9 @@ class HRobot {
       ABC_PI.z=ABC.z/360.0*TWO_PI;
       break;
     case M_MOUSE_ABC:
-      ABC.x=lerp(100, -100, (mouseY/(float)appH));
-      ABC.z=lerp(-100, 100, (mouseX/(float)appW));
+      ABC.x=lerp(10, -10, (mouseY/(float)appH));
+      
+      ABC.z=lerp(-10, 10, (mouseX/(float)appW));
       ABC_PI.x=ABC.x/360.0*TWO_PI;
       ABC_PI.z=ABC.z/360.0*TWO_PI;
       break;
@@ -156,60 +178,39 @@ class LEDPanel {
   PVector boxPosOffset;
   PVector dotSize;//=new PVector(100, 100);
   HRobot HR;
-  
+
   LEDPanel(HRobot hr, PVector bPO, PVector size) {
     HR=hr;
     boxPosOffset=bPO;
     dotSize=size;
     println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
   }
- 
+
   void drawx() {
     noStroke();
     pushMatrix();
-    translate(GLOBAL_OFFSET.x,GLOBAL_OFFSET.y,GLOBAL_OFFSET.z);
+    translate(GLOBAL_OFFSET.x, GLOBAL_OFFSET.y, GLOBAL_OFFSET.z);
     translate(boxPosOffset.x, 0, boxPosOffset.y);
     drawToolBox();
     fill(255, 0, 0, 255);
     ellipse(0, 0, dotSize.x, dotSize.y);
     noFill();
     stroke(255);
-    
-    rotateX(GLOBAL_ROTATE.x);
+
     translate(HR.XYZ.x, HR.XYZ.y, HR.XYZ.z);
-    
+
     rotateX(HR.ABC_PI.z);
     rotateY(HR.ABC_PI.y);
     rotateZ(HR.ABC_PI.x);
-    
-    
+
+
     sphere(10);
-    box(100, 100, 10);
-    
-    text(HR.ID,0,0);
+    box(100, 10, 100);
+
+    text(HR.ID, 0, 0);
     popMatrix();
   }
 }
 float cm2mm(float in) {
-  return in*10;
-}
-void send2robot() {
-
-  json.setString("X", String.valueOf(cm2mm( HRs[whichRobot].XYZ.x)));
-  json.setString("Y", String.valueOf(cm2mm( HRs[whichRobot].XYZ.y)));
-  json.setString("Z", String.valueOf(cm2mm( HRs[whichRobot].XYZ.z)));
-
-  //float a=lerp(-70, 58, (mouseX/(float)Window_X));
-  //float b=lerp(-89, 88, Bpercent);
-  //float c=lerp(-180, 180, (mouseY/(float)Window_Y));
-  //ROBOT_ABC.lerp(a, b, c, 0.1);
-  json.setString("A", String.valueOf(HRs[whichRobot].ABC.x) );
-  json.setString("B", String.valueOf(0) );
-  json.setString("C", String.valueOf(HRs[whichRobot].ABC.z) );
-
-  String outJ=json.toString().replaceAll(" ", "");
-  outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
-  println(outJ);
-  //u.send(printBB("TX",outJ),R_IP,R_PORT);
-  u.send(outJ, R_IP, R_PORT);
+  return (int)(in*10);
 }

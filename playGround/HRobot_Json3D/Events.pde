@@ -6,11 +6,37 @@ void mouseWheel(MouseEvent event) {
 void keyPressed() {
   motorWalk();
   switch(key) {
+  case ' ':
+    REALTIME=false;
+    for (int i=0; i<HRs.length; i++) {
+      HRs[i].RM=HRs[i].RM.STOP;
+    }
+    break;
+  case 'T':
+    TXms=TXms.next();
+    TX_mS=TXms.ms;
+
+    t33.cancel();
+    //TX_TIMER.cancel();
+    //TX_TIMER.purge();
+    t33=new statusTimer33();
+    //TX_TIMER =new java.util.Timer();
+    TX_TIMER.scheduleAtFixedRate(t33, 0, TX_mS);
+    break;
   case 'R':
     REALTIME=!REALTIME;
     exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
     println(REALTIME);
     break;
+  case 'A':
+    HRs[0].RM=HRs[0].RM.next();
+    for (int i=0; i<HRs.length; i++) {
+      HRs[i].RM=HRs[0].RM;
+      HRs[i].setCC_XYZ_NOW();
+    }
+
+    break;
+
   case 'M':
     HRs[whichRobot].setCC_XYZ_NOW();
     HRs[whichRobot].RM=HRs[whichRobot].RM.next();
