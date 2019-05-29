@@ -73,7 +73,7 @@ void setup() {
   u.log( false );
   u.listen( true );
   
-  new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 1000);
+  new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 100);
   
   
   
@@ -86,7 +86,7 @@ void setup() {
   cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
   cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "/Users/xlinx/Downloads/Archive 2/Untitled3.m4v");   
+  myMovie = new Movie(this, "XYZ.m4v");   
   //hint(DISABLE_DEPTH_TEST); 
   
   myMovie.loop();
@@ -207,6 +207,46 @@ double[] drawRobotWorld(double[] pose)
   obj3v.clear();
   double[] angles =kinma.inverse(pose);
   //angles =new double[]{0,0,0,0,HALF_PI,0};
+  boolean overAngle=false;
+  if(angles[3]>HALF_PI )
+  {
+    angles[3]-=PI;
+    overAngle=true;
+  }
+  else if(angles[3]<-HALF_PI )
+  {
+    angles[3]+=PI;
+    overAngle=true;
+  }
+  
+  if(overAngle)
+  {
+    angles[4]+=HALF_PI;
+    angles[4]*=-1;
+    angles[4]-=HALF_PI;
+    if(angles[4]>HALF_PI )
+    {
+      angles[4]=2*PI-angles[4];
+    }
+    else if(angles[4]<-HALF_PI )
+    {
+      angles[4]=2*PI+angles[4];
+    }
+    
+    angles[5]+=PI;
+    
+    if(angles[5]>PI )
+    {
+      angles[5]=angles[5]-2*PI;
+    }
+    else if(angles[5]<-PI )
+    {
+      angles[5]=angles[5]+2*PI;
+    }
+    
+  }
+  
+  
   double[][] calcPose = kinma.forward(angles);
   double[] calcPose5 = calcPose[5];
 
@@ -423,12 +463,12 @@ PVector XYZ=new PVector();
     
     //>X ^y  @Z (toward you) Kinematics world
     PVector pXYZ=new PVector(1300*XYZ.x,1300*(XYZ.z+1),1300*XYZ.y);
-    //pXYZ.x=20*sin(inc_X);
-    //pXYZ.y=780;
-    //pXYZ.z=940;
-    //RYP.x=0;
-    //RYP.y=0;
-    //RYP.z=0;
+    pXYZ.x=+100*sin(inc_X/16);
+    pXYZ.y=780+200*sin(inc_X/4);
+    pXYZ.z=940+200*cos(inc_X/4);
+    RYP.x=90*sin(inc_X/4)*PI/180;
+    RYP.y=0;
+    RYP.z=0;
     double[] pose=new double[]{
       pXYZ.x,pXYZ.y,pXYZ.z,RYP.x,RYP.y,RYP.z
     };
@@ -445,19 +485,47 @@ PVector XYZ=new PVector();
     //}
     //print("angles.  ");
     
+    /*boolean overAngle=false;
+    if(angles[3]>HALF_PI )
+    {
+      angles[3]-=PI;
+      overAngle=true;
+    }
+    else if(angles[3]<-HALF_PI )
+    {
+      angles[3]+=PI;
+      overAngle=true;
+    }
+    
+    if(overAngle)
+    {
+      angles[4]*=-1;
+    }*/
+    
     for(int k=0;k<angles.length;k++)
     {
-      float offset=0;
+      float angle = (float)angles[k];
+      
+      //HIWIN J5(index 4) has PI/2 offset
       if(k==4)
-        offset=-HALF_PI;
-      float fff=round((float)((offset+angles[k])*180/PI*1000))/1000f;
+        angle-=HALF_PI;
+        
+      //HIWIN J6(index 5) rotates diffetent direction
+      if(k==5)
+        angle=-angle;
+        
+      float fff=round((float)((angle)*180/PI*1000))/1000f;
       //println(fff+" ");
-      if(i==0){
-        json.getJSONArray("3").getJSONObject(3).setString("A"+(k+1),(fff)+"");
+      //if(i==0)
+      {
+        //print(fff+" ");
+        json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1),(fff)+"");
       }
         
       
     }
+    
+    println();
     if(i==0){
       
       outJ=json.toString().replaceAll("[/ /g]", "");
