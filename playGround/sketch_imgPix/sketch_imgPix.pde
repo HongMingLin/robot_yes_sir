@@ -20,15 +20,16 @@ PVector[] identityBoxV;
     
 double[][][] geometries = new double[][][]{
   {
-    {100, 280, 0},
+    {150, 280, 0},
     {0, 770,0},
-    {232, 0, 0},
+    {232, 150, 0},
     {454, 0, 0},
     {0, -110, 0},
   }
 };
     
 Vector<PVector> obj1v=new Vector<PVector>();
+Vector<PVector> obj3v=new Vector<PVector>();
 Vector<PVector> obj2v=new Vector<PVector>();
 PMatrix invCameraMat;
 PMatrix CameraMat;
@@ -123,7 +124,7 @@ void drawBoard_keepTranse()
   rect(0, -size/2, size/2, size);
   
   rotateY(-PI/2);
-  scale(size,size,10);
+  scale(0.01,size,size);
   /*noStroke();
   scale(10,10,2);
   sphere(1);  */ 
@@ -151,10 +152,17 @@ boolean CollisionDetection(Vector<PVector> obj1_v,Vector<PVector> obj2_v)
   }
   return false;
 }
+boolean CollisionDetection(Vector<PVector> obj1_v,Vector<PVector> obj2_v,Vector<PVector> obj3_v)
+{
+  return CollisionDetection(obj1_v,obj2_v)||
+  CollisionDetection(obj1_v,obj3_v)||
+  CollisionDetection(obj2_v,obj3_v);
+}
 double[] drawRobotWorld(double[] pose)
 {
   obj1v.clear();
   obj2v.clear();
+  obj3v.clear();
   double[] angles =kinma.inverse(pose);
   //angles =new double[]{0,0,0,0,-PI,0};
   double[][] calcPose = kinma.forward(angles);
@@ -212,7 +220,7 @@ double[] drawRobotWorld(double[] pose)
     {
       PVector pt=new PVector();
       WxO.mult(v,pt);
-      obj1v.add(pt);
+      obj3v.add(pt);
     }
   }
   
@@ -258,6 +266,15 @@ double[] drawRobotWorld(double[] pose)
       popMatrix();
     }
     
+    fill(255,255,0,100);
+    stroke(255,0,0);
+    for(PVector v:obj3v)
+    {
+      pushMatrix();
+      translate(v.x,v.y,v.z);
+      box(1);
+      popMatrix();
+    }
     
     fill(0,255,0,100);
     stroke(0,255,0);
@@ -274,7 +291,7 @@ double[] drawRobotWorld(double[] pose)
       
   }
 
-  boolean collision = CollisionDetection(obj1v,obj2v);
+  boolean collision = CollisionDetection(obj1v,obj2v,obj3v);
   
   fill(255,0,0,100);
   stroke(255,0,0);
@@ -385,51 +402,7 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     popMatrix();
   }
-  /*
-      if(false)
-      {
-        cam.beginHUD();
-        R.x+=1;
-        R.y+=1;
-        G.x+=1;
-        G.y+=1;
-        B.x+=1;
-        B.y+=1;
-        R.mult(300);
-        G.mult(300);
-        B.mult(300);
-        if(R.z>10)
-        {
-          stroke(255,0,0);
-          fill(255,0,0);
-          ellipse(R.x, R.y, 20, 20);
-          stroke(255,0,0);
-          fill(255);
-          text(R.z,R.x, R.y);
-        }
-        if(G.z>10)
-        {
-          stroke(0,255,0);
-          fill(0,255,0);
-          ellipse(G.x, G.y, 20, 20);
-          fill(255);
-          text(G.z,G.x, G.y);
-        }
-        if(B.z>10)
-        {
-          stroke(0,0,255);
-          fill(0,0,255);
-          ellipse(B.x, B.y, 20, 20);
-          fill(255);
-          text(B.z,B.x, B.y);
-        }
-        cam.endHUD();
-      }
-      println("-x:"+j +" y:"+i);
-      println(R);
-      println(G);
-      println(B);
-    }*/
+
   int timeDiff = millis()-t1;
   
   println("timeDiff:"+timeDiff);
