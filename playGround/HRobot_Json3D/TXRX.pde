@@ -11,7 +11,7 @@ void receive(byte[] bb, String ip, int port) {
       if (json == null) {
         println("[X]ParseJsonFail");
       } else {
-        
+
         System.out.println(logHeader()+inJson );
       }
     }
@@ -24,8 +24,35 @@ void receive(byte[] bb, String ip, int port) {
     break;
   }
 }
-
+//R1Json
 void send2robot() {
+
+  for (int i = 0; i < HRs.length; i++) {
+    R1Json.setString("Robot", "0");
+    R1Json.setString("X", String.valueOf(cm2mm( HRs[0].XYZ.x)));
+    R1Json.setString("Y", String.valueOf(cm2mm( HRs[0].XYZ.y)));
+    R1Json.setString("Z", String.valueOf(cm2mm( HRs[0].XYZ.z)));
+
+    //float a=lerp(-70, 58, (mouseX/(float)Window_X));
+    //float b=lerp(-89, 88, Bpercent);
+    //float c=lerp(-180, 180, (mouseY/(float)Window_Y));
+    //ROBOT_ABC.lerp(a, b, c, 0.1);
+    R1Json.setString("A", String.valueOf(HRs[0].ABC.x) );
+    R1Json.setString("B", String.valueOf(HRs[0].ABC.y) );
+    R1Json.setString("C", String.valueOf(HRs[0].ABC.z) );
+  }
+
+
+  outJ=R1Json.toString().replaceAll("[/ /g]", "");
+  outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
+  println(logHeader()+outJ);
+  //u.send(printBB("TX",outJ),R_IP,R_PORT);
+  TXLED=!TXLED;
+  u.send(outJ, R_IP, R_PORT);
+  //list.getItem("log "+i).put("color", new CColor().setBackground(0xffff0000).setBackground(0xffff88aa));
+  //if(getItems)
+}
+void send2robot2() {
 
   for (int i = 0; i < HRs.length; i++) {
     JSONObject tJ=R12JsonArray.getJSONObject(i);
@@ -43,14 +70,13 @@ void send2robot() {
   }
 
 
-  outJ=json.toString().replaceAll("[/ /g]","");
+  outJ=json.toString().replaceAll("[/ /g]", "");
   outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
   println(logHeader()+outJ);
   //u.send(printBB("TX",outJ),R_IP,R_PORT);
   TXLED=!TXLED;
   u.send(outJ, R_IP, R_PORT);
-  
 }
-String logHeader(){
-return "["+new SimpleDateFormat(pattern).format( new Date() )+"]";
+String logHeader() {
+  return "["+new SimpleDateFormat(pattern).format( new Date() )+"]";
 }

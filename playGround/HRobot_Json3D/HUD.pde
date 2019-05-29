@@ -19,12 +19,14 @@ void beginHUD() {
   xyz=cam.getLookAt();
   text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   
-  START_Y=560;
-  text("{q w e r} = 4F ", 5, START_Y-60);
-  text("{a s d f} = 3F ", 5, START_Y-40);
-  text("{z x c v} = 2F ", 5, START_Y-20);
+  START_Y=550;
+  text("{q w e r} = 4F ", 5, START_Y-65);
+  text("{a s d f} = 3F ", 5, START_Y-45);
+  text("{z x c v} = 2F ", 5, START_Y-25);
   text("[P] ALL_Mode(ES,STOP,PAUSE,PLAY)="+AM, 5, START_Y);
-  text("[M] 1Robot RunMode@"+whichRobot+"="+HRs[whichRobot].RM, 5, START_Y+=20);
+  textSize(20);
+  text("[M] 1Robot RunMode@"+whichRobot+"="+HRs[whichRobot].RM, 5, START_Y+=25);
+  textSize(12);
   text("SafeXYZ=±"
     +HRs[whichRobot].SAFEx0y0z0.x+" - "+HRs[whichRobot].SAFEx1y1z1.x
     +HRs[whichRobot].SAFEx0y0z0.y+" - "+HRs[whichRobot].SAFEx1y1z1.y
@@ -51,6 +53,6 @@ void beginHUD() {
   fill(RXLED?0:255, RXLED?255:0, 0);
   ellipse(155, appH-10, 8, 8);
   
-
+cp5.draw();
   cam.endHUD();
 }

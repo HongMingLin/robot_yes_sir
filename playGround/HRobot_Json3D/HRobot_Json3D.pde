@@ -1,6 +1,9 @@
 import peasy.PeasyCam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import controlP5.*;
+
+ControlP5 cp5;
 ALLMODE AM=ALLMODE.PLAY;
 PeasyCam cam;
 final int M_SCALE=1;
@@ -40,7 +43,7 @@ UDP u,u2;
 boolean REALTIME=false;
 String outJ="",inJstr="NotYet";
 HRobot[] HRs; 
-WHICHROBOT WR=WHICHROBOT.R4F1;
+WHICHROBOT WR=WHICHROBOT.R2F1;
 int whichRobot=WR.ID();
 LEDPanel[] LEDPs;
 float Bpercent=0.5;
@@ -55,6 +58,9 @@ void setup() {
   catch(Exception e) {
     println(e);
   }
+  cp5 = new ControlP5(this);
+  cp5.setAutoDraw(false);
+  setup_cp5();
   cam = new PeasyCam(this, CamD);
   cam.setMinimumDistance(MinD);
   cam.setMaximumDistance(MaxD);
@@ -84,6 +90,9 @@ void setup() {
 
   TX_TIMER.scheduleAtFixedRate(t33, 0, TX_mS);
     new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 500);
+  exec("/usr/bin/say", "HI WIN Robot online");
+  
+    
 
 }
 
@@ -128,4 +137,59 @@ void  drawToolBox() {
 
 
   popMatrix();
+}
+Knob myKnobA;
+Knob myKnobB;
+ListBox list;
+void setup_cp5(){
+ButtonBar b = cp5.addButtonBar("bar")
+     .setPosition(0, 0)
+     .setSize(400, 20)
+     .addItems(split("REALTIME b c d e f g h i j k "," "))
+     ;
+     println(b.getItem("a"));
+  b.changeItem("a","text","REALTIME "+(REALTIME?"ON":"OFF"));
+  b.changeItem("b","text","second");
+  b.changeItem("c","text","third");
+  b.onMove(new CallbackListener(){
+    public void controlEvent(CallbackEvent ev) {
+      ButtonBar bar = (ButtonBar)ev.getController();
+      println("hello ",bar.hover());
+    }
+  });
+  myKnobA = cp5.addKnob("knob")
+               .setRange(0,255)
+               .setValue(50)
+               .setPosition(20,170)
+               .setRadius(50)
+               .setDragDirection(Knob.VERTICAL)
+               ;
+   list = cp5.addListBox("ROBOT LOG")
+         .setPosition(400, 0)
+         .setSize(500, 500)
+         .setItemHeight(15)
+         .setBarHeight(20)
+         .setColorBackground(color(255, 128))
+         .setColorActive(color(0))
+         .setColorForeground(color(255, 100))
+         .close()
+         ;   
+  list.getCaptionLabel().setColor(0xffff0000);
+  //for (int i=0;i<80;i++) {
+  //  list.addItem("log "+i, i);
+  //  list.getItem("log "+i).put("color", new CColor().setBackground(0xffff0000).setBackground(0xffff88aa));
+  //}
+  myKnobB = cp5.addKnob("knobValue")
+               .setRange(0,255)
+               .setValue(220)
+               .setPosition(180,170)
+               .setRadius(50)
+               .setNumberOfTickMarks(10)
+               .setTickMarkLength(4)
+               .snapToTickMarks(true)
+               .setColorForeground(color(255))
+               .setColorBackground(color(0, 160, 100))
+               .setColorActive(color(255,255,0))
+               .setDragDirection(Knob.HORIZONTAL)
+               ;
 }

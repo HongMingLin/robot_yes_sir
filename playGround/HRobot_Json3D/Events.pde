@@ -11,6 +11,8 @@ void keyPressed() {
     for (int i=0; i<HRs.length; i++) {
       HRs[i].RM=HRs[i].RM.STOP;
     }
+        exec("/usr/bin/say", "All Stop");
+
     break;
   case 'T':
     TXms=TXms.next();
@@ -40,6 +42,8 @@ void keyPressed() {
   case 'M':
     HRs[whichRobot].setCC_XYZ_NOW();
     HRs[whichRobot].RM=HRs[whichRobot].RM.next();
+    exec("/usr/bin/say", "Robot "+whichRobot+" "+HRs[whichRobot].RM);
+
     break;
   default:
     for (int i=0; i<WHICHROBOT.values().length; i++) {
@@ -48,6 +52,9 @@ void keyPressed() {
       if (key == WR.hotKey()) {
         whichRobot=WR.ID();
         println("whichRobot="+whichRobot);
+        exec("/usr/bin/say", "Robot "+whichRobot+" ");
+//exec("/usr/bin/say","-v","Victoria","Im Victoria");
+//  exec("/usr/bin/say","-v","Zarvox"," and Robot.");
         break;
       }
     }

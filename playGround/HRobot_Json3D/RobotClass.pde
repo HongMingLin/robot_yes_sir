@@ -43,7 +43,7 @@ enum ALLMODE {
   }
 }
 enum RunMODE {
-  STOP, XYZ_50CM_1Sec, M_MOUSE_XYZ, M_MOUSE_ABC, XYZ_CIRCLE, ABC_CIRCLE;
+  STOP, XYZ_50CM_1Sec, XYZ_CIRCLE, ABC_CIRCLE, M_MOUSE_XYZ,M_MOUSE_ABC;
   private static RunMODE[] vals = values();
   public RunMODE next()
   {
@@ -55,7 +55,7 @@ enum RunMODE {
 class HRobot {
   //PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);
   //PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
-  PVector SAFEx0y0z0=new PVector(-32.5, 5, -16.2);
+  PVector SAFEx0y0z0=new PVector(-32.5, 5, -46.2);
   PVector SAFEx1y1z1=new PVector( 32.5, 93.2, 78);
 
   private PVector realXYZ=new PVector();
@@ -78,33 +78,43 @@ class HRobot {
   }
   void handleMouseEvent(MouseEvent event) {
     mouseWheele_e=event.getCount();
+    if(RM==RunMODE.STOP)return;
+    XYZ.y+=(mouseWheele_e*0.01);
+    mouseWheele_e=0;
   }
   void UPDATE() {
     float xx=0, yy=0, zz=0;
     globalNowSin=millis()*(TWO_PI/globalCRICLE_Time);
     //println("RM"+RM);
+    
     switch(RM) {
     case STOP:
+        
+
       break;
     case XYZ_50CM_1Sec:
-      xx=25*sin(millis()*TWO_PI/1000);
+      xx=25*sin(millis()*TWO_PI/5000);
       setXYZ(new PVector(xx, 0, 0));
       break;
     case XYZ_CIRCLE:
 
       xx=CC_XYZ.x+(15*sin(globalNowSin));
       zz=CC_XYZ.z+(15*cos(globalNowSin));
-      yy=XYZ.y+(mouseWheele_e*0.1);
-      setXYZ_lowPassFilter(new PVector(xx, yy, zz));
+      //yy=XYZ.y+(mouseWheele_e*0.1);
+      setXYZ_lowPassFilter(new PVector(xx, XYZ.y, zz));
       break;
     case M_MOUSE_XYZ:
 
       xx=lerp(SAFEx0y0z0.x, SAFEx1y1z1.x, (mouseX/(float)appW));
       zz=lerp(SAFEx1y1z1.z, SAFEx0y0z0.z, (mouseY/(float)appH));
-      yy=XYZ.y+(mouseWheele_e*0.1);
-      setXYZ_lowPassFilter(new PVector(xx, yy, zz));
+      //yy=XYZ.y+(mouseWheele_e*0.01);
+      setXYZ_lowPassFilter(new PVector(xx, XYZ.y, zz));
       break;
     case ABC_CIRCLE:
+      xx=lerp(SAFEx0y0z0.x, SAFEx1y1z1.x, (mouseX/(float)appW));
+      zz=lerp(SAFEx1y1z1.z, SAFEx0y0z0.z, (mouseY/(float)appH));
+      setXYZ_lowPassFilter(new PVector(xx, XYZ.y, zz));
+    
       ABC.x=(10*cos(globalNowSin));
       ABC.z=(10*sin(globalNowSin));
       ABC_PI.x=ABC.x/360.0*TWO_PI;
