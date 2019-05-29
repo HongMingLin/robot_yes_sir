@@ -5,8 +5,19 @@ import peasy.*;
 
 PeasyCam cam;
 Movie myMovie;
-
-
+JSONObject json=new JSONObject();
+JSONArray R12JsonArray=new JSONArray();
+JSONObject R1Json;
+UDP u;
+String outJ="";
+String R_IP="10.10.10.88";
+int R_PORT=6666;
+java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
+  public void run() {
+    u.send(outJ, R_IP, R_PORT);
+    println("[TX]"+outJ);
+  }
+};
 
 // Called every time a new frame is available to read
 void movieEvent(Movie m) {
@@ -34,17 +45,48 @@ Vector<PVector> obj2v=new Vector<PVector>();
 PMatrix invCameraMat;
 PMatrix CameraMat;
 Kinematics kinma;
+
+void setupJson() {
+  json = new JSONObject();
+  
+  R12JsonArray= new JSONArray();
+  for (int i = 0; i < 12; i++) {
+  R1Json= new JSONObject();
+  R1Json.setString("Robot", (i+1)+"");
+  R1Json.setString("Command", "ptp_axis");
+  R1Json.setString("A1", "0");
+  R1Json.setString("A2", "0");
+  R1Json.setString("A3", "0");
+  R1Json.setString("A4", "0");
+  R1Json.setString("A5", "0");
+  R1Json.setString("A6", "0");
+  
+    R12JsonArray.setJSONObject(i, R1Json);
+  }
+  json.setString("TIMESTAMP", millis()+"");
+  json.setJSONArray("GroupCommand", R12JsonArray);
+}
+
 void setup() {
+  setupJson();
+  u = new UDP( this, 1313 );
+  u.log( false );
+  u.listen( true );
+  
+  new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 1000);
+  
+  
+  
   identityBoxV=boxVertices(1,1,1);
   kinma=new Kinematics(geometries[0]);
- 
+   
   size(600, 600,P3D);
   cam = new PeasyCam(this, 100);
   cam.setMinimumDistance(10);
   cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
   cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "XYZ.m4v"); 
+  myMovie = new Movie(this, "/Users/xlinx/Downloads/Archive 2/Untitled3.m4v");   
   //hint(DISABLE_DEPTH_TEST); 
   
   myMovie.loop();
@@ -164,15 +206,15 @@ double[] drawRobotWorld(double[] pose)
   obj2v.clear();
   obj3v.clear();
   double[] angles =kinma.inverse(pose);
-  //angles =new double[]{0,0,0,0,-PI,0};
+  //angles =new double[]{0,0,0,0,HALF_PI,0};
   double[][] calcPose = kinma.forward(angles);
   double[] calcPose5 = calcPose[5];
 
-  for(int k=0;k<calcPose5.length;k++)
-  {
-    print(round((float)(calcPose5[k]*1000))/1000f+" ");
-  }
-  println();
+  //for(int k=0;k<calcPose5.length;k++)
+  //{
+  //  print(round((float)(calcPose5[k]*1000))/1000f+" ");
+  //}
+  //println();
   pushMatrix();
   
   rotateX(PI/2);
@@ -355,7 +397,15 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     asc_arr[i].setRGBInfo( R, G, B);
   }
   
-  PVector XYZ=new PVector();
+  
+
+  int timeDiff = millis()-t1;
+  
+  println("timeDiff:"+timeDiff);
+}
+
+void RK(ascreen_info []asc_arr){
+PVector XYZ=new PVector();
   PVector RYP=new PVector();
   for(int i=0;i<asc_arr.length;i++)
   {
@@ -388,31 +438,46 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
     
     double[] angles=drawRobotWorld(pose);
     
-    println("pose["+i+"].");
-    for(int k=0;k<pose.length;k++)
-    {
-      print(round((float)(pose[k]*1000))/1000f+" ");
-    }
-    print("angles.  ");
+    //println("pose["+i+"].");
+    //for(int k=0;k<pose.length;k++)
+    //{
+    //  print(round((float)(pose[k]*1000))/1000f+" ");
+    //}
+    //print("angles.  ");
+    
     for(int k=0;k<angles.length;k++)
     {
-      print(round((float)(angles[k]*180/PI*1000))/1000f+" ");
+      float offset=0;
+      if(k==4)
+        offset=-HALF_PI;
+      float fff=round((float)((offset+angles[k])*180/PI*1000))/1000f;
+      //println(fff+" ");
+      if(i==0){
+        json.getJSONArray("3").getJSONObject(3).setString("A"+(k+1),(fff)+"");
+      }
+        
+      
     }
-    println();
+    if(i==0){
+      
+      outJ=json.toString().replaceAll("[/ /g]", "");
+      outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
+      //sendX(outJ);
+    }
+    
+    //println();
     
     popMatrix();
   }
-
-  int timeDiff = millis()-t1;
-  
-  println("timeDiff:"+timeDiff);
 }
-
-
 void draw() {
   
   background(0);
+  pushMatrix();
+  translate(-myMovie.width/2,-myMovie.height/2, -1000);
   image(myMovie,0,0);
+  popMatrix();
+  
   CameraMat=getMatrix();
   invCameraMat = CameraMat.get();
   invCameraMat.invert();
@@ -432,4 +497,5 @@ void draw() {
     line(0, 0, 0, 0, 0, 10000);
   }
   sectionFinding(myMovie,ascArr);
+  RK(ascArr);
 }

@@ -387,8 +387,6 @@ void drawRod_keepTranse(PVector p1,PVector p2,float thickness,float xrotate)
 
 
 
-
-
 PVector[] boxVertices(float w,float h, float d)
 {
   PVector[] v={
