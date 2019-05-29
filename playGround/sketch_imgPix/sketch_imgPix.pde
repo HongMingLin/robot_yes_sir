@@ -10,7 +10,7 @@ JSONArray R12JsonArray=new JSONArray();
 JSONObject R1Json;
 UDP u;
 String outJ="";
-String R_IP="10.10.10.88";
+String R_IP="10.10.10.188";
 int R_PORT=6666;
 java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
   public void run() {
@@ -73,7 +73,7 @@ void setup() {
   u.log( false );
   u.listen( true );
   
-  new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 100);
+  //new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 100);
   
   
   
@@ -207,46 +207,7 @@ double[] drawRobotWorld(double[] pose)
   obj3v.clear();
   double[] angles =kinma.inverse(pose);
   //angles =new double[]{0,0,0,0,HALF_PI,0};
-  boolean overAngle=false;
-  if(angles[3]>HALF_PI )
-  {
-    angles[3]-=PI;
-    overAngle=true;
-  }
-  else if(angles[3]<-HALF_PI )
-  {
-    angles[3]+=PI;
-    overAngle=true;
-  }
-  
-  if(overAngle)
-  {
-    angles[4]+=HALF_PI;
-    angles[4]*=-1;
-    angles[4]-=HALF_PI;
-    if(angles[4]>HALF_PI )
-    {
-      angles[4]=2*PI-angles[4];
-    }
-    else if(angles[4]<-HALF_PI )
-    {
-      angles[4]=2*PI+angles[4];
-    }
-    
-    angles[5]+=PI;
-    
-    if(angles[5]>PI )
-    {
-      angles[5]=angles[5]-2*PI;
-    }
-    else if(angles[5]<-PI )
-    {
-      angles[5]=angles[5]+2*PI;
-    }
-    
-  }
-  
-  
+
   double[][] calcPose = kinma.forward(angles);
   double[] calcPose5 = calcPose[5];
 
@@ -444,6 +405,8 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
   println("timeDiff:"+timeDiff);
 }
 
+
+double maxDiff=0;
 void RK(ascreen_info []asc_arr){
 PVector XYZ=new PVector();
   PVector RYP=new PVector();
@@ -466,9 +429,9 @@ PVector XYZ=new PVector();
     pXYZ.x=+100*sin(inc_X/16);
     pXYZ.y=780+200*sin(inc_X/4);
     pXYZ.z=940+200*cos(inc_X/4);
-    RYP.x=90*sin(inc_X/4)*PI/180;
+    RYP.x=0;
     RYP.y=0;
-    RYP.z=0;
+    RYP.z=10*sin(inc_X/4)*PI/180;
     double[] pose=new double[]{
       pXYZ.x,pXYZ.y,pXYZ.z,RYP.x,RYP.y,RYP.z
     };
@@ -478,29 +441,65 @@ PVector XYZ=new PVector();
     
     double[] angles=drawRobotWorld(pose);
     
-    //println("pose["+i+"].");
-    //for(int k=0;k<pose.length;k++)
-    //{
-    //  print(round((float)(pose[k]*1000))/1000f+" ");
-    //}
-    //print("angles.  ");
     
-    /*boolean overAngle=false;
-    if(angles[3]>HALF_PI )
     {
-      angles[3]-=PI;
-      overAngle=true;
-    }
-    else if(angles[3]<-HALF_PI )
-    {
-      angles[3]+=PI;
-      overAngle=true;
+      
+      boolean overAngle=false;
+      double []P_angles = asc_arr[i].getAngles();
+      
+      double P_angle3 = P_angles[3];
+      if(angles[3]-P_angle3>HALF_PI )
+      {
+        angles[3]-=PI;
+        overAngle=true;
+      }
+      else if(angles[3]-P_angle3<-HALF_PI )
+      {
+        angles[3]+=PI;
+        overAngle=true;
+      }
+      
+      if(overAngle)
+      {
+        angles[4]+=HALF_PI;
+        angles[4]*=-1;
+        angles[4]-=HALF_PI;
+        if(angles[4]>HALF_PI )
+        {
+          angles[4]=2*PI-angles[4];
+        }
+        else if(angles[4]<-HALF_PI )
+        {
+          angles[4]=2*PI+angles[4];
+        }
+        
+        angles[5]+=PI;
+        
+        if(angles[5]>PI )
+        {
+          angles[5]=angles[5]-2*PI;
+        }
+        else if(angles[5]<-PI )
+        {
+          angles[5]=angles[5]+2*PI;
+        }
+        
+      }
+      
+      double DIFF4 = angles[3]-P_angles[3];
+      if(Math.abs(maxDiff)<Math.abs(DIFF4))
+      {
+        maxDiff = DIFF4;
+      }
+      
+      
+      println("maxDiff:"+maxDiff );
+      print("DIFF4:"+DIFF4+" >angles[3]="+angles[3]+"  "+P_angles[3] );
+      //println("DIFF4:"+(angles[3]-P_angles[3]));
+      println();
+      asc_arr[i].setAngles(angles);
     }
     
-    if(overAngle)
-    {
-      angles[4]*=-1;
-    }*/
     
     for(int k=0;k<angles.length;k++)
     {
@@ -525,7 +524,7 @@ PVector XYZ=new PVector();
       
     }
     
-    println();
+    //println();
     if(i==0){
       
       outJ=json.toString().replaceAll("[/ /g]", "");
