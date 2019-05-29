@@ -346,7 +346,7 @@ class ascreen_info
     rY = R.x;
     float rotateMap=PI/6;
     ret_RYP.y = rY*rotateMap;
-    ret_RYP.z = rX*rotateMap;
+    ret_RYP.z = -rX*rotateMap;
     
   }
 }
