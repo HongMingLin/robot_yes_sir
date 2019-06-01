@@ -10,12 +10,12 @@ JSONArray R12JsonArray=new JSONArray();
 JSONObject R1Json;
 UDP u;
 String outJ="";
-String R_IP="10.10.10.188";
+String R_IP="10.10.10.88";
 int R_PORT=6666;
 java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
   public void run() {
-    u.send(outJ, R_IP, R_PORT);
-    println("[TX]"+outJ);
+    u.send(outJ+"\n", R_IP, R_PORT);
+    //println("[TX]"+outJ);
   }
 };
 
@@ -37,6 +37,28 @@ double[][][] geometries = new double[][][]{
     {454, 0, 0},
     {0, -110, 0},
   }
+};
+
+/*
+16200 deg/s for motor
+
+speed reduction ratio
+J1 147
+J2 161
+J3 164.07
+J4 81
+J5 160
+J6 100
+*/
+
+double maxMotorAngularV=16200*PI/180*0.4;
+double []jointAngularV=new double[]{
+  maxMotorAngularV/147f,
+  maxMotorAngularV/161f,
+  maxMotorAngularV/164.07f,
+  maxMotorAngularV/81f,
+  maxMotorAngularV/160f,
+  maxMotorAngularV/100f
 };
     
 Vector<PVector> obj1v=new Vector<PVector>();
@@ -63,7 +85,6 @@ void setupJson() {
   
     R12JsonArray.setJSONObject(i, R1Json);
   }
-  json.setString("TIMESTAMP", millis()+"");
   json.setJSONArray("GroupCommand", R12JsonArray);
 }
 
@@ -349,7 +370,7 @@ double[] drawRobotWorld(double[] pose)
 float inc_X=0;
 void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 {
-  inc_X+=0.1;
+  inc_X=millis();
   myImage.loadPixels();
   PVector R=new PVector();
   PVector G=new PVector();
@@ -406,8 +427,56 @@ void sectionFinding( PImage myImage,ascreen_info []asc_arr )
 }
 
 
+void J4StepDown(double []angles,int step)
+{
+  if(step==0)return;
+  if(step<0)//angles[3]-P_angle3>HALF_PI )
+  {
+    angles[3]-=PI;
+  }
+  else if(step>0)
+  {
+    angles[3]+=PI;
+  }
+  
+  
+  for(int k=0;k<angles.length;k++)
+  {
+    angles[k]%=2*PI;
+  }
+  
+  {
+    angles[4]+=HALF_PI;
+    angles[4]*=-1;
+    angles[4]-=HALF_PI;
+    if(angles[4]>HALF_PI )
+    {
+      angles[4]=2*PI-angles[4];
+    }
+    else if(angles[4]<-HALF_PI )
+    {
+      angles[4]=2*PI+angles[4];
+    }
+    
+    angles[5]+=PI;
+    
+    if(angles[5]>PI )
+    {
+      angles[5]=angles[5]-2*PI;
+    }
+    else if(angles[5]<-PI )
+    {
+      angles[5]=angles[5]+2*PI;
+    }
+    
+  }
+}
+
+int count=0;
 double maxDiff=0;
 void RK(ascreen_info []asc_arr){
+  count++;
+  if(count<10)maxDiff=0;
 PVector XYZ=new PVector();
   PVector RYP=new PVector();
   for(int i=0;i<asc_arr.length;i++)
@@ -425,16 +494,32 @@ PVector XYZ=new PVector();
     
     
     //>X ^y  @Z (toward you) Kinematics world
-    PVector pXYZ=new PVector(1300*XYZ.x,1300*(XYZ.z+1),1300*XYZ.y);
-    pXYZ.x=+100*sin(inc_X/16);
-    pXYZ.y=780+200*sin(inc_X/4);
-    pXYZ.z=940+200*cos(inc_X/4);
-    RYP.x=0;
-    RYP.y=0;
-    RYP.z=10*sin(inc_X/4)*PI/180;
+    PVector pXYZ=new PVector(700*XYZ.x,700*(XYZ.z)+780+600,700*XYZ.y);
+    float period=4;
+    pXYZ.z+=300;
+    
+    
+    //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
+    //pXYZ.y=780+300+100*sin(inc_X*2*PI/1000/period);
+    //pXYZ.z=940+100*cos(inc_X*2*PI/1000/period);
+    //RYP.x=10*sin(inc_X*2*PI/1000/period)*PI/180;
+    //RYP.y=0;
+    //RYP.z=0;
+    
+    
+    
+    if(asc_arr[i].realWorld_XYZ.x==asc_arr[i].realWorld_XYZ.x)
+    {
+      
+      pXYZ= PVector.lerp(asc_arr[i].realWorld_XYZ, pXYZ, 0.1);
+      pXYZ = PositionAdv(asc_arr[i].realWorld_XYZ, pXYZ, 50);
+    }
+    asc_arr[i].realWorld_XYZ.set(pXYZ);
+    
     double[] pose=new double[]{
       pXYZ.x,pXYZ.y,pXYZ.z,RYP.x,RYP.y,RYP.z
     };
+    //pose[3]=0;
     //axisSwap(pose,0,1,2);
     
     axisSwap(pose,1,2,0,false,false,true);
@@ -443,59 +528,55 @@ PVector XYZ=new PVector();
     
     
     {
-      
       boolean overAngle=false;
       double []P_angles = asc_arr[i].getAngles();
       
       double P_angle3 = P_angles[3];
+      
+      double pDIFF4 = (angles[3]-P_angles[3])*180/PI;
       if(angles[3]-P_angle3>HALF_PI )
       {
-        angles[3]-=PI;
-        overAngle=true;
+        J4StepDown(angles,-1);
       }
       else if(angles[3]-P_angle3<-HALF_PI )
       {
-        angles[3]+=PI;
-        overAngle=true;
+        J4StepDown(angles,1);
       }
       
-      if(overAngle)
+      if(angles[3]>PI)
       {
-        angles[4]+=HALF_PI;
-        angles[4]*=-1;
-        angles[4]-=HALF_PI;
-        if(angles[4]>HALF_PI )
-        {
-          angles[4]=2*PI-angles[4];
-        }
-        else if(angles[4]<-HALF_PI )
-        {
-          angles[4]=2*PI+angles[4];
-        }
-        
-        angles[5]+=PI;
-        
-        if(angles[5]>PI )
-        {
-          angles[5]=angles[5]-2*PI;
-        }
-        else if(angles[5]<-PI )
-        {
-          angles[5]=angles[5]+2*PI;
-        }
-        
+        J4StepDown(angles,-1);
+        J4StepDown(angles,-1);
+        println("......Turn over-!!!");
       }
+      else if(angles[3]<-PI)
+      {
+        J4StepDown(angles,1);
+        J4StepDown(angles,1);
+        println("......Turn over+!!!");
+      }
+
       
-      double DIFF4 = angles[3]-P_angles[3];
+      double DIFF4 = (angles[3]-P_angles[3])*180/PI;
       if(Math.abs(maxDiff)<Math.abs(DIFF4))
       {
         maxDiff = DIFF4;
       }
       
-      
-      println("maxDiff:"+maxDiff );
-      print("DIFF4:"+DIFF4+" >angles[3]="+angles[3]+"  "+P_angles[3] );
+      if(i==0)println("angles:"+angles[3]*180/PI+" P_angles:"+P_angles[3]*180/PI);
+      //maxDiff*=0.999;
+      if(i==0)println("maxDiff:"+maxDiff+" DIFF4:"+DIFF4 +" pDIFF4:"+pDIFF4);
+      //print("DIFF4:"+DIFF4+" >angles[3]="+angles[3]+"  "+P_angles[3] );
       //println("DIFF4:"+(angles[3]-P_angles[3]));
+      for(int k=0;k<angles.length;k++)
+      {
+        float angV = (float)(angles[k]-P_angles[k])*frameRate;
+        float ratio = abs(round((float)(angV/jointAngularV[k]*10000))/10000f);
+        print("["+k+"]"+ratio+" ");
+        if(ratio>1)
+          println("DEAD......");
+        //print(jointAngularV[k]*180/PI+" ");
+      }
       println();
       asc_arr[i].setAngles(angles);
     }
@@ -523,19 +604,18 @@ PVector XYZ=new PVector();
         
       
     }
-    
     //println();
-    if(i==0){
-      
-      outJ=json.toString().replaceAll("[/ /g]", "");
-      outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
-      //sendX(outJ);
-    }
     
     //println();
     
     popMatrix();
   }
+  
+  json.setString("TIMESTAMP", millis()+"");
+  outJ=json.toString().replaceAll("[/ /g]", "");
+  outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
+  
+  //u.send(outJ+"\n", R_IP, R_PORT);
 }
 void draw() {
   

@@ -259,6 +259,9 @@ class ascreen_info
   PVector XYZ=new PVector();
   PVector RYP=new PVector();
   
+  PVector realWorld_XYZ=new PVector(Float.NaN,Float.NaN,Float.NaN);
+  PVector realWorld_RYP=new PVector(Float.NaN,Float.NaN,Float.NaN);
+  
   PVector idx_on_video=new PVector();
   
   double []AX;
@@ -316,6 +319,12 @@ class ascreen_info
     return pos_in_world;
   }
   
+  final double[] getAngles()
+  {
+    return AX;
+  }
+
+  
   final void setAngles(double []angles)
   {
     for(int i=0;i<angles.length;i++)
@@ -323,12 +332,6 @@ class ascreen_info
       AX[i]=angles[i];
     }
   }
-  
-  final double[] getAngles()
-  {
-    return AX;
-  }
-  
   int setRGBInfo(PVector R,PVector G,PVector B)
   {
     this.R.set(R);
@@ -511,4 +514,21 @@ void axisSwap(double[] vec,int x_idx,int y_idx,int z_idx,boolean x_flip,boolean 
   vec[0] = nx;
   vec[1] = ny;
   vec[2] = nz;
+}
+
+
+PVector PositionAdv(PVector p_update, PVector p_dst, float maxDist)
+{
+  float dist = p_update.dist(p_dst);
+  PVector p_ret = p_dst.copy();
+  if (dist<=maxDist)
+  {
+    return p_ret;
+  }
+  p_ret.sub(p_update);
+  p_ret.normalize();
+  p_ret.mult(maxDist);
+  p_ret.add(p_update);
+
+  return p_ret;
 }
