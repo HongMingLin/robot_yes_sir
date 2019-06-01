@@ -1,7 +1,7 @@
 class statusTimer33 extends java.util.TimerTask {
   public void run() {
     if (REALTIME) {
-      send2robot();
+      //send2robot12();
       //justOne=false;
     }
   }
@@ -9,6 +9,9 @@ class statusTimer33 extends java.util.TimerTask {
 java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
 
   public void run() {
-    u.send("asdf"+logHeader(),"127.0.0.1",1212);
+    //u.send("asdf"+logHeader(),"127.0.0.1",1212);
+    println("[TX]");
+        u2.send("{\"Command\":\"AllStatus\"}","10.10.10.88",9999);
+
   }
 };

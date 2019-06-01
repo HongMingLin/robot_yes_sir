@@ -1,6 +1,7 @@
 void beginHUD() {
 
   cam.beginHUD();
+  textAlign(LEFT);
   //image(img, 0, 0);
   //cp5setup();
   fill(255);
@@ -52,7 +53,7 @@ void beginHUD() {
   ellipse(145, appH-10, 8, 8);
   fill(RXLED?0:255, RXLED?255:0, 0);
   ellipse(155, appH-10, 8, 8);
-  
-cp5.draw();
+  drawMovie();
+  cp5.draw();
   cam.endHUD();
 }

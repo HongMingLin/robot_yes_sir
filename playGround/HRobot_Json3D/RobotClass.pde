@@ -43,7 +43,7 @@ enum ALLMODE {
   }
 }
 enum RunMODE {
-  STOP, XYZ_50CM_1Sec, XYZ_CIRCLE, ABC_CIRCLE, M_MOUSE_XYZ,M_MOUSE_ABC;
+  STOP, MOVIE,XYZ_50CM_1Sec, XYZ_CIRCLE, ABC_CIRCLE, M_MOUSE_XYZ,M_MOUSE_ABC;
   private static RunMODE[] vals = values();
   public RunMODE next()
   {
@@ -69,7 +69,7 @@ class HRobot {
   PVector CC_XYZ=new PVector();
   private PVector ABC=new PVector();
   private PVector ABC_PI=new PVector();
-  RunMODE RM=RunMODE.STOP;
+  RunMODE RM=RunMODE.MOVIE;
   float mouseWheele_e=0;
 
   int ID=0;
@@ -84,10 +84,36 @@ class HRobot {
   }
   void UPDATE() {
     float xx=0, yy=0, zz=0;
+    float aa=0,bb=0,cc=0;
     globalNowSin=millis()*(TWO_PI/globalCRICLE_Time);
     //println("RM"+RM);
     
     switch(RM) {
+      case MOVIE:
+      //xx=map(ascArr[ID].XYZ.x,-1,1,SAFEx0y0z0.x,SAFEx1y1z1.x);
+      //yy=map(ascArr[ID].XYZ.y,-1,1,SAFEx0y0z0.y,SAFEx1y1z1.y);
+      //zz=map(ascArr[ID].XYZ.z,-1,1,SAFEx0y0z0.z,SAFEx1y1z1.z);
+      if(ascArr[ID].getR().z*ascArr[ID].getG().z*ascArr[ID].getB().z==0)break;
+      xx=map(ascArr[ID].XYZ.x,-1,1,-Window_W/2,Window_W/2);
+      yy=map(ascArr[ID].XYZ.y,-1,1,-Window_D/2,Window_D/2);
+      zz=map(ascArr[ID].XYZ.z,-1,1,-Window_H/2,Window_H/2);
+      setXYZ(new PVector(xx,yy,zz));
+      
+      
+      //ABC.x=ascArr[ID].RYP.x/TWO_PI*360;
+      //ABC.y=ascArr[ID].RYP.y/TWO_PI*360;
+      //ABC.z=ascArr[ID].RYP.z/TWO_PI*360;
+      //ABC_PI.x=ABC.x/360.0*TWO_PI;
+      
+      ABC_PI.x=ascArr[ID].RYP.x;
+      ABC_PI.y=ascArr[ID].RYP.y;
+      ABC_PI.z=ascArr[ID].RYP.z;
+      
+      //println("ABC_PI.x="+ABC_PI.x);
+      //println("ABC_PI.y="+ABC_PI.y);
+      //println("ABC_PI.z="+ABC_PI.z);
+      
+      break;
     case STOP:
         
 
@@ -128,7 +154,7 @@ class HRobot {
       ABC_PI.z=ABC.z/360.0*TWO_PI;
       break;
     }
-    LEDPs[ID].drawx();
+    LEDPs[ID].drawR();
   }
   PVector transXYZformat() {
     sX=(XYZ.x<=0?"":"+")+nf(XYZ.x, 3, 2);
@@ -196,7 +222,7 @@ class LEDPanel {
     println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
   }
 
-  void drawx() {
+  void drawR() {
     noStroke();
     pushMatrix();
     translate(GLOBAL_OFFSET.x, GLOBAL_OFFSET.y, GLOBAL_OFFSET.z);
@@ -209,9 +235,9 @@ class LEDPanel {
 
     translate(HR.XYZ.x, HR.XYZ.y, HR.XYZ.z);
 
-    rotateX(HR.ABC_PI.z);
+    rotateX(HR.ABC_PI.x);
     rotateY(HR.ABC_PI.y);
-    rotateZ(HR.ABC_PI.x);
+    rotateZ(HR.ABC_PI.z);
 
 
     sphere(10);

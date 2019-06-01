@@ -6,6 +6,9 @@ void mouseWheel(MouseEvent event) {
 void keyPressed() {
   motorWalk();
   switch(key) {
+    case 'J':
+    u2.send("{\"Command\":\"AllStatus\"}","10.10.10.157",9999);
+    break;
   case ' ':
     REALTIME=false;
     for (int i=0; i<HRs.length; i++) {

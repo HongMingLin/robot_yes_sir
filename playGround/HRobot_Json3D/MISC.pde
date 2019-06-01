@@ -1,24 +1,24 @@
 JSONArray R12JsonArray;
 JSONObject R1Json;
-void setupJson() {
-  json = new JSONObject();
+//void setupJson() {
+//  json = new JSONObject();
   
-  R12JsonArray= new JSONArray();
-  for (int i = 0; i < HRs.length; i++) {
-  R1Json= new JSONObject();
-  R1Json.setString("Robot", i+"");
-  R1Json.setString("Command", "ptp_pose");
-  R1Json.setString("X", "0");
-  R1Json.setString("Y", "0");
-  R1Json.setString("Z", "0");
-  R1Json.setString("A", "0");
-  R1Json.setString("B", "0");
-  R1Json.setString("C", "0");
-    R12JsonArray.setJSONObject(i, R1Json);
-  }
-  json.setString("TIMESTAMP", millis()+"");
-  json.setJSONArray("GroupCommand", R12JsonArray);
-}
+//  R12JsonArray= new JSONArray();
+//  for (int i = 0; i < HRs.length; i++) {
+//  R1Json= new JSONObject();
+//  R1Json.setString("Robot", (i+1)+"");
+//  R1Json.setString("Command", "ptp_pose");
+//  R1Json.setString("X", "0");
+//  R1Json.setString("Y", "0");
+//  R1Json.setString("Z", "0");
+//  R1Json.setString("A", "0");
+//  R1Json.setString("B", "0");
+//  R1Json.setString("C", "0");
+//    R12JsonArray.setJSONObject(i, R1Json);
+//  }
+//  json.setString("TIMESTAMP", millis()+"");
+//  json.setJSONArray("GroupCommand", R12JsonArray);
+//}
 
 
 void runCircle() {

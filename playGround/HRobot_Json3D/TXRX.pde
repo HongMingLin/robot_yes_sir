@@ -1,9 +1,10 @@
 JSONObject inJson;// = parseJSONObject(data);
 String pattern  = "MM/dd HH:mm:ss.SSS";
 
-
+byte logSeq=0;
 void receive(byte[] bb, String ip, int port) {
   inJstr=new String(bb); 
+  println("RX="+inJstr);
   switch(port) {
   case 9999:  
     try {
@@ -11,7 +12,7 @@ void receive(byte[] bb, String ip, int port) {
       if (json == null) {
         println("[X]ParseJsonFail");
       } else {
-
+println("[O]ParseJsonOK");
         System.out.println(logHeader()+inJson );
       }
     }
@@ -28,7 +29,7 @@ void receive(byte[] bb, String ip, int port) {
 void send2robot() {
 
   for (int i = 0; i < HRs.length; i++) {
-    R1Json.setString("Robot", "0");
+    R1Json.setString("Robot", "1");
     R1Json.setString("X", String.valueOf(cm2mm( HRs[0].XYZ.x)));
     R1Json.setString("Y", String.valueOf(cm2mm( HRs[0].XYZ.y)));
     R1Json.setString("Z", String.valueOf(cm2mm( HRs[0].XYZ.z)));
@@ -48,11 +49,16 @@ void send2robot() {
   println(logHeader()+outJ);
   //u.send(printBB("TX",outJ),R_IP,R_PORT);
   TXLED=!TXLED;
-  u.send(outJ, R_IP, R_PORT);
+  sendX(outJ);
+  //u.send(outJ, R_IP, R_PORT);
+  //list.addItem(logHeader()+outJ,logSeq++);
+  //if(list.getItems().size()>100)
+  //  list.clear();
+  //list.addItem("log "+i, i);
   //list.getItem("log "+i).put("color", new CColor().setBackground(0xffff0000).setBackground(0xffff88aa));
   //if(getItems)
 }
-void send2robot2() {
+void send2robot12() {
 
   for (int i = 0; i < HRs.length; i++) {
     JSONObject tJ=R12JsonArray.getJSONObject(i);
@@ -75,7 +81,11 @@ void send2robot2() {
   println(logHeader()+outJ);
   //u.send(printBB("TX",outJ),R_IP,R_PORT);
   TXLED=!TXLED;
-  u.send(outJ, R_IP, R_PORT);
+  sendX(outJ);
+  //u.send(outJ, R_IP, R_PORT);
+}
+void sendX(String s) {
+  //u.send(s, R_IP, R_PORT);
 }
 String logHeader() {
   return "["+new SimpleDateFormat(pattern).format( new Date() )+"]";
