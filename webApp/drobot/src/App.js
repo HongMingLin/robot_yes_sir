@@ -1,24 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
+import './App.css';
+import { Button, List } from 'antd-mobile';
+
+const ComplexButtonDemo = () => (
+    <List style={{ margin: '5px 0', backgroundColor: 'white' }}>
+      <List.Item
+          extra={<Button type="ghost" size="small" inline>small</Button>}
+          multipleLine
+      >
+        Regional manager
+        <List.Item.Brief>
+          Can be collected, refund, discount management, view data and other operations
+        </List.Item.Brief>
+      </List.Item>
+      <List.Item
+          extra={<Button type="primary" size="small" inline>small</Button>}
+          multipleLine
+      >
+        Regional manager
+        <List.Item.Brief>
+          Can be collected, refund, discount management, view data and other operations
+        </List.Item.Brief>
+      </List.Item>
+    </List>
+);
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="App">
+
+        <ComplexButtonDemo />
+
+
     </div>
   );
 }
