@@ -1,0 +1,29 @@
+{
+  "name": "hrobot",
+  "version": "1.0.0",
+  "description": "DECADE",
+  "main": "js/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --colors --profile --display-modules ---display-reasons"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^2.1.1",
+    "customize-cra": "^0.2.13",
+    "html-loader": "^0.5.5",
+    "react-app-rewired": "^2.1.3",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.5.1"
+  },
+  "dependencies": {
+    "jquery": "^3.4.1"
+  }
+}

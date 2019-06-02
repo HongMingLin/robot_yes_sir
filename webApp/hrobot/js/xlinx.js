@@ -1,14 +1,13 @@
+import gHTML from './generateHTML';
+import initChart from './chart';
 
 $(document).ready(function() {
-    console.log("[E]$(document).ready]");
+    console.log("[E]$(document).readyX]");
     window.setInterval(timeInterval1000, 1000);
     // $("#sync1").click(function(){ $(this).css('animation-name') == "G2R_keyframe"; });
     // initMQTT();
-    gHTML();
-    bindEvents();
-    initWSBTN();
-    initChart();
-   
+
+
 
 });
 
@@ -16,19 +15,21 @@ $(document).ready(function() {
 
 window.onload = function() {
     console.log("[window.onload]");
+    gHTML();
 
+    initChart();
+    console.log("[window.onload2]");
 
 };
 $(function() {
     console.log("[E]$(function)]");
-});
-$(window).load(function() {
-    console.log("[E]$(window).load]");
 
+    console.log("[E]$(function)2]");
 });
+
 
 function timeInterval1000() {
-    // console.log("[INFO][timeInterval1000XXX]");
+    console.log("[INFO][timeInterval1000XXX]");
     // var text=$("#textareaX").val();
     // console.log("[DEBUG] textareaX="+ text);
     // doSendWS("from_mobile",text);
@@ -46,3 +47,6 @@ function parseData(url, callBack) {
         }
     });
 }
+
+
+

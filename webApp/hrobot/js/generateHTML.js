@@ -1,4 +1,3 @@
-
 function gHTML() {
     var motor700 = "<table class='bulbsTable'>";
     var bulbs = 0;
@@ -36,10 +35,11 @@ function gHTML() {
         h += "<li id=\"cmd/pc/say/" + welcome[i] + "\" class=\"wsbtn\" ><a>" + welcome[i] + "</a></li>";
     }
     $("#talking").html(h);
-
+    bindEvents();
+    initWSBTN();
 }
 function initMQTT(){
-    var mqtt = require('mqtt');
+    // var mqtt = require('mqtt');
 
     var client = mqtt.connect('mqtt://FloraGodReader:xlinxxlinx@broker.shiftr.io', {
         clientId: 'javascript'
@@ -59,6 +59,31 @@ function initMQTT(){
     client.on('message', function(topic, message) {
         console.log('new message:', topic, message.toString());
     });
+}
+function bindEvents() {
+
+    $("#statusLED1").click(function() {
+        console.log("gf");
+    });
+
+
+    $('a[role*="slider"]').mouseup(function(event, ui) {
+        var thisaddress = $(this).parent().prev().attr("id");
+        var thisaddress = "/" + thisaddress;
+        var thisccvalue = $(this).attr("aria-valuenow");
+        console.log($(this).parent().val());
+        console.log($(this).val());
+    });
+
+    $('.sliders').change(function() {
+        var SliderValue = $(this).val();
+        // alert("Slider value = " + SliderValue);
+
+        var msg = "/" + $(this).attr("id") + "/" + SliderValue;
+        doSendWS("ws_cue", msg);
+        console.log("SliderValue--->" + SliderValue);
+    });
+
 }
 function initWSBTN() {
     $(".wsbtn").click(function () {
@@ -100,3 +125,4 @@ function initWSBTN() {
     });
 }
 
+export default gHTML;

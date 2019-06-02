@@ -152,3 +152,4 @@ function removeData(chart) {
     });
     // chart.update();
 }
+export default initChart;

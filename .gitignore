@@ -27,3 +27,4 @@ playGround/HRobot_Json3D/application.windows32
 *.m4v
 webApp/drobot/.idea
 sftp-config.json
+webApp/hrobot/node_modules

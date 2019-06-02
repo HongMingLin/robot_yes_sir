@@ -221,37 +221,7 @@ function writeToScreen(message) {
     pre.innerHTML = message;
     document.getElementById("output").appendChild(pre);
 }
-function bindEvents() {
 
-    $("#statusLED1").click(function() {
-        console.log("gf");
-    });
-    
-    
-    $('a[role*="slider"]').mouseup(function(event, ui) {
-        var thisaddress = $(this).parent().prev().attr("id");
-        var thisaddress = "/" + thisaddress;
-        var thisccvalue = $(this).attr("aria-valuenow");
-        console.log($(this).parent().val());
-        console.log($(this).val());
-    });
-    $('a[role*="slider"]').touchend(function(event, ui) {
-        var thisaddress = $(this).parent().prev().attr("id");
-        var thisaddress = "/" + thisaddress;
-        var thisccvalue = $(this).attr("aria-valuenow");
-        console.log($(this).parent().val());
-        console.log($(this).val());
-    });
-    $('.sliders').change(function() {
-        var SliderValue = $(this).val();
-        // alert("Slider value = " + SliderValue);
-
-        var msg = "/" + $(this).attr("id") + "/" + SliderValue;
-        doSendWS("ws_cue", msg);
-        console.log("SliderValue--->" + SliderValue);
-    });
-
-}
 
 function maxXnums_ValueChange() {
     var sv = $('#maxXnums').val();
@@ -302,3 +272,4 @@ function valueChanged() {
     console.log("SliderValue--->" +SliderValue);
 }
 window.addEventListener("load", init, false);
+export default doSendWS;
