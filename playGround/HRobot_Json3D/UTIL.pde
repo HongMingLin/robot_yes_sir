@@ -259,6 +259,9 @@ class ascreen_info
   PVector XYZ=new PVector();
   PVector RYP=new PVector();
   
+  PVector realWorld_XYZ=new PVector(Float.NaN,Float.NaN,Float.NaN);
+  PVector realWorld_RYP=new PVector(Float.NaN,Float.NaN,Float.NaN);
+  
   PVector idx_on_video=new PVector();
   
   double []AX;
@@ -316,6 +319,12 @@ class ascreen_info
     return pos_in_world;
   }
   
+  final double[] getAngles()
+  {
+    return AX;
+  }
+
+  
   final void setAngles(double []angles)
   {
     for(int i=0;i<angles.length;i++)
@@ -323,12 +332,6 @@ class ascreen_info
       AX[i]=angles[i];
     }
   }
-  
-  final double[] getAngles()
-  {
-    return AX;
-  }
-  
   int setRGBInfo(PVector R,PVector G,PVector B)
   {
     this.R.set(R);
@@ -383,16 +386,16 @@ void drawRod_keepTranse_HACK(PVector p1,PVector p2,float thickness,float xrotate
 
   PVector pv1 = new PVector(p2.x,p2.y,p2.z);
   pv1.sub(p1);
-  
+
   Cart2Polar3D(pv1,pv1);
-  
-  
-   
+
+
+
   translate((p1.x+p2.x)/2, (p1.y+p2.y)/2, (p1.z+p2.z)/2);
   rotateZ(pv1.y);
   rotateY(pv1.z-PI/2);
   rotateX(xrotate);
-  box(pv1.x,thickness,thickness); 
+  box(pv1.x,thickness,thickness);
   pushMatrix();
   scale(pv1.x,thickness,thickness);
   //sphere(thickness);
@@ -401,6 +404,7 @@ void drawRod_keepTranse_HACK(PVector p1,PVector p2,float thickness,float xrotate
 
 void drawRod_keepTranse(PVector p1,PVector p2,float thickness,float xrotate)
 {
+
   PVector pv1 = new PVector(p2.x,p2.y,p2.z);
   pv1.sub(p1);
   
@@ -530,4 +534,21 @@ void axisSwap(double[] vec,int x_idx,int y_idx,int z_idx,boolean x_flip,boolean 
   vec[0] = nx;
   vec[1] = ny;
   vec[2] = nz;
+}
+
+
+PVector PositionAdv(PVector p_update, PVector p_dst, float maxDist)
+{
+  float dist = p_update.dist(p_dst);
+  PVector p_ret = p_dst.copy();
+  if (dist<=maxDist)
+  {
+    return p_ret;
+  }
+  p_ret.sub(p_update);
+  p_ret.normalize();
+  p_ret.mult(maxDist);
+  p_ret.add(p_update);
+
+  return p_ret;
 }

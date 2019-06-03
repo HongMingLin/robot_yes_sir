@@ -53,7 +53,7 @@ int TX_mS=33;
 java.util.Timer TX_TIMER =new java.util.Timer("TXTIMER");
 statusTimer33 t33=new statusTimer33();
 void setup() {
-  size(900, 700, P3D);
+  size(1000, 800, P3D);
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("../../media/HIWIN_LOGO.png");
@@ -192,7 +192,7 @@ void setup_cp5() {
     .setDragDirection(Knob.HORIZONTAL)
     ;
   list = cp5.addListBox("ROBOT LOG")
-    .setPosition(400, 0)
+    .setPosition(500, 0)
     .setSize(500, 500)
     .setItemHeight(15)
     .setBarHeight(20)

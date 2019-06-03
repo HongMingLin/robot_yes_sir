@@ -57,7 +57,7 @@ class HRobot {
   //PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
   PVector SAFEx0y0z0=new PVector(-32.5, 5, -46.2);
   PVector SAFEx1y1z1=new PVector( 32.5, 93.2, 78);
-
+  final boolean isCheckSAFE_XYZ=false;
   private PVector realXYZ=new PVector();
   private PVector XYZ=new PVector(0, 0, 0);
   private PVector normalizeXYZ=new PVector();
@@ -90,14 +90,18 @@ class HRobot {
     
     switch(RM) {
       case MOVIE:
+      if(ascArr[ID].getR().z*ascArr[ID].getG().z*ascArr[ID].getB().z==0)break;
       //xx=map(ascArr[ID].XYZ.x,-1,1,SAFEx0y0z0.x,SAFEx1y1z1.x);
       //yy=map(ascArr[ID].XYZ.y,-1,1,SAFEx0y0z0.y,SAFEx1y1z1.y);
       //zz=map(ascArr[ID].XYZ.z,-1,1,SAFEx0y0z0.z,SAFEx1y1z1.z);
-      if(ascArr[ID].getR().z*ascArr[ID].getG().z*ascArr[ID].getB().z==0)break;
-      xx=map(ascArr[ID].XYZ.x,-1,1,-Window_W/2,Window_W/2);
-      yy=map(ascArr[ID].XYZ.y,-1,1,-Window_D/2,Window_D/2);
-      zz=map(ascArr[ID].XYZ.z,-1,1,-Window_H/2,Window_H/2);
-      setXYZ(new PVector(xx,yy,zz));
+      
+      xx=ascArr[ID].XYZ.x*100;
+      yy=ascArr[ID].XYZ.y*100;
+      zz=ascArr[ID].XYZ.z*100;
+      //xx=map(ascArr[ID].XYZ.x,-1,1,-Window_W/2,Window_W/2);
+      //yy=map(ascArr[ID].XYZ.y,-1,1,-Window_D/2,Window_D/2);
+      //zz=map(ascArr[ID].XYZ.z,-1,1,-Window_H/2,Window_H/2);
+      setXYZ(new PVector(-xx,yy,zz));
       
       
       //ABC.x=ascArr[ID].RYP.x/TWO_PI*360;
@@ -183,6 +187,7 @@ class HRobot {
   }
 
   void setXYZ(PVector in) {
+    println("setXYZ="+in);
     XYZ=checkSAFE(in);
   }
   void addXYZ(PVector in) {
@@ -192,6 +197,8 @@ class HRobot {
     normalizeXYZ=XYZ.sub(realXYZ).normalize();
   }
   PVector checkSAFE(PVector in) {
+    if(!isCheckSAFE_XYZ)
+    return in;
     if (in.x>  SAFEx1y1z1.x)
       in.x= SAFEx1y1z1.x;
     else if (in.x< SAFEx0y0z0.x)
