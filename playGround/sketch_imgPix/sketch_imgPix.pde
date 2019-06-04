@@ -10,7 +10,7 @@ JSONArray R12JsonArray=new JSONArray();
 JSONObject R1Json;
 UDP u;
 String outJ="";
-String R_IP="10.10.10.88";
+String R_IP="10.10.10.160";
 int R_PORT=6666;
 java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
   public void run() {
@@ -96,8 +96,6 @@ void setup() {
   
   //new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 100);
   
-  
-  
   identityBoxV=boxVertices(1,1,1);
   kinma=new Kinematics(geometries[0]);
    
@@ -107,7 +105,7 @@ void setup() {
   cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
   cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "XYZ.m4v");   
+  myMovie = new Movie(this, "/Users/xlinx/Movies/udlr.m4v");   
   //hint(DISABLE_DEPTH_TEST); 
   
   myMovie.loop();
@@ -600,13 +598,17 @@ PVector XYZ=new PVector();
       {
         //print(fff+" ");
         json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1),(fff)+"");
-      }
         
-      
+      }
     }
-    //println();
-    
-    //println();
+    JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
+
+        jTemp.setString("X",XYZ.x+"");
+        jTemp.setString("Y",XYZ.y+"");
+        jTemp.setString("Z",XYZ.z+"");
+        jTemp.setString("A",RYP.x+"");
+        jTemp.setString("B",RYP.y+"");
+        jTemp.setString("C",RYP.z+"");
     
     popMatrix();
   }
@@ -615,8 +617,9 @@ PVector XYZ=new PVector();
   outJ=json.toString().replaceAll("[/ /g]", "");
   outJ=outJ.replaceAll("[^\\x20-\\x7e]", "");
   
-  //u.send(outJ+"\n", R_IP, R_PORT);
+  u.send(outJ+"\n", R_IP, R_PORT);
 }
+
 void draw() {
   
   background(0);

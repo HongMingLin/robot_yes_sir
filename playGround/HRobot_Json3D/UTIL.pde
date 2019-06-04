@@ -255,7 +255,7 @@ class ascreen_info
   PVector G=new PVector();
   PVector B=new PVector();
   
-  
+  PVector REALWORLD_XYZ=new PVector();
   PVector XYZ=new PVector();
   PVector RYP=new PVector();
   

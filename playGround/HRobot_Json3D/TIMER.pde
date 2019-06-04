@@ -1,7 +1,7 @@
 class statusTimer33 extends java.util.TimerTask {
   public void run() {
     if (REALTIME) {
-      //send2robot12();
+      send2robot12();
       //justOne=false;
     }
   }

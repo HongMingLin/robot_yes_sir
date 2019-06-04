@@ -24,7 +24,7 @@ PVector GLOBAL_ROTATE=new PVector(HALF_PI, 0, 0);
 PVector GLOBAL_OFFSET=new PVector(-(Window_W+(Window_W/2)), 0, Window_H/2);
 
 PVector ROOM=new PVector(ROOM_W_D_H.x*M_SCALE, ROOM_W_D_H.y*M_SCALE, ROOM_W_D_H.z*M_SCALE);
-String R_IP="10.10.10.8";
+String R_IP="10.10.10.88";
 int R_PORT=6666;
 int R_PORT2=9999;
 
@@ -50,6 +50,8 @@ int whichRobot=WR.ID();
 LEDPanel[] LEDPs;
 float Bpercent=0.5;
 int TX_mS=33;
+java.text.DecimalFormat df=new java.text.DecimalFormat("#.###");
+
 java.util.Timer TX_TIMER =new java.util.Timer("TXTIMER");
 statusTimer33 t33=new statusTimer33();
 void setup() {

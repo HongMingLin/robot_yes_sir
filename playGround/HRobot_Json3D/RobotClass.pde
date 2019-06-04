@@ -91,13 +91,13 @@ class HRobot {
     switch(RM) {
       case MOVIE:
       if(ascArr[ID].getR().z*ascArr[ID].getG().z*ascArr[ID].getB().z==0)break;
-      //xx=map(ascArr[ID].XYZ.x,-1,1,SAFEx0y0z0.x,SAFEx1y1z1.x);
-      //yy=map(ascArr[ID].XYZ.y,-1,1,SAFEx0y0z0.y,SAFEx1y1z1.y);
-      //zz=map(ascArr[ID].XYZ.z,-1,1,SAFEx0y0z0.z,SAFEx1y1z1.z);
+      xx=map(ascArr[ID].XYZ.x,-1,1,SAFEx0y0z0.x,SAFEx1y1z1.x);
+      yy=map(ascArr[ID].XYZ.z,-1,1,SAFEx0y0z0.z,SAFEx1y1z1.y);
+      zz=map(ascArr[ID].XYZ.y,-1,1,SAFEx0y0z0.y,SAFEx1y1z1.z);
       
-      xx=ascArr[ID].XYZ.x*100;
-      yy=ascArr[ID].XYZ.y*100;
-      zz=ascArr[ID].XYZ.z*100;
+      //xx=-ascArr[ID].XYZ.x*100;
+      //yy=ascArr[ID].XYZ.z*100;
+      //zz=ascArr[ID].XYZ.y*100;
       //xx=map(ascArr[ID].XYZ.x,-1,1,-Window_W/2,Window_W/2);
       //yy=map(ascArr[ID].XYZ.y,-1,1,-Window_D/2,Window_D/2);
       //zz=map(ascArr[ID].XYZ.z,-1,1,-Window_H/2,Window_H/2);
@@ -109,9 +109,9 @@ class HRobot {
       //ABC.z=ascArr[ID].RYP.z/TWO_PI*360;
       //ABC_PI.x=ABC.x/360.0*TWO_PI;
       
-      ABC_PI.x=ascArr[ID].RYP.x;
-      ABC_PI.y=ascArr[ID].RYP.y;
-      ABC_PI.z=ascArr[ID].RYP.z;
+      //ABC_PI.x=ascArr[ID].RYP.x;
+      ABC_PI.y=ascArr[ID].RYP.x;
+      ABC_PI.z=-ascArr[ID].RYP.y;
       
       //println("ABC_PI.x="+ABC_PI.x);
       //println("ABC_PI.y="+ABC_PI.y);

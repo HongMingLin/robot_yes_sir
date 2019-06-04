@@ -41,6 +41,13 @@ void keyPressed() {
     }
 
     break;
+  case 'H':
+    
+    JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(whichRobot);
+    jTemp.setString("Command", "HOME");
+    sendX(clearAllASCII(jTemp.toString())+"\n");
+    
+    break;
 
   case 'M':
     HRs[whichRobot].setCC_XYZ_NOW();
