@@ -6,15 +6,15 @@ void mouseWheel(MouseEvent event) {
 void keyPressed() {
   motorWalk();
   switch(key) {
-    case 'J':
-    u2.send("{\"Command\":\"AllStatus\"}","10.10.10.157",9999);
+  case 'J':
+    u2.send("{\"Command\":\"AllStatus\"}", "10.10.10.157", 9999);
     break;
   case ' ':
     REALTIME=false;
     for (int i=0; i<HRs.length; i++) {
       HRs[i].RM=HRs[i].RM.STOP;
     }
-        exec("/usr/bin/say", "All Stop");
+    exec("/usr/bin/say", "All Stop");
 
     break;
   case 'T':
@@ -41,18 +41,40 @@ void keyPressed() {
     }
 
     break;
+  case 'G':
+    JSONObject jTemp=null;
+    for (int i=0; i<12; i++) {
+      HRs[i].RM=RunMODE.MOVIE;
+      jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
+      jTemp.setString("Command", "ptp_axis");
+    }
+    exec("/usr/bin/say", "Robot Go");
+    break;
   case 'H':
-    
-    JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(whichRobot);
-    jTemp.setString("Command", "HOME");
-    sendX(clearAllASCII(jTemp.toString())+"\n");
-    
+    jTemp=null;
+    for (int i=0; i<12; i++) {
+      jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
+      jTemp.setString("Command", "Home");
+       HRs[i].RM=RunMODE.HOME;
+    }
+
+
+    sendX(clearAllASCII(json.toString()+"\n") );
+    exec("/usr/bin/say", "Robot 全部 回家");
+
     break;
 
-  case 'M':
-    HRs[whichRobot].setCC_XYZ_NOW();
-    HRs[whichRobot].RM=HRs[whichRobot].RM.next();
-    exec("/usr/bin/say", "Robot "+whichRobot+" "+HRs[whichRobot].RM);
+
+  case 'm':
+    jTemp=null;
+    for (int i=0; i<12; i++) {
+      jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
+      jTemp.setString("Command", "ptp_axis");
+      HRs[i].RM=RunMODE.MOVIE;
+    }
+    //HRs[whichRobot].setCC_XYZ_NOW();
+    //HRs[whichRobot].RM=HRs[whichRobot].RM.next();
+    exec("/usr/bin/say", "Robot All "+HRs[whichRobot].RM);
 
     break;
   default:
@@ -63,8 +85,8 @@ void keyPressed() {
         whichRobot=WR.ID();
         println("whichRobot="+whichRobot);
         exec("/usr/bin/say", "Robot "+whichRobot+" ");
-//exec("/usr/bin/say","-v","Victoria","Im Victoria");
-//  exec("/usr/bin/say","-v","Zarvox"," and Robot.");
+        //exec("/usr/bin/say","-v","Victoria","Im Victoria");
+        //  exec("/usr/bin/say","-v","Zarvox"," and Robot.");
         break;
       }
     }

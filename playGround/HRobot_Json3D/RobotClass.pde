@@ -16,6 +16,7 @@ enum WHICHROBOT {
     R3F1(4, 'a'), R3F2(5, 's'), R3F3(6, 'd'), R3F4(7, 'f'), 
     R2F1(0, 'z'), R2F2(1, 'x'), R2F3(2, 'c'), R2F4(3, 'v');
   private int idid;
+  private String STATUS;
   private char HOTKEY;
   private WHICHROBOT(int v, char c) {
     this.idid = v;
@@ -43,7 +44,7 @@ enum ALLMODE {
   }
 }
 enum RunMODE {
-  STOP, MOVIE,XYZ_50CM_1Sec, XYZ_CIRCLE, ABC_CIRCLE, M_MOUSE_XYZ,M_MOUSE_ABC;
+  STOP, HOME,MOVIE,XYZ_50CM_1Sec, XYZ_CIRCLE, ABC_CIRCLE, M_MOUSE_XYZ,M_MOUSE_ABC;
   private static RunMODE[] vals = values();
   public RunMODE next()
   {
@@ -69,7 +70,8 @@ class HRobot {
   PVector CC_XYZ=new PVector();
   private PVector ABC=new PVector();
   private PVector ABC_PI=new PVector();
-  RunMODE RM=RunMODE.MOVIE;
+  RunMODE RM=RunMODE.STOP;
+  boolean Aligned=false;
   float mouseWheele_e=0;
 
   int ID=0;

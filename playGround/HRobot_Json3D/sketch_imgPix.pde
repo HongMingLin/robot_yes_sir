@@ -32,55 +32,55 @@ PVector[] identityBoxV;
 
 /*
 
-
-
-
-
-
-
-________________________________________________
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-
-
-^y
->X
-@Z (toward you)
-the [o] is the hiwin origin, so we assume [v0] has no height
-
-    R/J2{Z}---[v2]--R/J3{X}---[v3]---R/J4{Z}
-      |                                |
-      |                               [v4] 
-      |                              R/J5 {Y}
-      |
-    [v1]
-      |
-      |                        
-      |                               
-[o]__R/J1{Z}  ^                   
-|    /        |                 
-|  [v0]       |                    
-|  /          |                  
-R/J0{Y}       |height "525mm"         
-|   |         |                         
-|___|         V                          
-|@@@|Support  ^                              ____
-|@@@|structure|                              |//|
-|@@@|         |                              |//|
-|@@@|         |                              |//|
-|@@@|         |                              |//|
-|@@@|         |                              |//|
-|@@@|         |                              |//|
-|@@@|<--------|----------------------------->|//|
-|@@@|         V                              |//|
-//////////////////////////////////////////////
-*/
+ 
+ 
+ 
+ 
+ 
+ 
+ ________________________________________________
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ 
+ 
+ ^y
+ >X
+ @Z (toward you)
+ the [o] is the hiwin origin, so we assume [v0] has no height
+ 
+ R/J2{Z}---[v2]--R/J3{X}---[v3]---R/J4{Z}
+ |                                |
+ |                               [v4] 
+ |                              R/J5 {Y}
+ |
+ [v1]
+ |
+ |                        
+ |                               
+ [o]__R/J1{Z}  ^                   
+ |    /        |                 
+ |  [v0]       |                    
+ |  /          |                  
+ R/J0{Y}       |height "525mm"         
+ |   |         |                         
+ |___|         V                          
+ |@@@|Support  ^                              ____
+ |@@@|structure|                              |//|
+ |@@@|         |                              |//|
+ |@@@|         |                              |//|
+ |@@@|         |                              |//|
+ |@@@|         |                              |//|
+ |@@@|         |                              |//|
+ |@@@|<--------|----------------------------->|//|
+ |@@@|         V                              |//|
+ //////////////////////////////////////////////
+ */
 
 
 
@@ -296,7 +296,6 @@ double[] drawRobotWorld(double[] pose)
 
   double[][] calcPose = kinma.forward(angles);
   double[] calcPose5 = calcPose[5];
-
   //for(int k=0;k<calcPose5.length;k++)
   //{
   //  print(round((float)(calcPose5[k]*1000))/1000f+" ");
@@ -326,7 +325,7 @@ double[] drawRobotWorld(double[] pose)
     if (j==3)
     {
 
-      scale(1, -1, 1);
+      scale(1, 1, 1);
       //tint(0,255,0);
       translate(-HIWIN_LOGO.width/2, -HIWIN_LOGO.height/2, 110);
       image(HIWIN_LOGO, 0, 0);
@@ -367,7 +366,7 @@ double[] drawRobotWorld(double[] pose)
   popMatrix();
 
   pushMatrix();
-  
+
   translate(0, 880, 739-200);
   rotateX(PI/2);
 
@@ -555,7 +554,6 @@ void RK(ascreen_info []asc_arr) {
     if (asc_arr[i].getR().z*asc_arr[i].getG().z*asc_arr[i].getB().z==0)continue;
     XYZ.set(asc_arr[i].getXYZ());
     RYP.set(asc_arr[i].getRYP());
-
     pushMatrix();
 
     final PVector origin = asc_arr[i].getOrigin();
@@ -565,20 +563,22 @@ void RK(ascreen_info []asc_arr) {
 
 
     //>X ^y  @Z (toward you) Kinematics world
-    PVector pXYZ=new PVector(700*XYZ.x, 700*(XYZ.z)+780+600, 700*XYZ.y);
-    
+    PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+600, 700*XYZ.y);
+
     asc_arr[i].REALWORLD_XYZ=pXYZ.copy();
     float period=4;
     pXYZ.z+=300;
 
 
-    pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
-    pXYZ.y=780+300+100*sin(inc_X*2*PI/1000/period);
-    pXYZ.z=940+100*cos(inc_X*2*PI/1000/period);
-    RYP.x=10*sin(inc_X*2*PI/1000/period)*PI/180;
-    RYP.y=0;
-    RYP.z=0;
-
+    //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
+    //pXYZ.y=780+300+100*sin(inc_X*2*PI/1000/period);
+    //pXYZ.z=940+100*cos(inc_X*2*PI/1000/period);
+    //RYP.x=10*sin(inc_X*2*PI/1000/period)*PI/180;
+    //RYP.y=0;
+    //RYP.z=0;
+    RYP.x/=2;
+    RYP.y/=2;
+    RYP.z/=2;
 
 
     if (asc_arr[i].realWorld_XYZ.x==asc_arr[i].realWorld_XYZ.x)
@@ -595,11 +595,15 @@ void RK(ascreen_info []asc_arr) {
     //pose[3]=0;
     //axisSwap(pose,0,1,2);
 
-    axisSwap(pose, 1, 2, 0, false, false, true);
+    axisSwap(pose, 1, 2, 0, false, false, false);
     //525mm, base floor to hiwin robot origin()
+
+    if (i==2 || i==3)println(pose[2]);    
     double[] angles=drawRobotWorld(pose);
 
 
+
+    if (i==2 || i==3)println(">>>>"+angles[0]);    
     {
       boolean overAngle=false;
       double []P_angles = asc_arr[i].getAngles();
@@ -670,7 +674,7 @@ void RK(ascreen_info []asc_arr) {
       //if(i==0)
       {
         //print(fff+" ");
-        json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1),df.format(fff)+"");
+        json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
       }
     }
     JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
@@ -687,14 +691,12 @@ void RK(ascreen_info []asc_arr) {
 
   json.setString("TIMESTAMP", millis()+"");
   outJ=clearAllASCII(json.toString());
-  
-  
-  //println(outJ.length()+"=>"+outJ);
-  
+
+
+  println(outJ.length()+"=>"+outJ);
 }
-String clearAllASCII(String in){
+String clearAllASCII(String in) {
   return in.toString().replaceAll("[/ /g]", "").replaceAll("[^\\x20-\\x7e]", "");
-  
 }
 void drawMovie() {
   pushMatrix();

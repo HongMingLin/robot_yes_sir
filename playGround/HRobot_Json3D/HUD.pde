@@ -6,7 +6,7 @@ void beginHUD() {
   //cp5setup();
   fill(255);
 
-  text(mouseX+","+mouseY, mouseX, mouseY);
+  
   //text(Qsb.toString(),WINDOW_W-textWidth(Qsb.toString())+(WINDOW_W/2*(1+sin(millis()*TWO_PI/2000))),20);
   int OFFSET_Y=20;
   int START_Y=40;
@@ -55,5 +55,37 @@ void beginHUD() {
   ellipse(155, appH-10, 8, 8);
   drawMovie();
   cp5.draw();
+  showRobotStatusHUD();
+  text(mouseX+","+mouseY, mouseX, mouseY);
   cam.endHUD();
+}
+void showRobotStatusHUD(){
+  PVector[] video12XY={
+    new PVector(1,1,1),
+    new PVector(1,1,0),
+    new PVector(1,0,0),
+    new PVector(1,0,1),
+    
+    new PVector(0,1,1),
+    new PVector(0,1,0),
+    new PVector(0,0,0),
+    new PVector(0,0,1),
+  };
+  
+  //HRs[0].Aligned
+  text(HRs[0].RM+"",10,225);
+  text(HRs[4].RM+"",10,290);
+  text(HRs[8].RM+"",10,360);
+  
+  text(HRs[1].RM+"",85,225);
+  text(HRs[5].RM+"",85,290);
+  text(HRs[9].RM+"",85,360);
+  
+  text(HRs[2].RM+"",160,225);
+  text(HRs[6].RM+"",160,290);
+  text(HRs[10].RM+"",160,360);
+  
+  text(HRs[3].RM+"",230,225);
+  text(HRs[7].RM+"",230,290);
+  text(HRs[11].RM+"",230,360);
 }
