@@ -1,6 +1,6 @@
 
 enum MODE{
-  MOUSE_GB,MOUSE_RED,CIRCLE_XY,STOP;
+  SEQ_GB,MOUSE_GB,MOUSE_RED,CIRCLE_XY,STOP;
   private static MODE[] vals = values();
   public MODE next()
   {

@@ -48,7 +48,7 @@ class RedDot {
     translate(boxPosOffset.x, boxPosOffset.y);
     translate(windowSize.x/2, windowSize.y/2);
         translate(nowXY.x, nowXY.y);
-
+    
     fill(255, 0, 0, 255);
     ellipse(0, 0, dotSize.x, dotSize.y);
     popMatrix();

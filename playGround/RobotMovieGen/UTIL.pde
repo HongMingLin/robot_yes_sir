@@ -4,10 +4,14 @@ void drawBlock(){
     float blockW=movieSize.x/robotArray.x;
     float wx=blockW+(i*blockW);
     line(wx ,0,wx,movieSize.y);
+    textSize(15*(1+sin(millis()*TWO_PI/2000)/2));
+    text(i,wx ,30);
   }
   for(int i=0;i<2;i++){
     float wy=(movieSize.y/robotArray.y)+(i*(movieSize.y/robotArray.y));
     line(0,wy,movieSize.x,wy);
+    textSize(30);
+    text(i,0,wy);
   }
 }
 String logHeader() {

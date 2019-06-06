@@ -1,4 +1,5 @@
 class GBbox {
+  int ID=0;
   private PVector boxSize;//=new PVector(100, 100);
   private PVector XYOffset; 
   private PVector nowXY=new PVector(0, 0);
@@ -49,10 +50,12 @@ class GBbox {
     translate(XYOffset.x, XYOffset.y);    
     translate(windowSize.x/2, windowSize.y/2);
     translate(nowXY.x, nowXY.y);
+    fill(255);
+    
     rectMode(CORNER);
-    fill(0, 255, 0);
-    rect(0, 0, boxSize.x/2, boxSize.y);
     fill(0, 0, 255);
+    rect(0, 0, boxSize.x/2, boxSize.y);
+    fill(0, 255,0);
     translate(boxSize.x/2, 0);
     rect(0, 0, boxSize.x/2, boxSize.y);
     popMatrix();
@@ -63,7 +66,8 @@ class GBbox {
     //ellipse(0,0, 10, 10);
     //popMatrix();
   }
-  GBbox(PVector bPO, PVector scale) {
+  GBbox(int id,PVector bPO, PVector scale) {
+    ID=id;
     XYOffset=bPO;
     boxSize=new PVector(100*scale.x, 100*scale.y);
     println("XYOffset.x"+XYOffset.x+", XYOffset.y"+XYOffset.y);

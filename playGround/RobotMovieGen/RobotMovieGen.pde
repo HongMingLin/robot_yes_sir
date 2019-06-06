@@ -36,7 +36,7 @@ void setup() {
 
   gbBoxs=new GBbox[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<gbBoxs.length; i++)
-    gbBoxs[i]=new GBbox(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), SCALE_MOVIE);
+    gbBoxs[i]=new GBbox(i,new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), SCALE_MOVIE);
 
   server = new SyphonServer(this, "RobotSyphon");
 }
@@ -44,6 +44,10 @@ void setup() {
 void draw() {
   background(0);
   drawBlock();
+  
+  
+  //server.sendImage(get());
+  server.sendScreen();  
   pushMatrix();
   scale(SCALE_MOVIE.x, SCALE_MOVIE.y);
   effect();
@@ -57,8 +61,12 @@ void draw() {
   if (recording) {
     videoExport.saveFrame();
   }
-  server.sendImage(get());
+
+  //pushMatrix();
+  
+  //popMatrix();
   fill(255);
+  textSize(12);
   text(" FPS:"+ nfc(frameRate, 2)+" Mode="+ALLMODE, 10, 10);
   text(mouseX+","+mouseY, mouseX, mouseY);
 }
@@ -66,6 +74,14 @@ void draw() {
 void effect() {
 
   switch(ALLMODE) {
+  case SEQ_GB:
+  
+    for (int i=0; i<gbBoxs.length; i++) {
+      gbBoxs[i].setXY(
+        (mouseX/movieSize.x)*((1+sin(TWO_PI/12*i))/2.0), 
+        (mouseY/movieSize.y)*((1+sin(TWO_PI/12*i))/2.0));
+    }
+    break;
   case MOUSE_RED:
     for (int i=0; i<gbBoxs.length; i++) {
       redDots[i].setXY(
@@ -82,8 +98,9 @@ void effect() {
     break;
   case CIRCLE_XY:
     for (int i=0; i<gbBoxs.length; i++) {
-      gbBoxs[i].goXY(-10+windowSize.x/4.0*sin(millis()*TWO_PI/3000.0), 
-        -10+windowSize.x/4.0*cos(millis()*TWO_PI/3000.0), 1000);
+      gbBoxs[i].setXY(
+      (1+sin(millis()*TWO_PI/3000.0))/2, 
+      (1+cos(millis()*TWO_PI/3000.0))/2);
     }
 
     break;
