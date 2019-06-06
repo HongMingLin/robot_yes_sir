@@ -174,7 +174,7 @@ void setup2() {
   //cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
   //cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "/Users/xlinx/Movies/udlr.m4v");
+  myMovie = new Movie(this, "XYZ.m4v");
   //hint(DISABLE_DEPTH_TEST); 
 
   myMovie.loop();
@@ -245,16 +245,16 @@ float board_WH=1000;
 float board_thickness=100;
 
 /*  flange2BoardCenter_distance
-  <--------->
-\          |=|
-|\---------|=|board
- |\        |=|
-    
+ <--------->
+ \          |=|
+ |\---------|=|board
+ | \        |=|
+ 
  ^flange2Board_angle         
-  
-  
-*/
-float flange2Board_angle=60*PI/180;
+ 
+ 
+ */
+float flange2Board_angle=-60*PI/180;
 float flange2BoardCenter_distance=165.583;
 
 
@@ -265,7 +265,7 @@ void drawBoard_keepTranse()
   noStroke();
   rotateY(PI/2);
   rotateX(flange2Board_angle);
-  translate(0,0,flange2BoardCenter_distance);
+  translate(0, 0, flange2BoardCenter_distance);
   fill(0, 0, 255);
   rect(-board_WH/2, -board_WH/2, board_WH/2, board_WH);
   fill(0, 255, 0);
@@ -276,6 +276,42 @@ void drawBoard_keepTranse()
   /*noStroke();
    scale(10,10,2);
    sphere(1);  */
+}
+
+double [] boardPose2FlangePose(double []pose)
+{
+  double []pfose=new double[6];
+  PMatrix3D mat = new PMatrix3D();
+  mat.reset();
+
+
+  //mat.translate(0,-flange2BoardCenter_distance*5,0);
+  //mat.rotateX(-flange2Board_angle);
+  mat.translate((float)pose[0], (float)pose[1], (float)pose[2]);
+  PVector RYP=new PVector((float)pose[3], (float)pose[4], (float)pose[5]);
+  mat.rotateZ(RYP.z);
+  mat.rotateY(RYP.y);
+  mat.rotateX(RYP.x);
+
+  mat.translate(-flange2BoardCenter_distance, 0, 0);
+  mat.rotateZ(flange2Board_angle);
+  //
+  //mat.invert();
+  PVector origin = new PVector(0, 0, 0);
+  PVector tar = new PVector();
+  mat.mult(origin, tar);
+  
+  pfose[0]=tar.x;
+  pfose[1]=tar.y;
+  pfose[2]=tar.z;
+
+  Quaternion qn=new Quaternion();
+  qn.set(mat);
+  qn.getEuler(qn, RYP, Quaternion_RotSeq.zyx);
+  pfose[3]=RYP.x;
+  pfose[4]=RYP.y;
+  pfose[5]=RYP.z;
+  return pfose;
 }
 
 boolean CollisionDetection(Vector<PVector> obj1_v, Vector<PVector> obj2_v)
@@ -350,13 +386,15 @@ double[] drawRobotWorld(double[] pose)
       image(HIWIN_LOGO, 0, 0);
     }
 
-
-    WxO.preApply(invCameraMat);
-    for (PVector v : identityBoxV)
+    if(j!=4)//ignore the part J5~J6
     {
-      PVector pt=new PVector();
-      WxO.mult(v, pt);
-      obj1v.add(pt);
+      WxO.preApply(invCameraMat);
+      for (PVector v : identityBoxV)
+      {
+        PVector pt=new PVector();
+        WxO.mult(v, pt);
+        obj1v.add(pt);
+      }
     }
 
     popMatrix();
@@ -582,22 +620,19 @@ void RK(ascreen_info []asc_arr) {
 
 
     //>X ^y  @Z (toward you) Kinematics world
-    PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+600, 700*XYZ.y);
-
+    PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+600, 700*XYZ.y+300);
     asc_arr[i].REALWORLD_XYZ=pXYZ.copy();
-    float period=4;
-    pXYZ.z+=300;
 
-
+    //float period=4;
     //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
     //pXYZ.y=780+300+100*sin(inc_X*2*PI/1000/period);
     //pXYZ.z=940+100*cos(inc_X*2*PI/1000/period);
     //RYP.x=10*sin(inc_X*2*PI/1000/period)*PI/180;
     //RYP.y=0;
     //RYP.z=0;
-    RYP.x/=2;
-    RYP.y/=2;
-    RYP.z/=2;
+    //RYP.x/=2;//make rotation smaller for safety
+    //RYP.y/=2;
+    //RYP.z/=2;
 
 
     if (asc_arr[i].realWorld_XYZ.x==asc_arr[i].realWorld_XYZ.x)
@@ -611,13 +646,13 @@ void RK(ascreen_info []asc_arr) {
     double[] pose=new double[]{
       pXYZ.x, pXYZ.y, pXYZ.z, RYP.x, RYP.y, RYP.z
     };
-    //pose[3]=0;
-    //axisSwap(pose,0,1,2);
 
     axisSwap(pose, 1, 2, 0, false, false, false);
     //525mm, base floor to hiwin robot origin()
+    
+    pose =  boardPose2FlangePose(pose);
 
-    if (i==2 || i==3)println(pose[2]);    
+    //if (i==2 || i==3)println(pose[2]);    
     double[] angles=drawRobotWorld(pose);
 
 
@@ -655,7 +690,7 @@ void RK(ascreen_info []asc_arr) {
         maxDiff = DIFF4;
       }
 
-      
+
       //if (i==0)println("angles:"+angles[0]+","+angles[1]+","+angles[2]+","+angles[3]+","+angles[4]+","+angles[5]);
       //if (i==0)println("angles:"+angles[5]*180/PI+" P_angles:"+P_angles[5]*180/PI);
       //maxDiff*=0.999;

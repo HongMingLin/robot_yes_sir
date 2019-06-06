@@ -48,6 +48,44 @@ public class Quaternion {
       z = _z;
       w = _w;
   }
+  
+  public void set(PMatrix3D mat) {
+      float qw,qx,qy,qz;
+      float tr = mat.m00 + mat.m11 + mat.m22;
+      
+      if (tr > 0) { 
+        float S = sqrt(tr+1.0) * 2; // S=4*qw 
+        qw = 0.25 * S;
+        qx = (mat.m21 - mat.m12) / S;
+        qy = (mat.m02 - mat.m20) / S; 
+        qz = (mat.m10 - mat.m01) / S; 
+      } else if ((mat.m00 > mat.m11)&(mat.m00 > mat.m22)) { 
+        float S = sqrt(1.0 + mat.m00 - mat.m11 - mat.m22) * 2; // S=4*qx 
+        qw = (mat.m21 - mat.m12) / S;
+        qx = 0.25 * S;
+        qy = (mat.m01 + mat.m10) / S; 
+        qz = (mat.m02 + mat.m20) / S; 
+      } else if (mat.m11 > mat.m22) { 
+        float S = sqrt(1.0 + mat.m11 - mat.m00 - mat.m22) * 2; // S=4*qy
+        qw = (mat.m02 - mat.m20) / S;
+        qx = (mat.m01 + mat.m10) / S; 
+        qy = 0.25 * S;
+        qz = (mat.m12 + mat.m21) / S; 
+      } else { 
+        float S = sqrt(1.0 + mat.m22 - mat.m00 - mat.m11) * 2; // S=4*qz
+        qw = (mat.m10 - mat.m01) / S;
+        qx = (mat.m02 + mat.m20) / S;
+        qy = (mat.m12 + mat.m21) / S;
+        qz = 0.25 * S;
+      }
+      w = qw;
+      x = qx;
+      y = qy;
+      z = qz;
+      
+
+  }
+  
   public void set(Quaternion ref) {
       x = ref.x;
       y = ref.y;
