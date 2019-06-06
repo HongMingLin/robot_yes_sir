@@ -351,7 +351,7 @@ class ascreen_info
     ret_XYZ.z = (float)Math.hypot(G.x-B.x,G.y-B.y)-0.5;
     
     
-    float roll = atan2(G.y-B.y,G.x-B.x);
+    float roll = atan2(B.y-G.y,B.x-G.x);
     //The x y is for image coordnate, x axis is upside down, ie, positive angle is CW
     //println(roll*180/PI);
     ret_RYP.x = roll;
