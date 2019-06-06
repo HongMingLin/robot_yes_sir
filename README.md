@@ -1,10 +1,10 @@
-# HIWIN Tech. X LuxuryLogico X DECADE.tw - RobotYesSir
-HIWIN Robot Performance.
-
-HRobot2019
+# HIWIN Tech. X LuxuryLogico X DECADE.TW - RobotYesSir
+## HIWIN Robot Performance@Taipei - HRobot2019
 <div align="center">
   <a target="_blank" href="https://youtu.be/zSYaZxp4Cd8"><img src="https://img.youtube.com/vi/zSYaZxp4Cd8/sddefault.jpg" alt="IMAGE ALT TEXT"></a>
 </div>
+
+## Video link: https://youtu.be/zSYaZxp4Cd8
 
 Guys~
 HIWIN Robot
@@ -28,5 +28,5 @@ HIMC_TCP_UDP_Middleware
     $brew install socat
     https://brew.sh/index_zh-tw
 
-Enjoy.
+Enjoy. http://decade.tw
 
