@@ -621,7 +621,6 @@ void RK(ascreen_info []asc_arr) {
 
     //>X ^y  @Z (toward you) Kinematics world
     PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+600, 700*XYZ.y+300);
-    asc_arr[i].REALWORLD_XYZ=pXYZ.copy();
 
     //float period=4;
     //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
@@ -641,19 +640,19 @@ void RK(ascreen_info []asc_arr) {
       pXYZ= PVector.lerp(asc_arr[i].realWorld_XYZ, pXYZ, 0.1);
       pXYZ = PositionAdv(asc_arr[i].realWorld_XYZ, pXYZ, 50);
     }
-    asc_arr[i].realWorld_XYZ.set(pXYZ);
-
     double[] pose=new double[]{
       pXYZ.x, pXYZ.y, pXYZ.z, RYP.x, RYP.y, RYP.z
     };
 
+    asc_arr[i].realWorld_XYZ.set(pXYZ);
+
     axisSwap(pose, 1, 2, 0, false, false, false);
     //525mm, base floor to hiwin robot origin()
     
-    pose =  boardPose2FlangePose(pose);
+    double[] flangePose =  boardPose2FlangePose(pose);
 
     //if (i==2 || i==3)println(pose[2]);    
-    double[] angles=drawRobotWorld(pose);
+    double[] angles=drawRobotWorld(flangePose);
 
 
     {
@@ -703,7 +702,7 @@ void RK(ascreen_info []asc_arr) {
         float ratio = abs(round((float)(angV/jointAngularV[k]*10000))/10000f);
         //print("["+k+"]"+ratio+" ");
         if (ratio>1)
-          println("DEAD......");
+          println("Motor[J"+(k+1)+"] speed overload");
         //print(jointAngularV[k]*180/PI+" ");
       }
       println();
@@ -731,13 +730,16 @@ void RK(ascreen_info []asc_arr) {
         json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
       }
     }
+    
+    for(int k=0;k<flangePose.length;k++)pose[k]=flangePose[k];
+    axisSwap(pose, 2,0,1, false, false, false);
     JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
-    jTemp.setString("X", df.format(pXYZ.x)+"");
-    jTemp.setString("Y", df.format(pXYZ.y)+"");
-    jTemp.setString("Z", df.format(pXYZ.z)+"");
-    jTemp.setString("A", df.format(RYP.x/TWO_PI*360.0)+"");
-    jTemp.setString("B", df.format(RYP.y/TWO_PI*360.0)+"");
-    jTemp.setString("C", df.format(RYP.z/TWO_PI*360.0)+"");
+    jTemp.setString("X", df.format(pose[0])+"");
+    jTemp.setString("Y", df.format(pose[1])+"");
+    jTemp.setString("Z", df.format(pose[2])+"");
+    jTemp.setString("A", df.format(pose[3]/TWO_PI*360.0)+"");
+    jTemp.setString("B", df.format(pose[4]/TWO_PI*360.0)+"");
+    jTemp.setString("C", df.format(pose[5]/TWO_PI*360.0)+"");
 
 
     popMatrix();
