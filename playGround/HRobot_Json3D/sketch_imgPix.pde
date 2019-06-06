@@ -172,7 +172,7 @@ void setup2() {
   //cam = new PeasyCam(this, 100);
   //cam.setMinimumDistance(10);
   //cam.setMaximumDistance(5000);
-  //cam.setWheelScale(0.1);
+  cam.setWheelScale(0.1);
   //cam.lookAt(0, 0, 0,1600,0);
   myMovie = new Movie(this, "udlr.mp4");
   //hint(DISABLE_DEPTH_TEST); 
@@ -240,20 +240,39 @@ void draw3Axis(float size)
   stroke(0, 0, 255);
   line(0, 0, 0, 0, 0, size);
 }
+
+float board_WH=1000;
+float board_thickness=100;
+
+/*  flange2BoardCenter_distance
+  <--------->
+\          |=|
+|\---------|=|board
+ |\        |=|
+    
+ ^flange2Board_angle         
+  
+  
+*/
+float flange2Board_angle=60*PI/180;
+float flange2BoardCenter_distance=165.583;
+
+
 void drawBoard_keepTranse()
 {
-  float size=1000;
+
   //rect(-5, -5, 10, 10);
   noStroke();
-  draw3Axis(400);
   rotateY(PI/2);
+  rotateX(flange2Board_angle);
+  translate(0,0,flange2BoardCenter_distance);
   fill(0, 255, 0);
-  rect(-size/2, -size/2, size/2, size);
+  rect(-board_WH/2, -board_WH/2, board_WH/2, board_WH);
   fill(0, 0, 255);
-  rect(0, -size/2, size/2, size);
-
+  rect(0, -board_WH/2, board_WH/2, board_WH);
+  draw3Axis(400);
   rotateY(-PI/2);
-  scale(0.01, size, size);
+  scale(board_thickness, board_WH, board_WH);
   /*noStroke();
    scale(10,10,2);
    sphere(1);  */
@@ -348,7 +367,7 @@ double[] drawRobotWorld(double[] pose)
   rotateZ((float)calcPose5[5]);
   rotateY((float)calcPose5[4]);
   rotateX((float)calcPose5[3]);
-  translate(50, 0, 0);
+  //translate(50, 0, 0);
 
   //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
   drawBoard_keepTranse();

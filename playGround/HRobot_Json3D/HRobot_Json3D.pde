@@ -69,7 +69,7 @@ void setup() {
   cam = new PeasyCam(this, CamD);
   cam.setMinimumDistance(MinD);
   cam.setMaximumDistance(MaxD);
-  cam.setWheelHandler(null);
+  //cam.setWheelHandler(null);
   //cam.setRotations(-1.218, 0,0);
   //cam.setRotations(0,0, 0.258);
   //cam.setRotations(0, 0.939, 0);
