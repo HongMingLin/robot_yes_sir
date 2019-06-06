@@ -39,14 +39,14 @@ PVector[] identityBoxV;
  
  
  ________________________________________________
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
-                                             |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
+ |//|
  
  
  ^y
@@ -174,7 +174,7 @@ void setup2() {
   //cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
   //cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "udlr.mp4");
+  myMovie = new Movie(this, "/Users/xlinx/Movies/udlr.m4v");
   //hint(DISABLE_DEPTH_TEST); 
 
   myMovie.loop();
@@ -266,9 +266,9 @@ void drawBoard_keepTranse()
   rotateY(PI/2);
   rotateX(flange2Board_angle);
   translate(0,0,flange2BoardCenter_distance);
-  fill(0, 255, 0);
-  rect(-board_WH/2, -board_WH/2, board_WH/2, board_WH);
   fill(0, 0, 255);
+  rect(-board_WH/2, -board_WH/2, board_WH/2, board_WH);
+  fill(0, 255, 0);
   rect(0, -board_WH/2, board_WH/2, board_WH);
   draw3Axis(400);
   rotateY(-PI/2);
@@ -620,7 +620,7 @@ void RK(ascreen_info []asc_arr) {
     if (i==2 || i==3)println(pose[2]);    
     double[] angles=drawRobotWorld(pose);
 
-   
+
     {
       boolean overAngle=false;
       double []P_angles = asc_arr[i].getAngles();
