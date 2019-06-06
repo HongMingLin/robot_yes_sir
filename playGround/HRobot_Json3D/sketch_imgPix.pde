@@ -39,14 +39,14 @@ PVector[] identityBoxV;
  
  
  ________________________________________________
- |//|
- |//|
- |//|
- |//|
- |//|
- |//|
- |//|
- |//|
+                                             |//|
+                                             |//|
+                                             |//|
+                                             |//|
+                                             |//|
+                                             |//|
+                                             |//|
+                                             |//|
  
  
  ^y
@@ -174,7 +174,7 @@ void setup2() {
   //cam.setMaximumDistance(5000);
   //cam.setWheelScale(0.1);
   //cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "/Users/xlinx/Movies/udlr.m4v");
+  myMovie = new Movie(this, "udlr.mp4");
   //hint(DISABLE_DEPTH_TEST); 
 
   myMovie.loop();
@@ -247,9 +247,9 @@ void drawBoard_keepTranse()
   noStroke();
   draw3Axis(400);
   rotateY(PI/2);
-  fill(0, 0, 255);
-  rect(-size/2, -size/2, size/2, size);
   fill(0, 255, 0);
+  rect(-size/2, -size/2, size/2, size);
+  fill(0, 0, 255);
   rect(0, -size/2, size/2, size);
 
   rotateY(-PI/2);
@@ -601,9 +601,7 @@ void RK(ascreen_info []asc_arr) {
     if (i==2 || i==3)println(pose[2]);    
     double[] angles=drawRobotWorld(pose);
 
-
-
-    if (i==2 || i==3)println(">>>>"+angles[0]);    
+   
     {
       boolean overAngle=false;
       double []P_angles = asc_arr[i].getAngles();
@@ -638,9 +636,11 @@ void RK(ascreen_info []asc_arr) {
         maxDiff = DIFF4;
       }
 
-      if (i==0)println("angles:"+angles[3]*180/PI+" P_angles:"+P_angles[3]*180/PI);
+      
+      //if (i==0)println("angles:"+angles[0]+","+angles[1]+","+angles[2]+","+angles[3]+","+angles[4]+","+angles[5]);
+      //if (i==0)println("angles:"+angles[5]*180/PI+" P_angles:"+P_angles[5]*180/PI);
       //maxDiff*=0.999;
-      if (i==0)println("maxDiff:"+maxDiff+" DIFF4:"+DIFF4 +" pDIFF4:"+pDIFF4);
+      //if (i==0)println("maxDiff:"+maxDiff+" DIFF4:"+DIFF4 +" pDIFF4:"+pDIFF4);
       //print("DIFF4:"+DIFF4+" >angles[3]="+angles[3]+"  "+P_angles[3] );
       //println("DIFF4:"+(angles[3]-P_angles[3]));
       for (int k=0; k<angles.length; k++)
