@@ -200,7 +200,7 @@ class HRobot {
   }
 
   void setXYZ(PVector in) {
-    println("setXYZ="+in);
+    //println("setXYZ="+in);
     XYZ=checkSAFE(in);
   }
   void addXYZ(PVector in) {

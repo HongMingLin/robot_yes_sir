@@ -4,16 +4,16 @@ String pattern  = "MM/dd HH:mm:ss.SSS";
 byte logSeq=0;
 void receive(byte[] bb, String ip, int port) {
   inJstr=new String(bb); 
-  println("RX="+inJstr);
+  //println("RX="+inJstr);
   switch(port) {
   case 9999:  
     try {
       inJson = parseJSONObject(inJstr);
       if (json == null) {
-        println("[X]ParseJsonFail");
+        //println("[X]ParseJsonFail");
       } else {
-println("[O]ParseJsonOK");
-        System.out.println(logHeader()+inJson );
+        //println("[O]ParseJsonOK");
+        //System.out.println(logHeader()+inJson );
       }
     }
     catch(Exception e) {

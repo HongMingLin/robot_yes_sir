@@ -557,7 +557,6 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
   //println("timeDiff:"+timeDiff);
 }
 
-
 void J4StepDown(double []angles, int step)
 {
   if (step==0)return;
@@ -670,20 +669,33 @@ void RK(ascreen_info []asc_arr) {
         J4StepDown(angles, 1);
       }
 
-      if (angles[3]>PI)
+      if (angles[3]>PI/2)
       {
         J4StepDown(angles, -1);
-        J4StepDown(angles, -1);
+        //J4StepDown(angles, -1);
         println("......Turn over-!!!");
-      } else if (angles[3]<-PI)
+      } else if (angles[3]<-PI/2)
       {
         J4StepDown(angles, 1);
-        J4StepDown(angles, 1);
+        //J4StepDown(angles, 1);
         println("......Turn over+!!!");
       }
 
 
       double DIFF4 = (angles[3]-P_angles[3])*180/PI;
+      
+      
+      double DIFF6 = (angles[5]-P_angles[5]);
+      
+      if(DIFF6>PI)
+      {
+        angles[5]-=TWO_PI;
+      }
+      else if(DIFF6<-PI)
+      {
+        angles[5]+=TWO_PI;
+      }
+      
       if (Math.abs(maxDiff)<Math.abs(DIFF4))
       {
         maxDiff = DIFF4;
@@ -701,11 +713,14 @@ void RK(ascreen_info []asc_arr) {
         float angV = (float)(angles[k]-P_angles[k])*frameRate;
         float ratio = abs(round((float)(angV/jointAngularV[k]*10000))/10000f);
         //print("["+k+"]"+ratio+" ");
-        if (ratio>1)
-          println("Motor[J"+(k+1)+"] speed overload");
+        if (ratio>1){
+          println("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
+          if(ratio*100>200)
+          println("*****SUPER OVERLOAD*****");
+        }
         //print(jointAngularV[k]*180/PI+" ");
       }
-      println();
+      //println();
       asc_arr[i].setAngles(angles);
     }
 
@@ -749,7 +764,7 @@ void RK(ascreen_info []asc_arr) {
   outJ=clearAllASCII(json.toString());
 
 
-  println(outJ.length()+"=>"+outJ);
+  //println(outJ.length()+"=>"+outJ);
 }
 String clearAllASCII(String in) {
   return in.toString().replaceAll("[/ /g]", "").replaceAll("[^\\x20-\\x7e]", "");
