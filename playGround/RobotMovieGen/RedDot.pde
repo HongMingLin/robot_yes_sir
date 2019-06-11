@@ -1,4 +1,6 @@
 class RedDot {
+  Eye eye;
+
   PVector boxPosOffset;
   PVector dotSize;//=new PVector(100, 100);
   private PVector nowXY=new PVector(0, 0);
@@ -21,13 +23,13 @@ class RedDot {
     setXY(new PVector(x, y));
   }
   void setXY(PVector in) {
-    
-    float xx=map(in.x,0,1,-windowHalfSize.x+ledSizeHalf.x,windowHalfSize.x-ledSizeHalf.x);
-    float yy=map(in.y,0,1,-windowHalfSize.y+ledSizeHalf.y,windowHalfSize.y-ledSizeHalf.y);
-    nowXY.lerp(xx,yy,0, 0.018);
+
+    float xx=map(in.x, 0, 1, -windowHalfSize.x+ledSizeHalf.x, windowHalfSize.x-ledSizeHalf.x);
+    float yy=map(in.y, 0, 1, -windowHalfSize.y+ledSizeHalf.y, windowHalfSize.y-ledSizeHalf.y);
+    nowXY.lerp(xx, yy, 0, 0.018);
     //println(nowXY);
   }
-  
+
   PVector lowpassFilter(PVector in) {
     return in.lerp(in, 0.18);
   }
@@ -40,15 +42,21 @@ class RedDot {
       movingPercent=1;
     nowXY=PVector.lerp(fromXY, targetXY, movingPercent);
   }
-  void update() {
+  void drawx() {
     updatePOI();
 
     noStroke();
     pushMatrix();
     translate(boxPosOffset.x, boxPosOffset.y);
     translate(windowSize.x/2, windowSize.y/2);
-        translate(nowXY.x, nowXY.y);
-    
+    //translate(nowXY.x, nowXY.y);
+    if (ALLMODE==MODE.EYE) {
+      rotate(eye.angle);
+      eye.drawx();
+    }
+    translate(nowXY.x, nowXY.y);
+
+
     fill(255, 0, 0, 255);
     ellipse(0, 0, dotSize.x, dotSize.y);
     popMatrix();
@@ -56,6 +64,8 @@ class RedDot {
   RedDot(PVector bPO, PVector size) {
     boxPosOffset=bPO;
     dotSize=size;
+    eye=new Eye( (int)(bPO.x+windowSize.x/2), (int)(bPO.y+windowSize.y/2), 50);
+
     println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
   }
 }

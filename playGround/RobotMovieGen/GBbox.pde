@@ -41,7 +41,7 @@ class GBbox {
       movingPercent=1;
     nowXY=PVector.lerp(fromXY, targetXY, movingPercent);
   }
-  void update() {
+  void drawx() {
     updatePOI();
 
     noStroke(); 
