@@ -35,7 +35,7 @@ void setup() {
   println();  
   redDots=new RedDot[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<redDots.length; i++)
-    redDots[i]=new RedDot(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), new PVector(10, 10));
+    redDots[i]=new RedDot(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), new PVector(20, 20));
 
   gbBoxs=new GBbox[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<gbBoxs.length; i++)
@@ -104,6 +104,8 @@ void effect() {
         (mouseY/movieSize.y));
     }
     break;
+    case SCALE:
+    case ROTATE:
   case MOUSE_GB:
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(

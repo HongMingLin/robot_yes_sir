@@ -1,3 +1,8 @@
+void mouseWheel(MouseEvent event) {
+  //float e = event.getCount();
+  for (int i=0; i<gbBoxs.length; i++)
+    gbBoxs[i].handleMouseEvent(event);
+}
 void keyPressed() {
   switch(key) {
   case 'M':

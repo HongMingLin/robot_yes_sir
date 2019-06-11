@@ -5,9 +5,29 @@ class GBbox {
   private PVector nowXY=new PVector(0, 0);
   private PVector fromXY=new PVector(0, 0);
   private PVector targetXY=new PVector(0, 0);
+  private float scale=1.0f;
+  private float rotate=00f;
   long startMillis=0;
   float movingPercent=1;
   float movingDurition=0;
+
+  void handleMouseEvent(MouseEvent e) {
+    switch(ALLMODE) {
+    case SCALE:
+      scale+= e.getCount()*0.001;
+    if (scale<0.4)scale=0.4;
+    if (scale>2)scale=2;
+      break;
+    case ROTATE:
+     rotate+= e.getCount()*0.001;
+    if (rotate<-HALF_PI)rotate=-HALF_PI;
+    if (rotate>HALF_PI)rotate=HALF_PI;
+      break;
+    default:
+      break;
+    }
+    
+  }
   void goXY(float x, float y, float t) {
     goXY(new PVector(x, y), t);
   }
@@ -22,13 +42,13 @@ class GBbox {
     setXY(new PVector(x, y));
   }
   void setXY(PVector in) {
-    
-    float xx=map(in.x,0,1,-windowHalfSize.x+ledSizeHalf.x,windowHalfSize.x-ledSizeHalf.x);
-    float yy=map(in.y,0,1,-windowHalfSize.y+ledSizeHalf.y,windowHalfSize.y-ledSizeHalf.y);
-    nowXY.lerp(xx,yy,0, 0.018);
+
+    float xx=map(in.x, 0, 1, -windowHalfSize.x+ledSizeHalf.x, windowHalfSize.x-ledSizeHalf.x);
+    float yy=map(in.y, 0, 1, -windowHalfSize.y+ledSizeHalf.y, windowHalfSize.y-ledSizeHalf.y);
+    nowXY.lerp(xx, yy, 0, 0.018);
     //println(nowXY);
   }
-  
+
   PVector lowpassFilter(PVector in) {
     return in.lerp(in, 0.18);
   }
@@ -52,21 +72,20 @@ class GBbox {
     translate(nowXY.x, nowXY.y);
     fill(255);
     
+    rotate(rotate);
     rectMode(CORNER);
     fill(0, 0, 255);
+    scale(scale);
     rect(0, 0, boxSize.x/2, boxSize.y);
-    fill(0, 255,0);
+    fill(0, 255, 0);
     translate(boxSize.x/2, 0);
     rect(0, 0, boxSize.x/2, boxSize.y);
+    
     popMatrix();
 
-    //pushMatrix();
-    //translate(windowSize.x/2, windowSize.y/2);
-    //fill(255, 0,0);
-    //ellipse(0,0, 10, 10);
-    //popMatrix();
+    
   }
-  GBbox(int id,PVector bPO, PVector scale) {
+  GBbox(int id, PVector bPO, PVector scale) {
     ID=id;
     XYOffset=bPO;
     boxSize=new PVector(100*scale.x, 100*scale.y);
