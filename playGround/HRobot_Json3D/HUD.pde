@@ -39,7 +39,11 @@ void beginHUD() {
   text("XYZ="+HRs[whichRobot].sX+", "+HRs[whichRobot].sY+", "+HRs[whichRobot].sZ, 5, START_Y+=20);
   text("ABC="+HRs[whichRobot].ABC.x+", "+HRs[whichRobot].ABC.y+", "+HRs[whichRobot].ABC.z, 5, START_Y+=20);
   fill(255,255,0);
-  text("TX_JSON="+outJ , 5, START_Y+=20);
+  //println(jsonHUD);
+  //text("TX_JSON="+outJ , 5, START_Y+=20);
+  //text(("+jsonHUD.get("360A1")+"));
+  text("TX_JSON=("+jsonHUD.get("360A1")+")("+jsonHUD.get("360A2")+")("+jsonHUD.get("360A3")+")("+jsonHUD.get("360A4")+","
+  +jsonHUD.get("360A5")+")("+jsonHUD.get("360A6"), 5, START_Y+=20);
   text("RX_JSON="+inJstr , 5, START_Y+=16);
   
   fill(255);

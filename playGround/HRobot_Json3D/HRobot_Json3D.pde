@@ -33,6 +33,7 @@ int R_PORT=6666;
 int R_PORT2=9999;
 
 JSONObject json;
+JSONObject jsonHUD;
 int MinD=0;
 int MaxD=(int)ROOM.x*100*M_SCALE;
 float CamD=(int)ROOM.x*2*M_SCALE;
@@ -44,7 +45,7 @@ float CRICLE_R=1;
 float globalCRICLE_Time=5000.0;
 float globalNowSin=0;
 int appH=700;
-int appW=900;
+int appW=800;
 UDP u, u2;
 boolean REALTIME=false;
 String outJ="", inJstr="NotYet";
@@ -64,9 +65,11 @@ void fakeGraphics(PGraphics pg){
   
   pg.endDraw();
 }
+void setting() {
 
+}
 void setup() {
-  size(1000, 800, P3D);
+    size(800, 800, P3D);
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("HIWIN_LOGO.png");

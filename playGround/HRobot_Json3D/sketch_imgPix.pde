@@ -129,7 +129,7 @@ Kinematics kinma;
 
 void setupJson() {
   json = new JSONObject();
-
+  jsonHUD = new JSONObject();
   R12JsonArray= new JSONArray();
   for (int i = 0; i < 12; i++) {
     R1Json= new JSONObject();
@@ -153,6 +153,7 @@ void setupJson() {
   }
   json.setString("TIMESTAMP", millis()+"");
   json.setJSONArray("GroupCommand", R12JsonArray);
+  jsonHUD.setJSONArray("Robots", R12JsonArray);
 }
 
 void setup2() {
@@ -340,9 +341,9 @@ boolean CollisionDetection(Vector<PVector> obj1_v, Vector<PVector> obj2_v, Vecto
     CollisionDetection(obj1_v, obj3_v)||
     CollisionDetection(obj2_v, obj3_v);
 }
-double[] drawRobotWorld(double[] pose)
+double[] drawRobotWorld(double[] pose,Boolean isCollided)
 {
-
+  isCollided=false;
   obj1v.clear();
   obj2v.clear();
   obj3v.clear();
@@ -491,7 +492,10 @@ double[] drawRobotWorld(double[] pose)
   fill(255, 0, 0, 100);
   stroke(255, 0, 0);
   if (collision)
+  {
     box(1000, 1000, 1000);
+    isCollided=true;
+  }
 
   popMatrix();
   return angles;
@@ -602,6 +606,7 @@ int count=0;
 double maxDiff=0;
 void RK(ascreen_info []asc_arr) {
   count++;
+  boolean fatalError=false;
   if (count<10)maxDiff=0;
   PVector XYZ=new PVector();
   PVector RYP=new PVector();
@@ -650,9 +655,15 @@ void RK(ascreen_info []asc_arr) {
 
     double[] flangePose =  boardPose2FlangePose(pose);
 
-    //if (i==2 || i==3)println(pose[2]);    
-    double[] angles=drawRobotWorld(flangePose);
+    //if (i==2 || i==3)println(pose[2]);  
+    Boolean isCollided=false;
+    double[] angles=drawRobotWorld(flangePose,isCollided);
 
+    if(isCollided)
+    {
+      fatalError=true;
+    }
+    
 
     {
       boolean overAngle=false;
@@ -669,16 +680,18 @@ void RK(ascreen_info []asc_arr) {
         J4StepDown(angles, 1);
       }
 
-      if (angles[3]>PI/2)
+      if (angles[3]>PI)
       {
         J4StepDown(angles, -1);
         //J4StepDown(angles, -1);
         println("......Turn over-!!!");
-      } else if (angles[3]<-PI/2)
+        fatalError=true;
+      } else if (angles[3]<-PI)
       {
         J4StepDown(angles, 1);
         //J4StepDown(angles, 1);
         println("......Turn over+!!!");
+        fatalError=true;
       }
 
 
@@ -716,7 +729,11 @@ void RK(ascreen_info []asc_arr) {
         if (ratio>1){
           println("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
           if(ratio*100>200)
-          println("*****SUPER OVERLOAD*****");
+          {
+            println("*****SUPER OVERLOAD*****");
+            
+            fatalError=true;
+          }
         }
         //print(jointAngularV[k]*180/PI+" ");
       }
@@ -743,6 +760,8 @@ void RK(ascreen_info []asc_arr) {
       {
         //print(fff+" ");
         json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
+        float dgree=fff/TWO_PI*360.0;
+        jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
       }
     }
 
