@@ -6,6 +6,14 @@ void mouseWheel(MouseEvent event) {
 void keyPressed() {
   motorWalk();
   switch(key) {
+  case 'V':
+    M_S=M_S.next();
+    if (M_S==MOVIE_or_SHAREIAMGE.Movie)
+      myMovie.play();
+    else
+      myMovie.stop();
+    break;
+
   case 'J':
     u2.send("{\"Command\":\"AllStatus\"}", "10.10.10.157", 9999);
     break;
@@ -55,7 +63,7 @@ void keyPressed() {
     for (int i=0; i<12; i++) {
       jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
       jTemp.setString("Command", "Home");
-       HRs[i].RM=RunMODE.HOME;
+      HRs[i].RM=RunMODE.HOME;
     }
 
 

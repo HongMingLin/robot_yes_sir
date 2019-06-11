@@ -1,4 +1,15 @@
 TXRATE TXms=TXRATE.s33;
+MOVIE_or_SHAREIAMGE M_S=MOVIE_or_SHAREIAMGE.Movie;
+enum MOVIE_or_SHAREIAMGE {
+  Movie,ShareImage;
+  private static MOVIE_or_SHAREIAMGE[] vals = values();
+  public MOVIE_or_SHAREIAMGE next()
+  {
+    int now = this.ordinal()+1;
+    return vals[(now) % vals.length];
+  }
+}
+
 enum TXRATE {
   s33(33), s50(50), s100(100), s500(500), s1000(1000);
   int ms;

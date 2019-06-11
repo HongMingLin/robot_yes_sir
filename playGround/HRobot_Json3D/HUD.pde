@@ -11,7 +11,9 @@ void beginHUD() {
   int OFFSET_Y=20;
   int START_Y=40;
 
-  text("C_Distance:" +cam.getDistance()+" FPS:"+ nfc(frameRate, 2), 10, START_Y+=OFFSET_Y);
+  //text("C_Distance:" +cam.getDistance()+" FPS:"+ nfc(frameRate, 2), 10, START_Y+=OFFSET_Y);
+  text("C_Distance:" +cam.getDistance()+" FPS:"+ nfc(frameRate, 2)+"M_S="+M_S, 10, START_Y+=OFFSET_Y);
+
   float[] xyz = cam.getRotations();
   text("rX="+nf(xyz[0], 1, 3)+" rY="+nf(xyz[1], 1, 3)+" rZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   xyz=cam.getPosition();

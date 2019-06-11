@@ -174,7 +174,7 @@ void setup2() {
   //cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
   //cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "XYZ.m4v");
+  myMovie = new Movie(this, "0.mp4");
   //hint(DISABLE_DEPTH_TEST); 
 
   myMovie.loop();
@@ -300,7 +300,7 @@ double [] boardPose2FlangePose(double []pose)
   PVector origin = new PVector(0, 0, 0);
   PVector tar = new PVector();
   mat.mult(origin, tar);
-  
+
   pfose[0]=tar.x;
   pfose[1]=tar.y;
   pfose[2]=tar.z;
@@ -386,7 +386,7 @@ double[] drawRobotWorld(double[] pose)
       image(HIWIN_LOGO, 0, 0);
     }
 
-    if(j!=4)//ignore the part J5~J6
+    if (j!=4)//ignore the part J5~J6
     {
       WxO.preApply(invCameraMat);
       for (PVector v : identityBoxV)
@@ -648,7 +648,7 @@ void RK(ascreen_info []asc_arr) {
 
     axisSwap(pose, 1, 2, 0, false, false, false);
     //525mm, base floor to hiwin robot origin()
-    
+
     double[] flangePose =  boardPose2FlangePose(pose);
 
     //if (i==2 || i==3)println(pose[2]);    
@@ -730,9 +730,9 @@ void RK(ascreen_info []asc_arr) {
         json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
       }
     }
-    
-    for(int k=0;k<flangePose.length;k++)pose[k]=flangePose[k];
-    axisSwap(pose, 2,0,1, false, false, false);
+
+    for (int k=0; k<flangePose.length; k++)pose[k]=flangePose[k];
+    axisSwap(pose, 2, 0, 1, false, false, false);
     JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
     jTemp.setString("X", df.format(pose[0])+"");
     jTemp.setString("Y", df.format(pose[1])+"");
@@ -762,7 +762,18 @@ void drawMovie() {
   //translate(-myMovie.width/2,-myMovie.height/2, -1000);
   translate(0, 155, 0);
 
-  image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+  //image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+  switch(M_S) {
+  case Movie:
+    if (myMovie!=null)
+      image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+    break;
+  case ShareImage:
+
+    image(canvas.get(), 0, 0, 300, canvas.height/(canvas.width/300.0));
+    break;
+  }
+
   popMatrix();
 }
 void draw2() {
@@ -792,6 +803,16 @@ void draw2() {
     stroke(0, 0, 255);
     line(0, 0, 0, 0, 0, 10000);
   }
-  sectionFinding(myMovie, ascArr);
+  //sectionFinding(myMovie, ascArr);
+    switch(M_S){
+    case Movie:
+    if(myMovie!=null)
+      sectionFinding(myMovie, ascArr);
+    break;
+    case ShareImage:
+      sectionFinding(canvas.get(), ascArr);
+    break;
+  }
+
   RK(ascArr);
 }

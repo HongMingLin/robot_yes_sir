@@ -4,6 +4,10 @@ import java.util.Date;
 import controlP5.*;
 import processing.video.*;
 import java.lang.Math.*;
+import codeanticode.syphon.*;
+
+PGraphics canvas;
+SyphonClient client;
 
 ControlP5 cp5;
 ALLMODE AM=ALLMODE.PLAY;
@@ -54,15 +58,26 @@ java.text.DecimalFormat df=new java.text.DecimalFormat("#.###");
 
 java.util.Timer TX_TIMER =new java.util.Timer("TXTIMER");
 statusTimer33 t33=new statusTimer33();
+void fakeGraphics(PGraphics pg){
+  pg.beginDraw();
+  pg.background(0);
+  
+  pg.endDraw();
+}
+
 void setup() {
   size(1000, 800, P3D);
   try {
     photo = loadImage("HRobot_small.png");
-    HIWIN_LOGO= loadImage("../../media/HIWIN_LOGO.png");
+    HIWIN_LOGO= loadImage("HIWIN_LOGO.png");
   }
   catch(Exception e) {
     println(e);
   }
+    canvas= createGraphics(300, 300);
+  fakeGraphics(canvas);
+  client = new SyphonClient(this);
+
   cp5 = new ControlP5(this);
   cp5.setAutoDraw(false);
   setup_cp5();
@@ -103,6 +118,12 @@ void setup() {
 
 void draw() {
   background(10);
+    if (client.newFrame()) {
+    canvas = client.getGraphics(canvas);
+    
+    //image(canvas, 0, 0, width, height);    
+  } 
+
   fill(0, 255, 0, 50);
   rectMode(CENTER);
   rect(0, 0, 1000, 1000);//green plane
