@@ -129,12 +129,12 @@ Kinematics kinma;
 
 void setupJson() {
   json = new JSONObject();
-  jsonHUD = new JSONObject();
+  //jsonHUD = new JSONObject();
   R12JsonArray= new JSONArray();
   for (int i = 0; i < 12; i++) {
     R1Json= new JSONObject();
-    R1Json.setString("Robot", (i+1)+"");
-    R1Json.setString("Command", "STOP");
+    R1Json.setString(JSONKEYWORD.ID, (i+1)+"");
+    R1Json.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
     R1Json.setString("A1", "0");
     R1Json.setString("A2", "0");
     R1Json.setString("A3", "0");
@@ -151,9 +151,9 @@ void setupJson() {
 
     R12JsonArray.setJSONObject(i, R1Json);
   }
-  json.setString("TIMESTAMP", millis()+"");
-  json.setJSONArray("GroupCommand", R12JsonArray);
-  jsonHUD.setJSONArray("Robots", R12JsonArray);
+  json.setString(JSONKEYWORD.TIMESTAMP, "0");
+  json.setJSONArray(JSONKEYWORD.Robots, R12JsonArray);
+  //jsonHUD.setJSONArray("HUD_R_Info", R12JsonArray);
 }
 
 void setup2() {
@@ -759,15 +759,15 @@ void RK(ascreen_info []asc_arr) {
       //if(i==0)
       {
         //print(fff+" ");
-        json.getJSONArray("GroupCommand").getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
+        json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
         float dgree=fff/TWO_PI*360.0;
-        jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
+        //jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
       }
     }
 
     for (int k=0; k<flangePose.length; k++)pose[k]=flangePose[k];
     axisSwap(pose, 2, 0, 1, false, false, false);
-    JSONObject jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
+    JSONObject jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
     jTemp.setString("X", df.format(pose[0])+"");
     jTemp.setString("Y", df.format(pose[1])+"");
     jTemp.setString("Z", df.format(pose[2])+"");
@@ -779,7 +779,7 @@ void RK(ascreen_info []asc_arr) {
     popMatrix();
   }
 
-  json.setString("TIMESTAMP", millis()+"");
+  json.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
   outJ=clearAllASCII(json.toString());
 
 
@@ -794,7 +794,7 @@ void drawMovie() {
   rectMode(CORNER);
 
   //translate(-myMovie.width/2,-myMovie.height/2, -1000);
-  translate(0, 155, 0);
+  translate(0, 125, 0);
 
   //image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
   switch(M_S) {

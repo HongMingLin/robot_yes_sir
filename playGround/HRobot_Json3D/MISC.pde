@@ -7,7 +7,7 @@ JSONObject R1Json;
 //  for (int i = 0; i < HRs.length; i++) {
 //  R1Json= new JSONObject();
 //  R1Json.setString("Robot", (i+1)+"");
-//  R1Json.setString("Command", "ptp_pose");
+//  R1Json.setString("CMD", "ptp_pose");
 //  R1Json.setString("X", "0");
 //  R1Json.setString("Y", "0");
 //  R1Json.setString("Z", "0");
@@ -16,7 +16,7 @@ JSONObject R1Json;
 //  R1Json.setString("C", "0");
 //    R12JsonArray.setJSONObject(i, R1Json);
 //  }
-//  json.setString("TIMESTAMP", millis()+"");
+//  json.setString(JsonKeyName[0], millis()+"");
 //  json.setJSONArray("GroupCommand", R12JsonArray);
 //}
 

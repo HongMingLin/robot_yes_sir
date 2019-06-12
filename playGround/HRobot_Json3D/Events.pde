@@ -53,20 +53,19 @@ void keyPressed() {
     JSONObject jTemp=null;
     for (int i=0; i<12; i++) {
       HRs[i].RM=RunMODE.MOVIE;
-      jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
-      jTemp.setString("Command", "ptp_axis");
+      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
+
     }
     exec("/usr/bin/say", "Robot Go");
     break;
   case 'H':
     jTemp=null;
     for (int i=0; i<12; i++) {
-      jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
-      jTemp.setString("Command", "Home");
+      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
       HRs[i].RM=RunMODE.HOME;
     }
-
-
     sendX(clearAllASCII(json.toString()+"\n") );
     exec("/usr/bin/say", "Robot 全部 回家");
 
@@ -74,12 +73,12 @@ void keyPressed() {
 
 
   case 'm':
-    jTemp=null;
-    for (int i=0; i<12; i++) {
-      jTemp=json.getJSONArray("GroupCommand").getJSONObject(i);
-      jTemp.setString("Command", "ptp_axis");
-      HRs[i].RM=RunMODE.MOVIE;
-    }
+    //jTemp=null;
+    //for (int i=0; i<12; i++) {
+    //  jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+    //  jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
+    //  HRs[i].RM=RunMODE.MOVIE;
+    //}
     //HRs[whichRobot].setCC_XYZ_NOW();
     //HRs[whichRobot].RM=HRs[whichRobot].RM.next();
     exec("/usr/bin/say", "Robot All "+HRs[whichRobot].RM);

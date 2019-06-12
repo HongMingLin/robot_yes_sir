@@ -9,7 +9,7 @@ void beginHUD() {
   
   //text(Qsb.toString(),WINDOW_W-textWidth(Qsb.toString())+(WINDOW_W/2*(1+sin(millis()*TWO_PI/2000))),20);
   int OFFSET_Y=20;
-  int START_Y=40;
+  int START_Y=25;
 
   //text("C_Distance:" +cam.getDistance()+" FPS:"+ nfc(frameRate, 2), 10, START_Y+=OFFSET_Y);
   text("C_Distance:" +cam.getDistance()+" FPS:"+ nfc(frameRate, 2)+"M_S="+M_S, 10, START_Y+=OFFSET_Y);
@@ -23,10 +23,10 @@ void beginHUD() {
   text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   
   START_Y=550;
-  text("{q w e r} = 4F ", 5, START_Y-65);
-  text("{a s d f} = 3F ", 5, START_Y-45);
-  text("{z x c v} = 2F ", 5, START_Y-25);
-  text("[P] ALL_Mode(ES,STOP,PAUSE,PLAY)="+AM, 5, START_Y);
+  text("{q w e r} = 4F ", 869, 40);
+  text("{a s d f} = 3F ", 869, 50);
+  text("{z x c v} = 2F ", 869, 60);
+  //text("[P] ALL_Mode(ES,STOP,PAUSE,PLAY)="+AM, 5, START_Y);
   textSize(20);
   text("[M] 1Robot RunMode@"+whichRobot+"="+HRs[whichRobot].RM, 5, START_Y+=25);
   textSize(12);
@@ -42,8 +42,21 @@ void beginHUD() {
   //println(jsonHUD);
   //text("TX_JSON="+outJ , 5, START_Y+=20);
   //text(("+jsonHUD.get("360A1")+"));
-  text("TX_JSON=("+jsonHUD.get("360A1")+")("+jsonHUD.get("360A2")+")("+jsonHUD.get("360A3")+")("+jsonHUD.get("360A4")+","
-  +jsonHUD.get("360A5")+")("+jsonHUD.get("360A6"), 5, START_Y+=20);
+
+  
+
+  int tY=365;
+  for(int i=0;i<12;i++){
+    
+    JSONObject JJJ=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+
+    String s1 = String.format("%-10s %-10s %-10s %-10s %-10s %-10s "
+    ,"("+JJJ.get("A1")+")","("+JJJ.get("A2")+")","("+JJJ.get("A3")+")",
+    "("+JJJ.get("A4")+")","("+JJJ.get("A5")+")","("+JJJ.get("A6")+")");
+    text(s1, 5, tY+=15);
+  }
+  
+  text("TX_JSON="+outJ , 5, START_Y+=16);
   text("RX_JSON="+inJstr , 5, START_Y+=16);
   
   fill(255);

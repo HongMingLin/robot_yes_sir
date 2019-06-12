@@ -81,6 +81,7 @@ void send2robot12() {
   //println(logHeader()+outJ);
   //u.send(printBB("TX",outJ),R_IP,R_PORT);
   TXLED=!TXLED;
+  
   sendX(outJ+"\n");
 
 }

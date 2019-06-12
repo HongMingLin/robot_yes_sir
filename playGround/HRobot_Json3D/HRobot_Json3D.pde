@@ -31,9 +31,8 @@ PVector ROOM=new PVector(ROOM_W_D_H.x*M_SCALE, ROOM_W_D_H.y*M_SCALE, ROOM_W_D_H.
 String R_IP="10.10.10.88";
 int R_PORT=6666;
 int R_PORT2=9999;
-
 JSONObject json;
-JSONObject jsonHUD;
+//JSONObject jsonHUD;
 int MinD=0;
 int MaxD=(int)ROOM.x*100*M_SCALE;
 float CamD=(int)ROOM.x*2*M_SCALE;
@@ -45,7 +44,7 @@ float CRICLE_R=1;
 float globalCRICLE_Time=5000.0;
 float globalNowSin=0;
 int appH=700;
-int appW=800;
+int appW=1000;
 UDP u, u2;
 boolean REALTIME=false;
 String outJ="", inJstr="NotYet";
@@ -69,7 +68,7 @@ void setting() {
 
 }
 void setup() {
-    size(800, 800, P3D);
+    size(1000, 800, P3D);
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("HIWIN_LOGO.png");
@@ -123,7 +122,6 @@ void draw() {
   background(10);
     if (client.newFrame()) {
     canvas = client.getGraphics(canvas);
-    
     //image(canvas, 0, 0, width, height);    
   } 
 
@@ -150,8 +148,8 @@ void draw() {
 
   beginHUD();
   //drawToolBox();
-  for (int i=0; i<HRs.length; i++)
-    HRs[i].UPDATE();
+  //for (int i=0; i<HRs.length; i++)
+  //  HRs[i].UPDATE();
   pushMatrix();
   translate(0,0,1000);
   rotateX(-HALF_PI);
@@ -176,8 +174,7 @@ void  drawToolBox() {
   stroke(255);
   popMatrix();
 }
-Knob myKnobA;
-Knob myKnobB;
+
 ListBox list;
 void setup_cp5() {
   
@@ -197,26 +194,7 @@ void setup_cp5() {
     }
   }
   );
-  myKnobA = cp5.addKnob("knob")
-    .setRange(0, 255)
-    .setValue(50)
-    .setPosition(20, 400)
-    .setRadius(20)
-    .setDragDirection(Knob.VERTICAL)
-    ;
-    myKnobB = cp5.addKnob("knobValue")
-    .setRange(0, 255)
-    .setValue(220)
-    .setPosition(80, 400)
-    .setRadius(20)
-    .setNumberOfTickMarks(10)
-    .setTickMarkLength(4)
-    .snapToTickMarks(true)
-    .setColorForeground(color(255))
-    .setColorBackground(color(0, 160, 100))
-    .setColorActive(color(255, 255, 0))
-    .setDragDirection(Knob.HORIZONTAL)
-    ;
+
   list = cp5.addListBox("ROBOT LOG")
     .setPosition(500, 0)
     .setSize(500, 500)
