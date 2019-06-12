@@ -65,6 +65,8 @@ enum RunMODE {
 }
 
 class HRobot {
+  boolean RK_fatalError=false;
+  AtomicBoolean RK_ColliError=new AtomicBoolean(false);
   //PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);
   //PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
   PVector SAFEx0y0z0=new PVector(-32.5, 5, -46.2);

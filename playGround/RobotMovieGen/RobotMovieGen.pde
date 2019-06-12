@@ -7,7 +7,7 @@ SimpleDateFormat SDF= new SimpleDateFormat("MMdd_HHmmss.S");
 PGraphics canvas;
 SyphonServer server;
 VideoExport videoExport;
-MODE ALLMODE=MODE.MOUSE_GB;
+MODE ALLMODE=MODE.QLAB;
 //PVector SCALE_MOVIE=new PVector(0.5, 0.5);
 PVector movieSize=new PVector(640, 480);
 
@@ -27,15 +27,13 @@ void settings() {
   size((int)movieSize.x, (int)movieSize.y, P2D);
 }
 void setup() {
-
-
   println("SCALE_WH.x"+SCALE_MOVIE.x+", SCALE_WH.y"+SCALE_MOVIE.y);
   println("mSize.x"+movieSize.x+", mSize.y"+movieSize.y);
   println("windowSize.x"+windowSize.x+", windowSize.y"+windowSize.y);
   println();  
   redDots=new RedDot[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<redDots.length; i++)
-    redDots[i]=new RedDot(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), new PVector(20, 20));
+    redDots[i]=new RedDot(new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), new PVector(10, 10));
 
   gbBoxs=new GBbox[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<gbBoxs.length; i++)
@@ -116,8 +114,8 @@ void effect() {
   case CIRCLE_XY:
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(
-        (1+sin(millis()*TWO_PI/3000.0))/2, 
-        (1+cos(millis()*TWO_PI/3000.0))/2);
+        (1+sin(millis()*TWO_PI/6000.0))/2, 
+        (1+cos(millis()*TWO_PI/6000.0))/2);
     }
 
     break;

@@ -5,7 +5,7 @@ import controlP5.*;
 import processing.video.*;
 import java.lang.Math.*;
 import codeanticode.syphon.*;
-
+import java.util.concurrent.atomic.AtomicBoolean;
 PGraphics canvas;
 SyphonClient client;
 

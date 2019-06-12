@@ -21,13 +21,14 @@ void keyPressed() {
       recording=false;
       videoExport.endMovie();
       videoExport=null;
+      
+    videoExport=null;
     }
     recording = !recording;
     println("Recording is " + (recording ? "RECing" : "PAUSE"));
     break;
   case 'q':
-    videoExport.endMovie();
-    videoExport=null;
+    
     break;
   case '1':
 

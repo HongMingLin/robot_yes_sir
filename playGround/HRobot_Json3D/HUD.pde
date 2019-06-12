@@ -50,12 +50,26 @@ void beginHUD() {
     
     JSONObject JJJ=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
 
-    String s1 = String.format("%-10s %-10s %-10s %-10s %-10s %-10s "
-    ,"("+JJJ.get("A1")+")","("+JJJ.get("A2")+")","("+JJJ.get("A3")+")",
-    "("+JJJ.get("A4")+")","("+JJJ.get("A5")+")","("+JJJ.get("A6")+")");
+    String s1 = String.format("%+06.1f %+06.1f %+06.1f %+06.1f %+06.1f %+06.1f "
+    ,JJJ.getFloat("A1"),JJJ.getFloat("A2"),JJJ.getFloat("A3"),
+    JJJ.getFloat("A4"),JJJ.getFloat("A5"),JJJ.getFloat("A6"))+" RK-Err=";
+    fill(255,255,0,128);
     text(s1, 5, tY+=15);
+    fill((HRs[i].RK_fatalError?255:0),(HRs[i].RK_fatalError?0:255),0);
+    text((HRs[i].RK_fatalError?"NG":"OK"), 5 + 1 + textWidth(s1), tY );
+    s1+=(HRs[i].RK_fatalError?"NG":"OK");
+    fill(255,255,0,128);
+    text(", Colli=", 5 + 1 + textWidth(s1), tY );
+    
+    s1+=", Colli=";
+    
+    
+    fill((HRs[i].RK_ColliError.get()?255:0),(HRs[i].RK_ColliError.get()?0:255),0);
+    text((HRs[i].RK_ColliError.get()?"Y":"N"), 5 + 1 + textWidth(s1), tY );
+    
+     
   }
-  
+  fill(255,255,0);
   text("TX_JSON="+outJ , 5, START_Y+=16);
   text("RX_JSON="+inJstr , 5, START_Y+=16);
   

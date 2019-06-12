@@ -341,9 +341,10 @@ boolean CollisionDetection(Vector<PVector> obj1_v, Vector<PVector> obj2_v, Vecto
     CollisionDetection(obj1_v, obj3_v)||
     CollisionDetection(obj2_v, obj3_v);
 }
-double[] drawRobotWorld(double[] pose,Boolean isCollided)
+//import java.util.concurrent.atomic.AtomicBoolean;
+double[] drawRobotWorld(double[] pose,AtomicBoolean isCollided)
 {
-  isCollided=false;
+  //isCollided.setValue(false);
   obj1v.clear();
   obj2v.clear();
   obj3v.clear();
@@ -494,7 +495,8 @@ double[] drawRobotWorld(double[] pose,Boolean isCollided)
   if (collision)
   {
     box(1000, 1000, 1000);
-    isCollided=true;
+    isCollided.set(true);
+    
   }
 
   popMatrix();
@@ -607,11 +609,14 @@ double maxDiff=0;
 void RK(ascreen_info []asc_arr) {
   count++;
   boolean fatalError=false;
+  
   if (count<10)maxDiff=0;
   PVector XYZ=new PVector();
   PVector RYP=new PVector();
   for (int i=0; i<asc_arr.length; i++)
   {
+    HRs[i].RK_fatalError=false;
+    HRs[i].RK_ColliError.set(false);
     if (asc_arr[i].getR().z*asc_arr[i].getG().z*asc_arr[i].getB().z==0)continue;
     XYZ.set(asc_arr[i].getXYZ());
     RYP.set(asc_arr[i].getRYP());
@@ -656,12 +661,13 @@ void RK(ascreen_info []asc_arr) {
     double[] flangePose =  boardPose2FlangePose(pose);
 
     //if (i==2 || i==3)println(pose[2]);  
-    Boolean isCollided=false;
-    double[] angles=drawRobotWorld(flangePose,isCollided);
+    
+    double[] angles=drawRobotWorld(flangePose,HRs[i].RK_ColliError);
 
-    if(isCollided)
+    if(HRs[i].RK_ColliError.get())
     {
       fatalError=true;
+      HRs[i].RK_ColliError.set(true);
     }
     
 
@@ -686,12 +692,14 @@ void RK(ascreen_info []asc_arr) {
         //J4StepDown(angles, -1);
         println("......Turn over-!!!");
         fatalError=true;
+        HRs[i].RK_fatalError=true;
       } else if (angles[3]<-PI)
       {
         J4StepDown(angles, 1);
         //J4StepDown(angles, 1);
         println("......Turn over+!!!");
         fatalError=true;
+        HRs[i].RK_fatalError=true;
       }
 
 
@@ -731,7 +739,7 @@ void RK(ascreen_info []asc_arr) {
           if(ratio*100>200)
           {
             println("*****SUPER OVERLOAD*****");
-            
+            HRs[i].RK_fatalError=true;
             fatalError=true;
           }
         }

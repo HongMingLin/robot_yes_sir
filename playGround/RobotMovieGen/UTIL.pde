@@ -11,8 +11,6 @@ void drawBlock(){
   for(int i=0;i<2;i++){
     float wy=(movieSize.y/robotArray.y)+(i*(movieSize.y/robotArray.y));
     line(0,wy,movieSize.x,wy);
-    textSize(30);
-    text(i,0,wy);
   }
 }
 String logHeader() {
