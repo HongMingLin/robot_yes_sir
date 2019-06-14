@@ -568,16 +568,21 @@ void J4StepDown(double []angles, int step)
   if (step<0)//angles[3]-P_angle3>HALF_PI )
   {
     angles[3]-=PI;
-  } else if (step>0)
+    
+    angles[5]-=PI;
+  } 
+  else if (step>0)
   {
     angles[3]+=PI;
+    angles[5]+=PI;
   }
 
+  angles[4]%=2*PI;
 
-  for (int k=0; k<angles.length; k++)
+  /*for (int k=0; k<angles.length; k++)
   {
     angles[k]%=2*PI;
-  }
+  }*/
 
   {
     angles[4]+=HALF_PI;
@@ -591,14 +596,13 @@ void J4StepDown(double []angles, int step)
       angles[4]=2*PI+angles[4];
     }
 
-    angles[5]+=PI;
-
-    if (angles[5]>PI )
+    double J46_sum=angles[3]-angles[5];
+    if (J46_sum>PI )
     {
-      angles[5]=angles[5]-2*PI;
-    } else if (angles[5]<-PI )
+      angles[5]+=2*PI;
+    } else if (J46_sum<-PI )
     {
-      angles[5]=angles[5]+2*PI;
+      angles[5]-=2*PI;
     }
   }
 }
@@ -662,14 +666,6 @@ void RK(ascreen_info []asc_arr) {
     //if (i==2 || i==3)println(pose[2]);  
     
     double[] angles =kinma.inverse(flangePose);
-    drawRobotWorld(angles,HRs[i].RK_ColliError);
-
-    if(HRs[i].RK_ColliError.get())
-    {
-      fatalError=true;
-      HRs[i].RK_ColliError.set(true);
-    }
-    
 
     {
       double []P_angles = asc_arr[i].getAngles();
@@ -733,7 +729,7 @@ void RK(ascreen_info []asc_arr) {
       double DIFF4 = (angles[3]-P_angles[3])*180/PI;
       
       
-      double DIFF6 = (angles[5]-P_angles[5]);
+      /*double DIFF6 = (angles[5]-P_angles[5]);
       
       if(DIFF6>PI)
       {
@@ -742,13 +738,22 @@ void RK(ascreen_info []asc_arr) {
       else if(DIFF6<-PI)
       {
         angles[5]+=TWO_PI;
-      }
+      }*/
       
       if (Math.abs(maxDiff)<Math.abs(DIFF4))
       {
         maxDiff = DIFF4;
       }
 
+
+      drawRobotWorld(asc_arr[i].getSimAngles(),HRs[i].RK_ColliError);
+  
+      if(HRs[i].RK_ColliError.get())
+      {
+        fatalError=true;
+        HRs[i].RK_ColliError.set(true);
+      }
+    
 
       //if (i==0)println("angles:"+angles[0]+","+angles[1]+","+angles[2]+","+angles[3]+","+angles[4]+","+angles[5]);
       //if (i==0)println("angles:"+angles[5]*180/PI+" P_angles:"+P_angles[5]*180/PI);
