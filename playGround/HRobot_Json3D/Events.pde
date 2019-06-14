@@ -88,7 +88,7 @@ void keyPressed() {
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
       HRs[i].RM=RunMODE.HOME;
     }
-    sendX(clearAllASCII(json.toString()+"\n") );
+    //sendX(clearAllASCII(json.toString()+"\n") );
     exec("/usr/bin/say", "Robot 全部 回家");
 
     break;
