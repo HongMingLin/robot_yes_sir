@@ -265,12 +265,14 @@ class ascreen_info
   
   double []AX;
   
+  double []simAngles;
   PVector pos_in_world=new PVector();
   ascreen_info(int idx_x,int idx_y,PVector pos_in_world)
   {
     idx_on_video.x = idx_x;
     idx_on_video.y = idx_y;
     AX=new double[6];
+    simAngles=new double[6];
     this.pos_in_world.set(pos_in_world);
   }
   
@@ -324,11 +326,17 @@ class ascreen_info
   }
 
   
+  final double[] getSimAngles()
+  {
+    return simAngles;
+  }
+  
   final void setAngles(double []angles)
   {
     for(int i=0;i<angles.length;i++)
     {
       AX[i]=angles[i];
+      simAngles[i]+=(AX[i]-simAngles[i])*0.05;
     }
   }
   int setRGBInfo(PVector R,PVector G,PVector B)
