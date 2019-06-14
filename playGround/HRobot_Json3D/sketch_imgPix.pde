@@ -591,18 +591,23 @@ void J4StepDown(double []angles, int step)
     if (angles[4]>HALF_PI )
     {
       angles[4]=2*PI-angles[4];
-    } else if (angles[4]<-HALF_PI )
+    } 
+    else if (angles[4]<-HALF_PI )
     {
       angles[4]=2*PI+angles[4];
     }
 
-    double J46_sum=angles[3]-angles[5];
-    if (J46_sum>PI )
-    {
-      angles[5]+=2*PI;
-    } else if (J46_sum<-PI )
-    {
-      angles[5]-=2*PI;
+    float J46_sum=(float)(angles[3]+angles[5]);
+    while(abs(J46_sum)>PI)
+    { 
+      J46_sum=(float)(angles[5]-angles[3]);
+      if (J46_sum>PI )
+      {
+        angles[5]-=2*PI;
+      } else if (J46_sum<-PI )
+      {
+        angles[5]+=2*PI;
+      }
     }
   }
 }
@@ -670,6 +675,23 @@ void RK(ascreen_info []asc_arr) {
     {
       double []P_angles = asc_arr[i].getAngles();
 
+      if(false)
+      {
+        double DIFF6 = (angles[5]-P_angles[5]);
+        while(abs((float)DIFF6)>PI)
+        { 
+          DIFF6 = (angles[5]-P_angles[5]);
+          if(DIFF6>PI)
+          {
+            angles[5]-=TWO_PI;
+          }
+          else if(DIFF6<-PI)
+          {
+            angles[5]+=TWO_PI;
+          }
+        }
+      }
+      
       double P_angle3 = P_angles[3];
       
       double pDIFF4 = (angles[3]-P_angle3)*180/PI;
@@ -694,7 +716,7 @@ void RK(ascreen_info []asc_arr) {
 
 
 
-      if(abs((float)angles[4]-HALF_PI)<2*PI/180)//The joint5 closes to straight (+-2degree)
+      if(abs((float)angles[4]-HALF_PI)<5*PI/180)//The joint5 closes to straight (+-2degree)
       {//Flip joint4 to be straight HIWIN logo in natural position
         if (angles[3]>HALF_PI)
         {
@@ -729,17 +751,6 @@ void RK(ascreen_info []asc_arr) {
       double DIFF4 = (angles[3]-P_angles[3])*180/PI;
       
       
-      /*double DIFF6 = (angles[5]-P_angles[5]);
-      
-      if(DIFF6>PI)
-      {
-        angles[5]-=TWO_PI;
-      }
-      else if(DIFF6<-PI)
-      {
-        angles[5]+=TWO_PI;
-      }*/
-      
       if (Math.abs(maxDiff)<Math.abs(DIFF4))
       {
         maxDiff = DIFF4;
@@ -767,10 +778,10 @@ void RK(ascreen_info []asc_arr) {
         float ratio = abs(round((float)(angV/jointAngularV[k]*10000))/10000f);
         //print("["+k+"]"+ratio+" ");
         if (ratio>1){
-          println("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
+          //println("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
           if(ratio*100>200)
           {
-            println("*****SUPER OVERLOAD*****");
+            //println("*****SUPER OVERLOAD*****");
             HRs[i].RK_fatalError=true;
             fatalError=true;
           }
