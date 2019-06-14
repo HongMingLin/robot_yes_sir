@@ -597,14 +597,14 @@ void J4StepDown(double []angles, int step)
       angles[4]=2*PI+angles[4];
     }
 
-    float J46_sum=(float)(angles[3]+angles[5]);
-    while(abs(J46_sum)>PI)
+    float J46_sum=(float)(angles[3]-angles[5]);
+    while(abs(J46_sum)>PI*3/2)
     { 
       J46_sum=(float)(angles[5]-angles[3]);
-      if (J46_sum>PI )
+      if (J46_sum>PI*3/2 )
       {
         angles[5]-=2*PI;
-      } else if (J46_sum<-PI )
+      } else if (J46_sum<-PI*3/2 )
       {
         angles[5]+=2*PI;
       }
@@ -672,10 +672,12 @@ void RK(ascreen_info []asc_arr) {
     
     double[] angles =kinma.inverse(flangePose);
 
+
+
     {
       double []P_angles = asc_arr[i].getAngles();
 
-      if(false)
+      if(true)
       {
         double DIFF6 = (angles[5]-P_angles[5]);
         while(abs((float)DIFF6)>PI)
@@ -694,7 +696,20 @@ void RK(ascreen_info []asc_arr) {
       
       double P_angle3 = P_angles[3];
       
-      double pDIFF4 = (angles[3]-P_angle3)*180/PI;
+      double pDIFF4 = (angles[3]-P_angle3);
+      
+      if(pDIFF4>PI)
+      {
+        angles[3]-=2*PI;
+      }
+      else if(pDIFF4<-PI)
+      {
+        angles[3]+=2*PI;
+      }
+      println(angles[3]+">"+angles[5]);
+      
+      
+      
       boolean needFix=true;
       double angle3_zero_tendency=20;//if the 
       while(needFix)
@@ -716,7 +731,7 @@ void RK(ascreen_info []asc_arr) {
 
 
 
-      if(abs((float)angles[4]-HALF_PI)<5*PI/180)//The joint5 closes to straight (+-2degree)
+      if(abs((float)angles[4]-HALF_PI)<30*PI/180)//The joint5 closes to straight (+-2degree)
       {//Flip joint4 to be straight HIWIN logo in natural position
         if (angles[3]>HALF_PI)
         {
