@@ -128,6 +128,8 @@ PMatrix CameraMat;
 Kinematics kinma;
 
 void setupJson() {
+  inJson= new JSONObject();
+  inJson.setString("HB", "FG");
   json = new JSONObject();
   //jsonHUD = new JSONObject();
   R12JsonArray= new JSONArray();

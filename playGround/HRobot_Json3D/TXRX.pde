@@ -9,13 +9,13 @@ void receive(byte[] bb, String ip, int port) {
   //println("RX="+inJstr);
   switch(port) {
   case 9999:
-  if (RX_OFFLINE){
+    if (RX_OFFLINE) {
       exec("/usr/bin/say", "HI WIN Robot Boss Online");
       RX_OFFLINE=false;
-  }
-  RXLED=!RXLED;
-  RX_OFFLINE=false;
-  RX_LOST_COUNT=0;
+    }
+    RXLED=!RXLED;
+    RX_OFFLINE=false;
+    RX_LOST_COUNT=0;
     try {
       inJson = parseJSONObject(inJstr);
       if (json == null) {
@@ -24,14 +24,13 @@ void receive(byte[] bb, String ip, int port) {
         println("[O]ParseJsonOK");
         System.out.println(logHeader()+inJson );
         JSONArray inJArr=inJson.getJSONArray(JSONKEYWORD.Robots);
-        if(inJArr.size()==12){
-          for(int i=0;i<12;i++){
+        if (inJArr.size()==12) {
+          for (int i=0; i<12; i++) {
             HRs[i].MotStatus=inJArr.getJSONObject(i).getString("MotStatus");
           }
-        }else{
+        } else {
           println("[inJ]Len!=12");
-        }        
-        
+        }
       }
     }
     catch(Exception e) {
@@ -45,16 +44,35 @@ void receive(byte[] bb, String ip, int port) {
 }
 void send2robot12() {
   TXLED=!TXLED;
-  if(second()%5==0)
+  if (second()%5==0)
     println(logHeader()+"[TX]= "+outJ);
   json.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
   outJ=clearAllASCII(json.toString());
   sendX(outJ+"\n");
-
 }
 void sendX(String s) {
   u.send(s, R_IP, R_PORT);
 }
+void wsSend(String s) {
+  String ss="asdf";
+  if (wsc!=null) {
+    wsc.sendMessage(s);
+  } else {
+    println("ws ==null");
+    initWS();
+    println("init ws..OK");
+  }
+}
 String logHeader() {
   return "["+new SimpleDateFormat(pattern).format( new Date() )+"]";
+}
+void initWS() {
+  try {
+    println("ws1");
+    wsc= new WebsocketClient(this, "ws://hrobot.decade.tw:8888/flora");
+    println("ws2");
+  }
+  catch(Exception e) {
+    println("ws3");
+  }
 }

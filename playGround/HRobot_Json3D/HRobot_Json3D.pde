@@ -6,6 +6,9 @@ import processing.video.*;
 import java.lang.Math.*;
 import codeanticode.syphon.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import websockets.*;
+
+WebsocketClient wsc;
 PGraphics canvas;
 SyphonClient client;
 
@@ -47,7 +50,7 @@ int appH=700;
 int appW=1000;
 UDP u, u2;
 boolean REALTIME=false;
-String outJ="", inJstr="NotYet";
+String outJ="{}", inJstr="NotYet";
 HRobot[] HRs; 
 WHICHROBOT WR=WHICHROBOT.R2F1;
 int whichRobot=WR.ID();
@@ -76,6 +79,7 @@ void setup() {
   catch(Exception e) {
     println(e);
   }
+  
     canvas= createGraphics(300, 300);
   fakeGraphics(canvas);
   client = new SyphonClient(this);
@@ -91,6 +95,7 @@ void setup() {
   //cam.setRotations(0,0, 0.258);
   //cam.setRotations(0, 0.939, 0);
   //cam.lookAt(-124.9, 20.8, 62.6, 837, 2000);
+  
   u = new UDP( this, 1313 );
   u.log( false );
   u.listen( true );
@@ -112,10 +117,14 @@ void setup() {
 
   TX_TIMER.scheduleAtFixedRate(t33, 0, TX_mS);
   new java.util.Timer().scheduleAtFixedRate(statusTimer500, 1000, 500);
+  new java.util.Timer().scheduleAtFixedRate(statusTimer999, 1000, 999);
   exec("/usr/bin/say", "Robot God online");
 
 
   setup2();
+  
+  
+
 }
 
 void draw() {
