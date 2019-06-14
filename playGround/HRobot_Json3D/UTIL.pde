@@ -55,6 +55,60 @@ boolean isB(PVector hsv,float range)
   return offset_hue<range && offset_hue>-range;
 }
 
+int GridEdgeDirtyCount(PImage img, int cw, int ch)
+{
+  if(cw<0 || ch<0)
+  {
+    return 1000000;
+  }
+  PVector RGB_HSV_Vec=new PVector();
+  int dirtyCount=0;
+  for(int i=0;i<img.height;i++)
+  {
+    int offset = i*img.width;
+    for(int j=cw;j<img.width-cw+5;j+=cw)
+    {
+      color c = img.pixels[offset+j];
+      RGB_HSV_Vec.set((c&0xFF0000)>>16,(c&0xFF00)>>8,c&0xFF);
+      
+      //if(RGB_HSV_Vec.x+RGB_HSV_Vec.y+RGB_HSV_Vec.z<100)continue; 
+      RGBtoHSV( RGB_HSV_Vec ,RGB_HSV_Vec );
+      //if(RGB_HSV_Vec.y<0.1)continue;
+      int V_thres=200;
+      if(RGB_HSV_Vec.z<V_thres)continue;
+      float range=30;
+      float alpha = (RGB_HSV_Vec.z-V_thres)/(255-V_thres);
+      if(isR(RGB_HSV_Vec,range)||isG(RGB_HSV_Vec,range)||isB(RGB_HSV_Vec,range))
+      {
+        dirtyCount++;
+      }
+    }
+  }
+  
+  for(int i=ch;i<img.height-ch+5;i+=ch)
+  {
+    int offset = i*img.width;
+    for(int j=0;j<img.width;j+=1)
+    {
+      color c = img.pixels[offset+j];
+      RGB_HSV_Vec.set((c&0xFF0000)>>16,(c&0xFF00)>>8,c&0xFF);
+      
+      //if(RGB_HSV_Vec.x+RGB_HSV_Vec.y+RGB_HSV_Vec.z<100)continue; 
+      RGBtoHSV( RGB_HSV_Vec ,RGB_HSV_Vec );
+      //if(RGB_HSV_Vec.y<0.1)continue;
+      int V_thres=200;
+      if(RGB_HSV_Vec.z<V_thres)continue;
+      float range=30;
+      float alpha = (RGB_HSV_Vec.z-V_thres)/(255-V_thres);
+      if(isR(RGB_HSV_Vec,range)||isG(RGB_HSV_Vec,range)||isB(RGB_HSV_Vec,range))
+      {
+        dirtyCount++;
+      }
+    }
+  }
+  
+  return dirtyCount;
+}
 int FindRGBLocation_(PImage img,int x,int y,int w,int h,PVector ret_RPos,PVector ret_GPos,PVector ret_BPos)
 {
   if(x<0 || y<0 || w<0 || h<0 || x+w>img.width|| y+h>img.height)

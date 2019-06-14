@@ -518,8 +518,23 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
   int SectH=myImage.height/YSectNum;
 
   textAlign(CENTER, CENTER);
-
-
+  
+  int gridDirtyCount = GridEdgeDirtyCount(myImage, SectW, SectH);
+  println("gridDirtyCount:"+gridDirtyCount);
+  if(gridDirtyCount>5)
+  {
+    //R.set(Float.NaN,Float.NaN,Float.NaN);
+    //R.set(Float.NaN,Float.NaN,Float.NaN);
+    //R.set(Float.NaN,Float.NaN,Float.NaN);
+    for (int i=0; i<asc_arr.length; i++)
+    {
+      
+      asc_arr[i].setRGBInfo( R, R, R);
+    }
+    return;
+  }
+  
+  
   for (int i=0; i<asc_arr.length; i++)
   {
     int idx_x=(int)asc_arr[i].getIdx().x;
@@ -706,7 +721,6 @@ void RK(ascreen_info []asc_arr) {
       {
         angles[3]+=2*PI;
       }
-      println(angles[3]+">"+angles[5]);
       
       
       
