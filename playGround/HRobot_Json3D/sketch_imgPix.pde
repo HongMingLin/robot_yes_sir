@@ -342,13 +342,12 @@ boolean CollisionDetection(Vector<PVector> obj1_v, Vector<PVector> obj2_v, Vecto
     CollisionDetection(obj2_v, obj3_v);
 }
 //import java.util.concurrent.atomic.AtomicBoolean;
-double[] drawRobotWorld(double[] pose,AtomicBoolean isCollided)
+double[] drawRobotWorld(double[] angles,AtomicBoolean isCollided)
 {
   //isCollided.setValue(false);
   obj1v.clear();
   obj2v.clear();
   obj3v.clear();
-  double[] angles =kinma.inverse(pose);
   //angles =new double[]{0,0,0,0,HALF_PI,0};
 
   double[][] calcPose = kinma.forward(angles);
@@ -662,7 +661,8 @@ void RK(ascreen_info []asc_arr) {
 
     //if (i==2 || i==3)println(pose[2]);  
     
-    double[] angles=drawRobotWorld(flangePose,HRs[i].RK_ColliError);
+    double[] angles =kinma.inverse(flangePose);
+    drawRobotWorld(angles,HRs[i].RK_ColliError);
 
     if(HRs[i].RK_ColliError.get())
     {
@@ -672,19 +672,45 @@ void RK(ascreen_info []asc_arr) {
     
 
     {
-      boolean overAngle=false;
       double []P_angles = asc_arr[i].getAngles();
 
       double P_angle3 = P_angles[3];
-
-      double pDIFF4 = (angles[3]-P_angles[3])*180/PI;
-      if (angles[3]-P_angle3>HALF_PI )
+      
+      double pDIFF4 = (angles[3]-P_angle3)*180/PI;
+      boolean needFix=true;
+      double angle3_zero_tendency=20;//if the 
+      while(needFix)
       {
-        J4StepDown(angles, -1);
-      } else if (angles[3]-P_angle3<-HALF_PI )
-      {
-        J4StepDown(angles, 1);
+        needFix=false;
+        
+        if (angles[3]-P_angle3>HALF_PI )//Check PI/2 diff
+        {
+          J4StepDown(angles, -1);
+          needFix=true;
+        } 
+        else if (angles[3]-P_angle3<-HALF_PI )
+        {
+          J4StepDown(angles, 1);
+          needFix=true;
+        }
+        
       }
+
+
+
+      if(abs((float)angles[4]-HALF_PI)<2*PI/180)//The joint5 closes to straight (+-2degree)
+      {//Flip joint4 to be straight HIWIN logo in natural position
+        if (angles[3]>HALF_PI)
+        {
+          J4StepDown(angles, -1);
+        }
+        else if(angles[3]<-HALF_PI)
+        {
+          J4StepDown(angles, 1);
+        }
+        
+      }
+
 
       if (angles[3]>PI)
       {
@@ -693,7 +719,8 @@ void RK(ascreen_info []asc_arr) {
         println("......Turn over-!!!");
         fatalError=true;
         HRs[i].RK_fatalError=true;
-      } else if (angles[3]<-PI)
+      } 
+      else if (angles[3]<-PI)
       {
         J4StepDown(angles, 1);
         //J4StepDown(angles, 1);
