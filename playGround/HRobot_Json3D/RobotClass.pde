@@ -65,6 +65,7 @@ enum RunMODE {
 }
 
 class HRobot {
+  String MotStatus="";
   boolean RK_fatalError=false;
   AtomicBoolean RK_ColliError=new AtomicBoolean(false);
   //PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);

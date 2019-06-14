@@ -7,13 +7,23 @@ void receive(byte[] bb, String ip, int port) {
   //println("RX="+inJstr);
   switch(port) {
   case 9999:  
+  RXLED=!RXLED;
     try {
       inJson = parseJSONObject(inJstr);
       if (json == null) {
         //println("[X]ParseJsonFail");
       } else {
-        //println("[O]ParseJsonOK");
-        //System.out.println(logHeader()+inJson );
+        println("[O]ParseJsonOK");
+        System.out.println(logHeader()+inJson );
+        JSONArray inJArr=inJson.getJSONArray(JSONKEYWORD.Robots);
+        if(inJArr.size()==12){
+          for(int i=0;i<12;i++){
+            HRs[i].MotStatus=inJArr.getJSONObject(i).getString("MotStatus");
+          }
+        }else{
+          println("[inJ]Len!=12");
+        }        
+        
       }
     }
     catch(Exception e) {
@@ -81,7 +91,8 @@ void send2robot12() {
   //println(logHeader()+outJ);
   //u.send(printBB("TX",outJ),R_IP,R_PORT);
   TXLED=!TXLED;
-  
+  if(second()%5==0)
+  println("[TX]= "+outJ);
   sendX(outJ+"\n");
 
 }

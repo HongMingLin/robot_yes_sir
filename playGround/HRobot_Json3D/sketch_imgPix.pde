@@ -134,7 +134,7 @@ void setupJson() {
   for (int i = 0; i < 12; i++) {
     R1Json= new JSONObject();
     R1Json.setString(JSONKEYWORD.ID, (i+1)+"");
-    R1Json.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
+    R1Json.setString(JSONKEYWORD.CMD, JSONKEYWORD.PASS);
     R1Json.setString("A1", "0");
     R1Json.setString("A2", "0");
     R1Json.setString("A3", "0");
@@ -176,7 +176,7 @@ void setup2() {
   cam.setWheelScale(0.1);
   //cam.lookAt(0, 0, 0,1600,0);
   myMovie = new Movie(this, "0.mp4");
-  //hint(DISABLE_DEPTH_TEST); 
+  //hint(DISABLE_DEPTH_TEST);
 
   myMovie.loop();
   ascArr=new ascreen_info[12];

@@ -60,9 +60,9 @@ void beginHUD() {
     s1+=(HRs[i].RK_fatalError?"NG":"OK");
     fill(255,255,0,128);
     text(", Colli=", 5 + 1 + textWidth(s1), tY );
-    
-    s1+=", Colli=";
-    
+    s1+=", Colli= ";
+    fill(255);
+    text(", MotStatus="+HRs[i].MotStatus, 5 + 1 + textWidth(s1), tY );
     
     fill((HRs[i].RK_ColliError.get()?255:0),(HRs[i].RK_ColliError.get()?0:255),0);
     text((HRs[i].RK_ColliError.get()?"Y":"N"), 5 + 1 + textWidth(s1), tY );
