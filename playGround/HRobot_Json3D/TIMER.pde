@@ -6,15 +6,17 @@ class statusTimer33 extends java.util.TimerTask {
     }
   }
 }
+
 java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
-
   public void run() {
-    //println(outJ);
-    //u.send("asdf"+logHeader(),"127.0.0.1",1212);
-    //println("[TX]");
-        u2.send("{\"CMD\":\"AllStatus\"}\n","10.10.10.88",9999);
-        //u2.send("{\"CMD\":\"giveMeFive\"}\n","10.10.10.88",9999);
-        
-
+    u2.send("{\"CMD\":\"AllStatus\"}\n", "10.10.10.88", 9999);
+    
+    if (RX_LOST_COUNT==3&&!RX_OFFLINE){
+      exec("/usr/bin/say", "Robot Boss Offline");
+      RX_OFFLINE=true;
+    }
+    RX_LOST_COUNT++;
+    
+    
   }
 };

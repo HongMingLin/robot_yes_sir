@@ -63,7 +63,11 @@ enum RunMODE {
     return vals[(now) % vals.length];
   }
 }
-
+enum RunCMD {
+  STOP, HOME,MOVIE,XYZ_50CM_1Sec, XYZ_CIRCLE, ABC_CIRCLE, M_MOUSE_XYZ,M_MOUSE_ABC;
+  
+  
+}
 class HRobot {
   String MotStatus="";
   boolean RK_fatalError=false;

@@ -111,8 +111,8 @@ void setup() {
   cam.setDistance(1908, 6000);
 
   TX_TIMER.scheduleAtFixedRate(t33, 0, TX_mS);
-  new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 500);
-  exec("/usr/bin/say", "HI WIN Robot online");
+  new java.util.Timer().scheduleAtFixedRate(statusTimer500, 1000, 500);
+  exec("/usr/bin/say", "Robot God online");
 
 
   setup2();

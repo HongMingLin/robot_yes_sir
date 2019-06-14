@@ -106,19 +106,19 @@ void showRobotStatusHUD(){
   };
   
   //HRs[0].Aligned
-  text(HRs[0].RM+"",10,225);
-  text(HRs[4].RM+"",10,290);
-  text(HRs[8].RM+"",10,360);
+  text(HRs[0].RM+"",10,205);
+  text(HRs[4].RM+"",10,280);
+  text(HRs[8].RM+"",10,350);
   
-  text(HRs[1].RM+"",85,225);
-  text(HRs[5].RM+"",85,290);
-  text(HRs[9].RM+"",85,360);
+  text(HRs[1].RM+"",85,205);
+  text(HRs[5].RM+"",85,280);
+  text(HRs[9].RM+"",85,350);
   
-  text(HRs[2].RM+"",160,225);
-  text(HRs[6].RM+"",160,290);
-  text(HRs[10].RM+"",160,360);
+  text(HRs[2].RM+"",160,205);
+  text(HRs[6].RM+"",160,280);
+  text(HRs[10].RM+"",160,350);
   
-  text(HRs[3].RM+"",230,225);
-  text(HRs[7].RM+"",230,290);
-  text(HRs[11].RM+"",230,360);
+  text(HRs[3].RM+"",230,205);
+  text(HRs[7].RM+"",230,280);
+  text(HRs[11].RM+"",230,350);
 }

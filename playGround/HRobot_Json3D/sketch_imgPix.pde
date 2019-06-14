@@ -520,7 +520,7 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
   textAlign(CENTER, CENTER);
   
   int gridDirtyCount = GridEdgeDirtyCount(myImage, SectW, SectH);
-  println("gridDirtyCount:"+gridDirtyCount);
+  //println("gridDirtyCount:"+gridDirtyCount);
   if(gridDirtyCount>5)
   {
     //R.set(Float.NaN,Float.NaN,Float.NaN);
@@ -859,8 +859,8 @@ void RK(ascreen_info []asc_arr) {
     popMatrix();
   }
 
-  json.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
-  outJ=clearAllASCII(json.toString());
+  //json.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
+  //outJ=clearAllASCII(json.toString());
 
 
   //println(outJ.length()+"=>"+outJ);
