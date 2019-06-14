@@ -22,7 +22,6 @@ void keyPressed() {
       videoExport.endMovie();
       videoExport=null;
       
-    videoExport=null;
     }
     recording = !recording;
     println("Recording is " + (recording ? "RECing" : "PAUSE"));
