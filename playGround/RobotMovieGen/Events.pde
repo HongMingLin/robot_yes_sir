@@ -10,21 +10,21 @@ void keyPressed() {
     ALLMODE=ALLMODE.next();
     break;
   case 'R':
-    if (videoExport==null&&recording==false) {
+    if (videoExport==null) {
       videoFilename=SDF.format(new java.util.Date())+".mp4";
       videoExport = new VideoExport(this, videoFilename);
       videoExport.startMovie();
-      recording = true;
+      //recording = true;
       println("videoFilename="+videoFilename);
-      println("Recording is " + (recording ? "RECing" : "PAUSE"));
+      
     } else {
-      recording=false;
+      //recording=false;
       videoExport.endMovie();
       videoExport=null;
       
     }
-    recording = !recording;
-    println("Recording is " + (recording ? "RECing" : "PAUSE"));
+    //recording = !recording;
+    println("Recording is " + (videoExport!=null ? "RECing" : "PAUSE"));
     break;
   case 'q':
     

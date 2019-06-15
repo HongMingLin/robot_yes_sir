@@ -1,7 +1,7 @@
 import com.hamoid.*;
 import codeanticode.syphon.*;
 import java.text.SimpleDateFormat;
-boolean recording = false;
+//boolean recording = false;
 String videoFilename;
 SimpleDateFormat SDF= new SimpleDateFormat("MMdd_HHmmss.S");
 PGraphics canvas;
@@ -61,7 +61,7 @@ void draw() {
     redDots[i].drawx();
   }
   popMatrix();
-  if (recording&&videoExport!=null) {
+  if (videoExport!=null) {
     videoExport.saveFrame();
   }
 
