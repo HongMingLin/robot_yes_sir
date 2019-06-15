@@ -111,6 +111,16 @@ void effect() {
         (mouseY/movieSize.y));
     }
     break;
+  case CIRCLE_RED:
+  for (int i=0; i<redDots.length; i++) {
+      redDots[i].setXY(
+        (1+sin(millis()*TWO_PI/6000.0))/2, 
+        (1+cos(millis()*TWO_PI/6000.0))/2);
+        gbBoxs[i].setXY(
+        (mouseX/movieSize.x), 
+        (mouseY/movieSize.y));
+    }
+    break;
   case CIRCLE_XY:
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(

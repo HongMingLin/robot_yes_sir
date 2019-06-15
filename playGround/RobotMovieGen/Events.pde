@@ -3,6 +3,15 @@ void mouseWheel(MouseEvent event) {
   for (int i=0; i<gbBoxs.length; i++)
     gbBoxs[i].handleMouseEvent(event);
 }
+void mousePressed() {
+  if (mouseButton == LEFT) {
+    
+  } else if (mouseButton == RIGHT) {
+    ALLMODE=ALLMODE.next();
+  } else {
+    
+  }
+}
 void keyPressed() {
   switch(key) {
   case 'M':

@@ -15,10 +15,14 @@ class GBbox {
     switch(ALLMODE) {
     case SCALE:
       scale+= e.getCount()*0.001;
-    if (scale<0.4)scale=0.4;
-    if (scale>2)scale=2;
+    if (scale<0.5)scale=0.5;
+    if (scale>1.5)scale=1.5;
       break;
     case ROTATE:
+    case CIRCLE_RED:
+    case MOUSE_GB:
+    case MOUSE_RED:
+    case CIRCLE_XY:
      rotate+= e.getCount()*0.001;
     if (rotate<-HALF_PI)rotate=-HALF_PI;
     if (rotate>HALF_PI)rotate=HALF_PI;
@@ -71,8 +75,10 @@ class GBbox {
     translate(windowSize.x/2, windowSize.y/2);
     translate(nowXY.x, nowXY.y);
     fill(255);
-    
+    translate(boxSize.x/2, boxSize.y/2);
     rotate(rotate);
+    scale(scale);
+    translate(-boxSize.x/2,- boxSize.y/2);
     rectMode(CORNER);
     fill(0, 0, 255);
     scale(scale);
