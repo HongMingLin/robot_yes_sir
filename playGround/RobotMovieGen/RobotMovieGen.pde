@@ -1,3 +1,4 @@
+import processing.video.*;
 import com.hamoid.*;
 import codeanticode.syphon.*;
 import java.text.SimpleDateFormat;
@@ -10,7 +11,7 @@ VideoExport videoExport;
 MODE ALLMODE=MODE.QLAB;
 //PVector SCALE_MOVIE=new PVector(0.5, 0.5);
 PVector movieSize=new PVector(640, 480);
-
+Movie myMovie;
 PVector robotArray=new PVector(4, 3);
 PVector windowSize=new PVector(260, 274);
 PVector ledSize=new PVector(100, 100);
@@ -23,6 +24,9 @@ PVector SCALE_MOVIE=new PVector(movieSize.x/(windowSize.x*robotArray.x), movieSi
 
 GBbox[] gbBoxs;//=new gbBoxs[robotArray.x*robotArray.y];
 RedDot[] redDots;
+void movieEvent(Movie m) {
+  m.read();
+}
 void settings() {
   size((int)movieSize.x, (int)movieSize.y, P2D);
 }
@@ -39,18 +43,11 @@ void setup() {
   for (int i=0; i<gbBoxs.length; i++)
     gbBoxs[i]=new GBbox(i, new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), SCALE_MOVIE);
 
-
-
+  myMovie = new Movie(this, "/Users/xlinx/Downloads/手臂測試影片/Test 11-1.mp4");
+myMovie.loop();
   server = new SyphonServer(this, "RobotSyphon");
 }
-
-void draw() {
-  background(0);
-  drawBlock();
-
-
-  //server.sendImage(get());
-  server.sendScreen();  
+void notMovie() {
   pushMatrix();
   scale(SCALE_MOVIE.x, SCALE_MOVIE.y);
   effect();
@@ -61,6 +58,25 @@ void draw() {
     redDots[i].drawx();
   }
   popMatrix();
+}
+void draw() {
+  background(0);
+  drawBlock();
+  switch(ALLMODE) {
+
+  case MOVIE:
+    image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+    break;
+  default:
+    notMovie();
+    break;
+  }
+
+  //server.sendImage(get());
+  server.sendScreen();  
+
+
+
   if (videoExport!=null) {
     videoExport.saveFrame();
   }
@@ -77,6 +93,7 @@ void draw() {
 void effect() {
 
   switch(ALLMODE) {
+
   case EYE:
     for (int i=0; i<gbBoxs.length; i++) {
       redDots[i].setXY((mouseX/movieSize.x), (mouseY/movieSize.y));
@@ -102,8 +119,8 @@ void effect() {
         (mouseY/movieSize.y));
     }
     break;
-    case SCALE:
-    case ROTATE:
+  case SCALE:
+  case ROTATE:
   case MOUSE_GB:
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(
@@ -112,11 +129,11 @@ void effect() {
     }
     break;
   case CIRCLE_RED:
-  for (int i=0; i<redDots.length; i++) {
+    for (int i=0; i<redDots.length; i++) {
       redDots[i].setXY(
         (1+sin(millis()*TWO_PI/6000.0))/2, 
         (1+cos(millis()*TWO_PI/6000.0))/2);
-        gbBoxs[i].setXY(
+      gbBoxs[i].setXY(
         (mouseX/movieSize.x), 
         (mouseY/movieSize.y));
     }
