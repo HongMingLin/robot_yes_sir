@@ -768,6 +768,7 @@ void RK(ascreen_info []asc_arr) {
         println("......Turn over-!!!");
         fatalError=true;
         HRs[i].RK_fatalError=true;
+        //HRs[i].RM=RunMODE.HOME;
       } 
       else if (angles[3]<-PI)
       {
@@ -776,6 +777,7 @@ void RK(ascreen_info []asc_arr) {
         println("......Turn over+!!!");
         fatalError=true;
         HRs[i].RK_fatalError=true;
+        //HRs[i].RM=RunMODE.HOME;
       }
 
 
@@ -792,8 +794,10 @@ void RK(ascreen_info []asc_arr) {
   
       if(HRs[i].RK_ColliError.get())
       {
+        HRs[i].RM=RunMODE.HOME;
         fatalError=true;
         HRs[i].RK_ColliError.set(true);
+        
       }
     
 
@@ -810,9 +814,10 @@ void RK(ascreen_info []asc_arr) {
         //print("["+k+"]"+ratio+" ");
         if (ratio>1){
           //println("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
-          if(ratio*100>200)
+          if(ratio*100>500)
           {
-            //println("*****SUPER OVERLOAD*****");
+            //println("*****SUPER OVERLOAD OVERSPEED*****");
+            //HRs[i].RM=RunMODE.HOME;
             HRs[i].RK_fatalError=true;
             fatalError=true;
           }

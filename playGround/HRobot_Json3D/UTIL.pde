@@ -259,7 +259,7 @@ int FindRGBLocation(PImage img,int x,int y,int w,int h,PVector ret_RPos,PVector 
       //if(RGB_HSV_Vec.y<0.1)continue;
       int V_thres=200;
       if(RGB_HSV_Vec.z<V_thres)continue;
-      float range=30;
+      float range=70;
       float alpha = (RGB_HSV_Vec.z-V_thres)/(255-V_thres);
       if(isR(RGB_HSV_Vec,range))
       {
@@ -267,13 +267,13 @@ int FindRGBLocation(PImage img,int x,int y,int w,int h,PVector ret_RPos,PVector 
         ret_RPos.y+=i*alpha;
         ret_RPos.z+=1*alpha;
       }
-      else if(isG(RGB_HSV_Vec,range))
+      if(isG(RGB_HSV_Vec,range))
       {
         ret_GPos.x+=j*alpha;
         ret_GPos.y+=i*alpha;
         ret_GPos.z+=1*alpha;
       }
-      else if(isB(RGB_HSV_Vec,range))
+      if(isB(RGB_HSV_Vec,range))
       {
         ret_BPos.x+=j*alpha;
         ret_BPos.y+=i*alpha;
