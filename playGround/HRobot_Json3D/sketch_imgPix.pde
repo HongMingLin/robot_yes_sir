@@ -257,7 +257,7 @@ float board_thickness=100;
  
  
  */
-float flange2Board_angle=-60*PI/180;
+float flange2Board_angle=+60*PI/180;
 float flange2BoardCenter_distance=165.583;
 
 
