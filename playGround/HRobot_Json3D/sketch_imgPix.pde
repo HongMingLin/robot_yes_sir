@@ -828,7 +828,17 @@ void RK(ascreen_info []asc_arr) {
       asc_arr[i].setAngles(angles);
     }
 
-
+    float ffff=(float)(angles[4]-PI/2)*180/PI;
+    
+    println("(PI+angles[4])="+ffff+">>"+angles[5]);
+    if( abs(ffff) >120){ //AXIS +- 110
+      if(abs(ffff) >130||abs((float)angles[5])*180/PI>30) // ByHIWIN/Eason. 
+      {
+        STOP_STOP_STOP(i);
+        fatalError=true;
+      }
+    }
+    
     for (int k=0; k<angles.length; k++)
     {
       float angle = (float)angles[k];
