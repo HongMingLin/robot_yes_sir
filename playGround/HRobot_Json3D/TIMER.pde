@@ -20,7 +20,7 @@ java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
 
 
     if (RX_LOST_COUNT==3&&!RX_OFFLINE) {
-      exec("/usr/bin/say", "Robot Boss Offline");
+      exec("/usr/bin/say", "Robot Balls Offline");//Boss
       RX_OFFLINE=true;
     }
     RX_LOST_COUNT++;

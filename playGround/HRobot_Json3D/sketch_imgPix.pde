@@ -4,19 +4,6 @@ import java.lang.Math.*;
 import peasy.*;
 
 Movie myMovie;
-//JSONObject json=new JSONObject();
-//JSONArray R12JsonArray=new JSONArray();
-//JSONObject R1Json;
-//UDP u;
-//String outJ="";
-//String R_IP="10.10.10.88";
-//int R_PORT=6666;
-//java.util.TimerTask statusTimer500 = new java.util.TimerTask() {
-//  public void run() {
-//    u.send(outJ+"\n", R_IP, R_PORT);
-//    //println("[TX]"+outJ);
-//  }
-//};
 
 // Called every time a new frame is available to read
 void movieEvent(Movie m) {
@@ -129,14 +116,14 @@ Kinematics kinma;
 
 void setupJson() {
   inJson= new JSONObject();
-  inJson.setString("HB", "FG");
+  inJson.setString("HB", "RG");
   json = new JSONObject();
   //jsonHUD = new JSONObject();
   R12JsonArray= new JSONArray();
   for (int i = 0; i < 12; i++) {
     R1Json= new JSONObject();
     R1Json.setString(JSONKEYWORD.ID, (i+1)+"");
-    R1Json.setString(JSONKEYWORD.CMD, JSONKEYWORD.PASS);
+    R1Json.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
     R1Json.setString("A1", "0");
     R1Json.setString("A2", "0");
     R1Json.setString("A3", "0");
@@ -690,7 +677,6 @@ void RK(ascreen_info []asc_arr) {
     double[] angles =kinma.inverse(flangePose);
 
 
-
     {
       double []P_angles = asc_arr[i].getAngles();
 
@@ -747,7 +733,7 @@ void RK(ascreen_info []asc_arr) {
 
 
 
-      if(abs((float)angles[4]-HALF_PI)<30*PI/180)//The joint5 closes to straight (+-2degree)
+      if(abs((float)angles[4]-HALF_PI)<30*PI/180)//The joint5 closes to straight (+-30degree)
       {//Flip joint4 to be straight HIWIN logo in natural position
         if (angles[3]>HALF_PI)
         {
@@ -763,6 +749,7 @@ void RK(ascreen_info []asc_arr) {
 
       if (angles[3]>PI)
       {
+        
         J4StepDown(angles, -1);
         //J4StepDown(angles, -1);
         println("......Turn over-!!!");

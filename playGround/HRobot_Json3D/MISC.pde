@@ -1,5 +1,11 @@
+
+JSONObject json;
 JSONArray R12JsonArray;
 JSONObject R1Json;
+void STATUS_MACHINE(){
+
+}
+
 void runCircle() {
   //nowSin=millis()*(TWO_PI/CRICLE_Time);
   PVector tempXYZ=new PVector();
@@ -10,7 +16,6 @@ void runCircle() {
   HRs[whichRobot].setXYZ(tempXYZ);
   
 }
-
 void drawXYZ() {
   stroke(255, 0, 0);
   line(0, 0, 0, Center_XYZLineLen, 0, 0);

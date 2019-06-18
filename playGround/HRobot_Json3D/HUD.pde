@@ -27,17 +27,18 @@ void beginHUD() {
   text("{a s d f} = 3F ", 869, 50);
   text("{z x c v} = 2F ", 869, 60);
   //text("[P] ALL_Mode(ES,STOP,PAUSE,PLAY)="+AM, 5, START_Y);
-  textSize(20);
-  text("[M] 1Robot RunMode@"+whichRobot+"="+HRs[whichRobot].RM, 5, START_Y+=25);
-  textSize(12);
-  text("SafeXYZ=±"
-    +HRs[whichRobot].SAFEx0y0z0.x+" - "+HRs[whichRobot].SAFEx1y1z1.x
-    +HRs[whichRobot].SAFEx0y0z0.y+" - "+HRs[whichRobot].SAFEx1y1z1.y
-    +HRs[whichRobot].SAFEx0y0z0.z+" - "+HRs[whichRobot].SAFEx1y1z1.z
-    , 5, START_Y+=20);
-  HRs[whichRobot].transXYZformat();
-  text("XYZ="+HRs[whichRobot].sX+", "+HRs[whichRobot].sY+", "+HRs[whichRobot].sZ, 5, START_Y+=20);
-  text("ABC="+HRs[whichRobot].ABC.x+", "+HRs[whichRobot].ABC.y+", "+HRs[whichRobot].ABC.z, 5, START_Y+=20);
+  
+  //textSize(20);
+  //text("[M] 1Robot RunMode@"+whichRobot+"="+HRs[whichRobot].RM, 5, START_Y+=25);
+  //textSize(12);
+  //text("SafeXYZ=±"
+  //  +HRs[whichRobot].SAFEx0y0z0.x+" - "+HRs[whichRobot].SAFEx1y1z1.x
+  //  +HRs[whichRobot].SAFEx0y0z0.y+" - "+HRs[whichRobot].SAFEx1y1z1.y
+  //  +HRs[whichRobot].SAFEx0y0z0.z+" - "+HRs[whichRobot].SAFEx1y1z1.z
+  //  , 5, START_Y+=20);
+  //HRs[whichRobot].transXYZformat();
+  //text("XYZ="+HRs[whichRobot].sX+", "+HRs[whichRobot].sY+", "+HRs[whichRobot].sZ, 5, START_Y+=20);
+  //text("ABC="+HRs[whichRobot].ABC.x+", "+HRs[whichRobot].ABC.y+", "+HRs[whichRobot].ABC.z, 5, START_Y+=20);
   fill(255,255,0);
   //println(jsonHUD);
   //text("TX_JSON="+outJ , 5, START_Y+=20);
@@ -52,26 +53,34 @@ void beginHUD() {
 
     String s1 = String.format("%+06.1f %+06.1f %+06.1f %+06.1f %+06.1f %+06.1f "
     ,JJJ.getFloat("A1"),JJJ.getFloat("A2"),JJJ.getFloat("A3"),
-    JJJ.getFloat("A4"),JJJ.getFloat("A5"),JJJ.getFloat("A6"))+" RK-Err=";
+    JJJ.getFloat("A4"),JJJ.getFloat("A5"),JJJ.getFloat("A6"))+" RK=";
     fill(255,255,0,128);
-    text(s1, 5, tY+=15);
+    text(s1, 5, tY+=10);
     fill((HRs[i].RK_fatalError?255:0),(HRs[i].RK_fatalError?0:255),0);
     text((HRs[i].RK_fatalError?"NG":"OK"), 5 + 1 + textWidth(s1), tY );
     s1+=(HRs[i].RK_fatalError?"NG":"OK");
     fill(255,255,0,128);
-    text(", Colli=", 5 + 1 + textWidth(s1), tY );
-    s1+=", Colli= ";
-    fill(255);
-    text(", MotStatus="+HRs[i].MotStatus, 5 + 1 + textWidth(s1), tY );
-    
+    text(" CD=", 5 + 1 + textWidth(s1), tY );
+    s1+=" CD=";
     fill((HRs[i].RK_ColliError.get()?255:0),(HRs[i].RK_ColliError.get()?0:255),0);
     text((HRs[i].RK_ColliError.get()?"Y":"N"), 5 + 1 + textWidth(s1), tY );
+    s1+=(HRs[i].RK_ColliError.get()?"Y":"N");
     
+    fill(255);
+    text("=", 5 + 1 + textWidth(s1), tY );
+    s1+="=";
+    fill((HRs[i].ALL_PATH_OK?0:255),(HRs[i].ALL_PATH_OK?255:0),0);
+    rect(5 + 1 + textWidth(s1), tY-10,5,10);
+    //text((HRs[i].ALL_PATH_OK?"Y":"N"), 5 + 1 + textWidth(s1), tY );
+    
+    
+    fill(222,222,0);
+    text("RB>"+HRs[i].MotStatus, 5, tY+130 );
      
   }
-  fill(255,255,0);
-  text("TX_JSON="+outJ , 5, START_Y+=16);
-  text("RX_JSON="+inJstr , 5, START_Y+=16);
+  //fill(255,255,0);
+  //text("TX_JSON="+outJ , 5, START_Y+=16);
+  //text("RX_JSON="+inJstr , 5, START_Y+=16);
   
   fill(255);
 
@@ -79,6 +88,7 @@ void beginHUD() {
   strokeWeight(1);
   line(0,appH-20,appW,appH-20);
   text("REALTIME(R)     TX/RX        | TX_mS="+TX_mS, 6, appH-5);
+  //text("ALL_PATH_OK", 6, appH-25);
   fill(REALTIME?0:255, REALTIME?255:0, 0);
   ellipse(88, appH-10, 8, 8);
   
@@ -86,6 +96,11 @@ void beginHUD() {
   ellipse(145, appH-10, 8, 8);
   fill(RXLED?0:255, RXLED?255:0, 0);
   ellipse(155, appH-10, 8, 8);
+  
+  for(int i=0;i<12;i++){
+    
+  }
+  
   drawMovie();
   cp5.draw();
   showRobotStatusHUD();

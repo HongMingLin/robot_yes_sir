@@ -69,6 +69,7 @@ enum RunCMD {
   
 }
 class HRobot {
+  boolean ALL_PATH_OK=true;
   String MotStatus="";
   boolean RK_fatalError=false;
   AtomicBoolean RK_ColliError=new AtomicBoolean(false);

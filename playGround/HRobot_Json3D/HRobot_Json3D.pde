@@ -34,7 +34,7 @@ PVector ROOM=new PVector(ROOM_W_D_H.x*M_SCALE, ROOM_W_D_H.y*M_SCALE, ROOM_W_D_H.
 String R_IP="10.10.10.88";
 int R_PORT=6666;
 int R_PORT2=9999;
-JSONObject json;
+
 //JSONObject jsonHUD;
 int MinD=0;
 int MaxD=(int)ROOM.x*100*M_SCALE;
@@ -46,7 +46,7 @@ PVector windowSize=new PVector(Window_W, Window_D, Window_H);
 float CRICLE_R=1;
 float globalCRICLE_Time=5000.0;
 float globalNowSin=0;
-int appH=700;
+int appH=750;
 int appW=1000;
 UDP u, u2;
 boolean REALTIME=false;
@@ -67,11 +67,11 @@ void fakeGraphics(PGraphics pg){
   
   pg.endDraw();
 }
-void setting() {
-
+void settings() {
+  size(appW, appH, P3D);
 }
 void setup() {
-    size(1000, 800, P3D);
+    
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("HIWIN_LOGO.png");
@@ -139,7 +139,7 @@ void draw() {
   rect(0, 0, 1000, 1000);//green plane
   rectMode(CORNER);
   pushMatrix();
-  translate(0, 0, Window_H*3+100);
+  translate(0, 0, Window_H*6+300);
 
   rotateX(-HALF_PI);
   if (REALTIME)
@@ -190,16 +190,16 @@ void setup_cp5() {
   ButtonBar b = cp5.addButtonBar("bar")
     .setPosition(10, 0)
     .setSize(300, 20)
-    .addItems(split("a b c d e f g h i j k ", " "))
+    .addItems(split("a b c d e f g h i j k l", " "))
     ;
-  println(b.getItem("a"));
+  //println(b.getItem("a"));
   //b.changeItem("a","text","REALTIME "+(REALTIME?"ON":"OFF"));
   //b.changeItem("b","text","ESTOP");
   //b.changeItem("c","text","third");
   b.onMove(new CallbackListener() {
     public void controlEvent(CallbackEvent ev) {
       ButtonBar bar = (ButtonBar)ev.getController();
-      println("hello ", bar.hover());
+      //println("hello ", bar.hover());
     }
   }
   );

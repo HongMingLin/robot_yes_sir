@@ -28,3 +28,6 @@ playGround/HRobot_Json3D/application.windows32
 .idea
 sftp-config.json
 node_modules
+playGround/HRobot_Json3D/application.macosx64
+playGround/RobotMovieGen/application.macosx
+playGround/RobotMovieGen/application.macosx64

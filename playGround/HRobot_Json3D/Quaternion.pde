@@ -307,7 +307,7 @@ public class Quaternion {
                     ret_vec);
         break;
       default:
-        println("Unknown rotation sequence");
+        println("Unknown rotation sequence.");
         break;
      }
   }

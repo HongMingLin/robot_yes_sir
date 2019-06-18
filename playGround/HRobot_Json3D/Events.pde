@@ -1,4 +1,11 @@
 PVector ROBOT_XYZ_Cxyz=new PVector(0, 0, 0);
+void STOP_STOP_STOP(int i){
+  json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
+  HRs[i].ALL_PATH_OK=false;
+  HRs[i].RM=HRs[i].RM.STOP;
+  HRs[i].RK_fatalError=true;
+    
+}
 void mouseWheel(MouseEvent event) {
   //float e = event.getCount();
   HRs[whichRobot].handleMouseEvent(event);
@@ -87,25 +94,13 @@ void keyPressed() {
       jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
       HRs[i].RM=RunMODE.HOME;
+      HRs[i].ALL_PATH_OK=true;
     }
     //sendX(clearAllASCII(json.toString()+"\n") );
     exec("/usr/bin/say", "Robot 全部 回家");
 
     break;
 
-
-  case 'm':
-    //jTemp=null;
-    //for (int i=0; i<12; i++) {
-    //  jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
-    //  jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
-    //  HRs[i].RM=RunMODE.MOVIE;
-    //}
-    //HRs[whichRobot].setCC_XYZ_NOW();
-    //HRs[whichRobot].RM=HRs[whichRobot].RM.next();
-    exec("/usr/bin/say", "Robot All "+HRs[whichRobot].RM);
-
-    break;
   default:
     for (int i=0; i<WHICHROBOT.values().length; i++) {
       WR=WR.next();
