@@ -1,3 +1,4 @@
+import doSendWS from "./wsocket.js";
 function gHTML() {
     var motor700 = "<table class='bulbsTable'>";
     var bulbs = 0;

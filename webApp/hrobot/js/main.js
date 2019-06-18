@@ -4,7 +4,8 @@
 require('../css/style.css');
 
 
-require('./ws.js');
+require('./wsocket.js');
+
 require('./chart.js');
 require('./xlinx.js');
 let cX=require('./main.html');

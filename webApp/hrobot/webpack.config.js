@@ -16,6 +16,11 @@ module.exports = {
     //     ]
     // },
     mode:'production',
+    // output: {
+    //     filename: 'bundle.js',
+    //     publicPath: '/assets/',
+    //     path: path.resolve(__dirname, './wwwroot/assets/'),        
+    // },
     output: {
         path: __dirname + '/dist',
         filename: 'bundle.js'
@@ -25,6 +30,7 @@ module.exports = {
     //     path: __dirname + '/dist'
     // },
     module: {
+        
         rules: [
             // {
             //     test: /\.js$/,
@@ -69,4 +75,5 @@ module.exports = {
                 }]
             }]
     }
+    ,devtool: 'source-map'
 }
