@@ -24,6 +24,7 @@ PVector SCALE_MOVIE=new PVector(movieSize.x/(windowSize.x*robotArray.x), movieSi
 
 GBbox[] gbBoxs;//=new gbBoxs[robotArray.x*robotArray.y];
 RedDot[] redDots;
+int circleTime=10000;
 void movieEvent(Movie m) {
   m.read();
 }
@@ -42,9 +43,22 @@ void setup() {
   gbBoxs=new GBbox[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<gbBoxs.length; i++)
     gbBoxs[i]=new GBbox(i, new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), SCALE_MOVIE);
+  try {
+    ///Users/xlinx/Movies/robotTest/Test 11-1.mp4
+    File mf = new File(System.getProperty("user.dir")+"/Movies/robotTest/Test 11-1.mp4");
+    if (mf.exists())
+    {
+      myMovie = new Movie(this, mf.getAbsolutePath());
+      myMovie.loop();
+    }
+    ///Users/xlinx/Movies/robotTest/Test 3-2.mp4
+  }
+  catch(Exception e) {
+    myMovie=null;
+    e.printStackTrace();
+  }
 
-  myMovie = new Movie(this, "/Users/xlinx/Downloads/手臂測試影片/Test 11-1.mp4");
-myMovie.loop();
+
   server = new SyphonServer(this, "RobotSyphon");
 }
 void notMovie() {
@@ -61,17 +75,19 @@ void notMovie() {
 }
 void draw() {
   background(0);
-  drawBlock();
+
   switch(ALLMODE) {
 
   case MOVIE:
-    image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+    //image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+    if (myMovie!=null)
+      image(myMovie, 0, 0, movieSize.x, movieSize.y);
     break;
   default:
     notMovie();
     break;
   }
-
+  drawBlock();
   //server.sendImage(get());
   server.sendScreen();  
 
@@ -131,8 +147,8 @@ void effect() {
   case CIRCLE_RED:
     for (int i=0; i<redDots.length; i++) {
       redDots[i].setXY(
-        (1+sin(millis()*TWO_PI/6000.0))/2, 
-        (1+cos(millis()*TWO_PI/6000.0))/2);
+        (1+sin(millis()*TWO_PI/circleTime))/2, 
+        (1+cos(millis()*TWO_PI/circleTime))/2);
       gbBoxs[i].setXY(
         (mouseX/movieSize.x), 
         (mouseY/movieSize.y));
@@ -141,8 +157,8 @@ void effect() {
   case CIRCLE_XY:
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(
-        (1+sin(millis()*TWO_PI/6000.0))/2, 
-        (1+cos(millis()*TWO_PI/6000.0))/2);
+        (1+sin(millis()*TWO_PI/circleTime))/2, 
+        (1+cos(millis()*TWO_PI/circleTime))/2);
     }
 
     break;

@@ -14,6 +14,16 @@ void mousePressed() {
 }
 void keyPressed() {
   switch(key) {
+    case '+':
+    circleTime+=500;
+    println("circleTime="+circleTime);
+    break;
+    case '-':
+    if(circleTime>6000)
+    circleTime-=500;
+    
+    println("circleTime="+circleTime);
+    break;
   case 'M':
   case 'm':
     ALLMODE=ALLMODE.next();
