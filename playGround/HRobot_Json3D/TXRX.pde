@@ -1,12 +1,13 @@
-JSONObject inJson;// = parseJSONObject(data);
+
 String pattern  = "MM/dd HH:mm:ss.SSS";
 boolean RXLED2=false;
 int RX_LOST_COUNT=0;
 boolean RX_OFFLINE=true;
 byte logSeq=0;
+String rxStr="";
 void receive(byte[] bb, String ip, int port) {
-  inJstr=new String(bb); 
-  //println("RX="+inJstr);
+  rxStr=new String(bb); 
+  //DEBUG("RX="+inJstr);
   switch(port) {
   case 9999:
     if (RX_OFFLINE) {
@@ -17,50 +18,63 @@ void receive(byte[] bb, String ip, int port) {
     RX_OFFLINE=false;
     RX_LOST_COUNT=0;
     try {
-      inJson = parseJSONObject(inJstr);
-      if (json == null) {
-        println("[X]ParseJsonFail>>>"+inJstr);
+      JSONObject in1Json = parseJSONObject(rxStr);
+      if (in1Json == null) {
+        DEBUG("[X]ParseJsonFail>>>"+rxStr);
       } else {
-        //println("[O]ParseJsonOK");
-
-        JSONArray inJArr=inJson.getJSONArray(JSONKEYWORD.Robots);
+        RXJSONObj=in1Json;
+        RXJSONStr=clearAllASCII(RXJSONObj.toString());
+        JSONArray inJArr=RXJSONObj.getJSONArray(JSONKEYWORD.Robots);
         if (inJArr.size()==12) {
           String LINEStr="";
           for (int i=0; i<12; i++) {
-            LINEStr+=" "+inJArr.getJSONObject(i).getInt("RID");
-            LINEStr+=" "+inJArr.getJSONObject(i).getString("MotStatus");
-            LINEStr+=" "+"OvrSpeed="+inJArr.getJSONObject(i).getInt("OvrSpeed");
-            LINEStr+=" "+"CmdCount="+inJArr.getJSONObject(i).getInt("CmdCount");
-            LINEStr+=" "+"ServoOn="+inJArr.getJSONObject(i).getBoolean("ServoOn");
-            LINEStr+=" "+"SafetyCheckObj="+inJArr.getJSONObject(i).getJSONObject("SafetyCheckObj");
+            int ID=inJArr.getJSONObject(i).getInt("RID")-1;
+            HRs[ID].ackXYZ.x=inJArr.getJSONObject(i).getInt("X");
+            HRs[ID].ackXYZ.y=inJArr.getJSONObject(i).getInt("Y");
+            HRs[ID].ackXYZ.z=inJArr.getJSONObject(i).getInt("Z");
+            HRs[ID].ackABC.x=inJArr.getJSONObject(i).getInt("A");
+            HRs[ID].ackABC.y=inJArr.getJSONObject(i).getInt("B");
+            HRs[ID].ackABC.z=inJArr.getJSONObject(i).getInt("C");
             
-            //LINEStr+=" "+"SafetyCheck="+inJArr.getJSONObject(i).getString("SafetyCheck");
-            LINEStr+=" "+"RbtState="+inJArr.getJSONObject(i).getString("RbtState");
-            LINEStr+=" "+"Level="+inJArr.getJSONObject(i).getString("Level");
-            LINEStr+=" "+"ECode="+inJArr.getJSONObject(i).getString("ECode");
-            
+            isAtHome(i,new PVector(HRs[ID].ackXYZ.x,HRs[ID].ackXYZ.y,HRs[ID].ackXYZ.z)
+            ,new PVector(HRs[ID].ackABC.x,HRs[ID].ackABC.y,HRs[ID].ackABC.z));
+            //HRs[ID].ackINFO[0]=inJArr.getJSONObject(i).getInt("CmdCount");
+            //HRs[ID].ackINFO[1]=inJArr.getJSONObject(i).getString("SafetyCheck");
+            //HRs[ID].ackINFO[2]=inJArr.getJSONObject(i).getString("ECode");
+
+            LINEStr+=" RID="+ID;
+            LINEStr+=" CmdCount="+HRs[ID].ackINFO[0];
+            LINEStr+=" SafetyCheck="+HRs[ID].ackINFO[1];
+            LINEStr+=" ECode="+HRs[ID].ackINFO[2];
+            LINEStr+=" XYZ="+HRs[ID].ackXYZ.x+","+HRs[ID].ackXYZ.y+","+HRs[ID].ackXYZ.z;
+            LINEStr+=" ABC="+HRs[ID].ackABC.x+","+HRs[ID].ackABC.y+","+HRs[ID].ackABC.z;
+
             for (int j=0; j<6; j++) {
-              LINEStr+=" T"+j+"="+json.getString("T"+j);
+              LINEStr+=" T"+j+"="+inJArr.getJSONObject(i).getFloat("T"+(j+1));
             }
-            HRs[i].MotStatus=LINEStr;
           }
-          println("[Line]"+LINEStr);
+          DEBUG("[Line]"+LINEStr);
         } else {
-          println("[inJ]Len!=12");
+          DEBUG("[inJ]Len!=12");
         }
-        
+        if (millis()%5==0) {
+          String msg="[RB]"+RXJSONObj.toString();
+          String cmd="curl -X POST -H 'Authorization: Bearer [1aqZBluKbLlpdzdye5Dit16h2HZN3qTZu5Q9BuYhZfj]' -F 'message="+msg+"' https://notify-api.line.me/api/notify";
+        }
+        DEBUG(RXJSONObj.toString());
       }
     }
     catch(Exception e) {
-      println("[X]ParseJsonError>>>");//+inJstr);
+      DEBUG("[X]ParseJsonError>>>");//+inJstr);
       e.printStackTrace();
     }
     break;
   case 6666:
-    println("[UDP666]"+inJstr);
+    DEBUG("[UDP666]"+rxStr);
     break;
   }
 }
+
 void LINE(JSONObject JO) {
   String LINEStr="";
   JSONArray inJArr=JO.getJSONArray(JSONKEYWORD.Robots);
@@ -78,15 +92,14 @@ void LINE(JSONObject JO) {
       LINEStr+="A"+j+json.getString("A"+j);
     }
   }
-  println(logHeader()+LINEStr );
+  DEBUG(logHeader()+LINEStr );
 }
 void send2robot12() {
   TXLED=!TXLED;
-  if (second()%5==0)
-    println(logHeader()+"[TX]= "+outJ);
-  json.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
-  outJ=clearAllASCII(json.toString());
-  sendX(outJ+"\n");
+
+  //TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
+
+  sendX(TXJSONStr+"\n");
 }
 void sendX(String s) {
   u.send(s, R_IP, R_PORT);
@@ -96,22 +109,21 @@ void wsSend(String s) {
   if (wsc!=null) {
     wsc.sendMessage(s);
   } else {
-    println("ws ==null");
+    DEBUG("ws ==null");
     initWS();
-    println("init ws..OK");
+    DEBUG("init ws..OK");
   }
 }
 String logHeader() {
   return "["+new SimpleDateFormat(pattern).format( new Date() )+"]";
 }
 void initWS() {
-  
   try {
-    println("ws1");
+    DEBUG("ws1");
     //wsc= new WebsocketClient(this, "ws://hrobot.decade.tw:60000");
-    println("ws2");
+    DEBUG("ws2");
   }
   catch(Exception e) {
-    println("ws3");
+    DEBUG("ws3");
   }
 }

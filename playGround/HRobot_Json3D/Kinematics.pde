@@ -150,7 +150,7 @@ class Kinematics {
     R[0] += (double)(Math.atan2(-J[4][2], J[4][0]));
     
     if (this.J_initial_absolute[4][2] > length2(J[4][2], J[4][0]) && this.debug) {
-      println("out of reach");
+      DEBUG("out of reach");
     }
 
     // ---- J1 ----
@@ -461,11 +461,11 @@ class Kinematics {
     double[] angles = kin.inverse(targetPose);
     double[][] calcPose = kin.forward(angles);
     double[] calcPose5 = calcPose[5];
-    println("targetPose");
+    DEBUG("targetPose");
     println(targetPose);
-    println("angles=inverse(targetPose)");
+    DEBUG("angles=inverse(targetPose)");
     println(angles);
-    println("calcPose5=forward(angles)");
+    DEBUG("calcPose5=forward(angles)");
     println(calcPose5);
   }
   

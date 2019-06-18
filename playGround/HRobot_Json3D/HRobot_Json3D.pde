@@ -11,7 +11,7 @@ import websockets.*;
 WebsocketClient wsc;
 PGraphics canvas;
 SyphonClient client;
-
+boolean GlobalDebug=false;
 ControlP5 cp5;
 ALLMODE AM=ALLMODE.PLAY;
 PeasyCam cam;
@@ -35,14 +35,10 @@ String R_IP="10.10.10.88";
 int R_PORT=6666;
 int R_PORT2=9999;
 
-//JSONObject jsonHUD;
 int MinD=0;
 int MaxD=(int)ROOM.x*100*M_SCALE;
 float CamD=(int)ROOM.x*2*M_SCALE;
-
-
 PVector windowSize=new PVector(Window_W, Window_D, Window_H);
-
 float CRICLE_R=1;
 float globalCRICLE_Time=5000.0;
 float globalNowSin=0;
@@ -50,7 +46,7 @@ int appH=750;
 int appW=1000;
 UDP u, u2;
 boolean REALTIME=false;
-String outJ="{}", inJstr="NotYet";
+
 HRobot[] HRs; 
 WHICHROBOT WR=WHICHROBOT.R2F1;
 int whichRobot=WR.ID();
@@ -58,29 +54,31 @@ LEDPanel[] LEDPs;
 float Bpercent=0.5;
 int TX_mS=33;
 java.text.DecimalFormat df=new java.text.DecimalFormat("#.###");
+PFont font;
 
 java.util.Timer TX_TIMER =new java.util.Timer("TXTIMER");
 statusTimer33 t33=new statusTimer33();
-void fakeGraphics(PGraphics pg){
+void fakeGraphics(PGraphics pg) {
   pg.beginDraw();
   pg.background(0);
-  
+
   pg.endDraw();
 }
 void settings() {
   size(appW, appH, P3D);
 }
 void setup() {
-    
+  font = loadFont("Monospaced-12.vlw");
+  textFont(font, 12);
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("HIWIN_LOGO.png");
   }
   catch(Exception e) {
-    println(e);
+    DEBUG(e.toString());
   }
-  
-    canvas= createGraphics(300, 300);
+
+  canvas= createGraphics(300, 300);
   fakeGraphics(canvas);
   client = new SyphonClient(this);
 
@@ -95,7 +93,7 @@ void setup() {
   //cam.setRotations(0,0, 0.258);
   //cam.setRotations(0, 0.939, 0);
   //cam.lookAt(-124.9, 20.8, 62.6, 837, 2000);
-  
+
   u = new UDP( this, 1313 );
   u.log( false );
   u.listen( true );
@@ -111,9 +109,9 @@ void setup() {
     LEDPs[i]=new LEDPanel(HRs[i], new PVector(windowSize.x*(i%robotArray.x), windowSize.z*((int)(i/robotArray.x)), windowSize.y*((int)(i/robotArray.x))), new PVector(10, 10));
 
   setupJson();
-  cam.setRotations(-1.537, -0.273, 0.053);
-  cam.lookAt(-591, 92, 798, 2000);
-  cam.setDistance(1908, 6000);
+  cam.setRotations(-1.381, -0.3, 0.101);
+  cam.lookAt(-1712, 365, 1678, 2000);
+  cam.setDistance(3353, 6000);
 
   TX_TIMER.scheduleAtFixedRate(t33, 0, TX_mS);
   new java.util.Timer().scheduleAtFixedRate(statusTimer500, 1000, 500);
@@ -122,16 +120,13 @@ void setup() {
 
 
   setup2();
-  
-  
-
 }
 
 void draw() {
   background(10);
-    if (client.newFrame()) {
+  if (client.newFrame()) {
     canvas = client.getGraphics(canvas);
-    //image(canvas, 0, 0, width, height);    
+    //image(canvas, 0, 0, width, height);
   } 
 
   fill(0, 255, 0, 50);
@@ -155,18 +150,18 @@ void draw() {
 
   drawXYZ();
 
-  beginHUD();
+  //beginHUD();
   //drawToolBox();
   //for (int i=0; i<HRs.length; i++)
   //  HRs[i].UPDATE();
   pushMatrix();
-  translate(0,0,1000);
+  translate(0, 0, 1000);
   rotateX(-HALF_PI);
-  
   draw2();
   strokeWeight(1);
   //noStroke();
   popMatrix();
+  beginHUD();
 }
 void  drawToolBox() {
   noFill();
@@ -184,40 +179,50 @@ void  drawToolBox() {
   popMatrix();
 }
 
-ListBox list;
+ScrollableList SLL;
+ButtonBar BB;
 void setup_cp5() {
-  
-  ButtonBar b = cp5.addButtonBar("bar")
+
+  BB = cp5.addButtonBar("bar")
     .setPosition(10, 0)
     .setSize(300, 20)
-    .addItems(split("a b c d e f g h i j k l", " "))
+    .addItems(split("1 2 3 4 5 6 7 8 9 10 11 12", " "))
+    .setFont(font)
     ;
-  //println(b.getItem("a"));
+  
+  //DEBUG(b.getItem("a"));
   //b.changeItem("a","text","REALTIME "+(REALTIME?"ON":"OFF"));
   //b.changeItem("b","text","ESTOP");
   //b.changeItem("c","text","third");
-  b.onMove(new CallbackListener() {
+  BB.onMove(new CallbackListener() {
     public void controlEvent(CallbackEvent ev) {
       ButtonBar bar = (ButtonBar)ev.getController();
-      //println("hello ", bar.hover());
+      //DEBUG("hello ", bar.hover());
     }
   }
   );
-
-  list = cp5.addListBox("ROBOT LOG")
-    .setPosition(500, 0)
-    .setSize(500, 500)
-    .setItemHeight(15)
+  SLL=cp5.addScrollableList("ROBOT LOG")
+    .setPosition(360, 0)
+    .setSize(640, 500)
+    .setItemHeight(13)
     .setBarHeight(20)
-    .setColorBackground(color(255, 128))
-    .setColorActive(color(0))
-    .setColorForeground(color(255, 100))
-    .close()
-    ;   
-  list.getCaptionLabel().setColor(0xffff0000);
-  for (int i=0; i<80; i++) {
-    list.addItem("log "+i, i);
-    list.getItem("log "+i).put("color", new CColor().setBackground(0xffff0000).setBackground(0xffff88aa));
+    .setItemHeight(30)
+    //.setColorBackground(color(255, 128))
+    .setColorBackground(color(0,45,90, 128))
+    //.setColorActive(color(0))
+    //.setColorForeground(color(255, 100))
+    
+.setFont(font)
+    //.setType(ScrollableList.LIST) // currently supported DROPDOWN and LIST
+    ;
+
+
+  for (int i=0; i<12; i++) {
+    //cp5.get(ScrollableList.class, "dropdown").getItem(n)
+    SLL.addItem("R"+i, i);
+
+    
+    //list.getItem("log "+i).put("color", new CColor().setBackground(0xffff0000).setBackground(0xffff88aa));
+    //HRs[i].ackXYZABCstr
   }
-  
 }

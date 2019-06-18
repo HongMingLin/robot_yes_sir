@@ -1,10 +1,9 @@
 PVector ROBOT_XYZ_Cxyz=new PVector(0, 0, 0);
-void STOP_STOP_STOP(int i){
-  json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
+void STOP_STOP_STOP(int i) {
+  TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
   HRs[i].ALL_PATH_OK=false;
   HRs[i].RM=HRs[i].RM.STOP;
   HRs[i].RK_fatalError=true;
-    
 }
 void mouseWheel(MouseEvent event) {
   //float e = event.getCount();
@@ -14,6 +13,9 @@ void keyPressed() {
   motorWalk();
   JSONObject jTemp=null;
   switch(key) {
+  case 'd':
+  GlobalDebug=!GlobalDebug;
+    break;
   case 'V':
     M_S=M_S.next();
     if (M_S==MOVIE_or_SHAREIAMGE.Movie)
@@ -40,7 +42,7 @@ void keyPressed() {
   case 'R':
     REALTIME=!REALTIME;
     exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
-    println(REALTIME);
+    
     break;
   case 'A':
     HRs[0].RM=HRs[0].RM.next();
@@ -54,7 +56,7 @@ void keyPressed() {
     jTemp=null;
     for (int i=0; i<12; i++) {
       //HRs[i].RM=RunMODE.MOVIE;
-      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.SEVO_ON);
     }
     exec("/usr/bin/say", "Robot Servo on");
@@ -64,7 +66,7 @@ void keyPressed() {
     jTemp=null;
     for (int i=0; i<12; i++) {
       //HRs[i].RM=RunMODE.MOVIE;
-      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.SEVO_OFF);
     }
     exec("/usr/bin/say", "Robot Servo off");
@@ -73,7 +75,7 @@ void keyPressed() {
   case ' ':
     jTemp=null;
     for (int i=0; i<12; i++) {
-      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
       HRs[i].RM=HRs[i].RM.STOP;
     }
@@ -83,7 +85,7 @@ void keyPressed() {
     jTemp=null;
     for (int i=0; i<12; i++) {
       HRs[i].RM=RunMODE.MOVIE;
-      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
     }
     exec("/usr/bin/say", "Robot Go");
@@ -91,10 +93,11 @@ void keyPressed() {
   case 'H':
     jTemp=null;
     for (int i=0; i<12; i++) {
-      jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
       HRs[i].RM=RunMODE.HOME;
       HRs[i].ALL_PATH_OK=true;
+      HRs[i].atHome=false;
     }
     //sendX(clearAllASCII(json.toString()+"\n") );
     exec("/usr/bin/say", "Robot 全部 回家");
@@ -104,10 +107,10 @@ void keyPressed() {
   default:
     for (int i=0; i<WHICHROBOT.values().length; i++) {
       WR=WR.next();
-      //println(i+" temp="+WR.ID()+", "+WR.hotKey());
+      //DEBUG(i+" temp="+WR.ID()+", "+WR.hotKey());
       if (key == WR.hotKey()) {
         whichRobot=WR.ID();
-        println("whichRobot="+whichRobot);
+        DEBUG("whichRobot="+whichRobot);
         exec("/usr/bin/say", "Robot "+whichRobot+" ");
         //exec("/usr/bin/say","-v","Victoria","Im Victoria");
         //  exec("/usr/bin/say","-v","Zarvox"," and Robot.");

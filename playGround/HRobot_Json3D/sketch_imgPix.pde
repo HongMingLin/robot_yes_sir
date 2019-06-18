@@ -114,36 +114,7 @@ PMatrix invCameraMat;
 PMatrix CameraMat;
 Kinematics kinma;
 
-void setupJson() {
-  inJson= new JSONObject();
-  inJson.setString("HB", "RG");
-  json = new JSONObject();
-  //jsonHUD = new JSONObject();
-  R12JsonArray= new JSONArray();
-  for (int i = 0; i < 12; i++) {
-    R1Json= new JSONObject();
-    R1Json.setString(JSONKEYWORD.ID, (i+1)+"");
-    R1Json.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
-    R1Json.setString("A1", "0");
-    R1Json.setString("A2", "0");
-    R1Json.setString("A3", "0");
-    R1Json.setString("A4", "0");
-    R1Json.setString("A5", "0");
-    R1Json.setString("A6", "0");
 
-    R1Json.setString("X", "0");
-    R1Json.setString("Y", "0");
-    R1Json.setString("Z", "0");
-    R1Json.setString("A", "0");
-    R1Json.setString("B", "0");
-    R1Json.setString("C", "0");
-
-    R12JsonArray.setJSONObject(i, R1Json);
-  }
-  json.setString(JSONKEYWORD.TIMESTAMP, "0");
-  json.setJSONArray(JSONKEYWORD.Robots, R12JsonArray);
-  //jsonHUD.setJSONArray("HUD_R_Info", R12JsonArray);
-}
 
 void setup2() {
   //setupJson();
@@ -345,7 +316,7 @@ double[] drawRobotWorld(double[] angles,AtomicBoolean isCollided)
   //{
   //  print(round((float)(calcPose5[k]*1000))/1000f+" ");
   //}
-  //println();
+  //DEBUG();
   pushMatrix();
 
   rotateX(PI/2);
@@ -397,7 +368,7 @@ double[] drawRobotWorld(double[] angles,AtomicBoolean isCollided)
   rotateX((float)calcPose5[3]);
   //translate(50, 0, 0);
 
-  //println(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
+  //DEBUG(calcPose5[3]/PI/2+":"+calcPose5[4]/PI/2+":"+calcPose5[5]/PI/2);
   drawBoard_keepTranse();
   {
     PMatrix WxO = getMatrix();//CxWxO
@@ -509,7 +480,7 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
   textAlign(CENTER, CENTER);
   
   int gridDirtyCount = GridEdgeDirtyCount(myImage, SectW, SectH);
-  //println("gridDirtyCount:"+gridDirtyCount);
+  //DEBUG("gridDirtyCount:"+gridDirtyCount);
   if(gridDirtyCount>5)
   {
     //R.set(Float.NaN,Float.NaN,Float.NaN);
@@ -529,7 +500,7 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
     int idx_x=(int)asc_arr[i].getIdx().x;
     int idx_y=(int)asc_arr[i].getIdx().y;
 
-    //println(idx_y+","+idx_x);
+    //DEBUG(idx_y+","+idx_x);
     FindRGBLocation(myImage, SectW*idx_x, SectH*idx_y, SectW-1, SectH-1, R, G, B);
 
     R.x-=SectW/2.0f;
@@ -563,7 +534,7 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
 
   int timeDiff = millis()-t1;
 
-  //println("timeDiff:"+timeDiff);
+  //DEBUG("timeDiff:"+timeDiff);
 }
 
 void J4StepDown(double []angles, int step)
@@ -672,7 +643,7 @@ void RK(ascreen_info []asc_arr) {
 
     double[] flangePose =  boardPose2FlangePose(pose);
 
-    //if (i==2 || i==3)println(pose[2]);  
+    //if (i==2 || i==3)DEBUG(pose[2]);  
     
     double[] angles =kinma.inverse(flangePose);
 
@@ -752,7 +723,7 @@ void RK(ascreen_info []asc_arr) {
         
         J4StepDown(angles, -1);
         //J4StepDown(angles, -1);
-        println("......Turn over-!!!");
+        DEBUG("......Turn over-!!!");
         fatalError=true;
         HRs[i].RK_fatalError=true;
         //HRs[i].RM=RunMODE.HOME;
@@ -761,7 +732,7 @@ void RK(ascreen_info []asc_arr) {
       {
         J4StepDown(angles, 1);
         //J4StepDown(angles, 1);
-        println("......Turn over+!!!");
+        DEBUG("......Turn over+!!!");
         fatalError=true;
         HRs[i].RK_fatalError=true;
         //HRs[i].RM=RunMODE.HOME;
@@ -788,22 +759,22 @@ void RK(ascreen_info []asc_arr) {
       }
     
 
-      //if (i==0)println("angles:"+angles[0]+","+angles[1]+","+angles[2]+","+angles[3]+","+angles[4]+","+angles[5]);
-      //if (i==0)println("angles:"+angles[5]*180/PI+" P_angles:"+P_angles[5]*180/PI);
+      //if (i==0)DEBUG("angles:"+angles[0]+","+angles[1]+","+angles[2]+","+angles[3]+","+angles[4]+","+angles[5]);
+      //if (i==0)DEBUG("angles:"+angles[5]*180/PI+" P_angles:"+P_angles[5]*180/PI);
       //maxDiff*=0.999;
-      //if (i==0)println("maxDiff:"+maxDiff+" DIFF4:"+DIFF4 +" pDIFF4:"+pDIFF4);
+      //if (i==0)DEBUG("maxDiff:"+maxDiff+" DIFF4:"+DIFF4 +" pDIFF4:"+pDIFF4);
       //print("DIFF4:"+DIFF4+" >angles[3]="+angles[3]+"  "+P_angles[3] );
-      //println("DIFF4:"+(angles[3]-P_angles[3]));
+      //DEBUG("DIFF4:"+(angles[3]-P_angles[3]));
       for (int k=0; k<angles.length; k++)
       {
         float angV = (float)(angles[k]-P_angles[k])*frameRate;
         float ratio = abs(round((float)(angV/jointAngularV[k]*10000))/10000f);
         //print("["+k+"]"+ratio+" ");
         if (ratio>1){
-          //println("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
+          //DEBUG("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
           if(ratio*100>500)
           {
-            //println("*****SUPER OVERLOAD OVERSPEED*****");
+            //DEBUG("*****SUPER OVERLOAD OVERSPEED*****");
             //HRs[i].RM=RunMODE.HOME;
             HRs[i].RK_fatalError=true;
             fatalError=true;
@@ -811,13 +782,13 @@ void RK(ascreen_info []asc_arr) {
         }
         //print(jointAngularV[k]*180/PI+" ");
       }
-      //println();
+      //DEBUG();
       asc_arr[i].setAngles(angles);
     }
 
     float ffff=(float)(angles[4]-PI/2)*180/PI;
     
-    println("(PI+angles[4])="+ffff+">>"+angles[5]);
+    //DEBUG("(PI+angles[4])="+ffff+">>"+angles[5]);
     if( abs(ffff) >120){ //AXIS +- 110
       if(abs(ffff) >130||abs((float)angles[5])*180/PI>30) // ByHIWIN/Eason. 
       {
@@ -839,11 +810,11 @@ void RK(ascreen_info []asc_arr) {
         angle=-angle;
 
       float fff=round((float)((angle)*180/PI*1000))/1000f;
-      //println(fff+" ");
+      //DEBUG(fff+" ");
       //if(i==0)
       {
         //print(fff+" ");
-        json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
+        TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
         float dgree=fff/TWO_PI*360.0;
         //jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
       }
@@ -851,7 +822,7 @@ void RK(ascreen_info []asc_arr) {
 
     for (int k=0; k<flangePose.length; k++)pose[k]=flangePose[k];
     axisSwap(pose, 2, 0, 1, false, false, false);
-    JSONObject jTemp=json.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+    JSONObject jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
     jTemp.setString("X", df.format(pose[0])+"");
     jTemp.setString("Y", df.format(pose[1])+"");
     jTemp.setString("Z", df.format(pose[2])+"");
@@ -863,11 +834,11 @@ void RK(ascreen_info []asc_arr) {
     popMatrix();
   }
 
-  //json.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
+  TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
   //outJ=clearAllASCII(json.toString());
 
 
-  //println(outJ.length()+"=>"+outJ);
+  //DEBUG(outJ.length()+"=>"+outJ);
 }
 String clearAllASCII(String in) {
   return in.toString().replaceAll("[/ /g]", "").replaceAll("[^\\x20-\\x7e]", "");

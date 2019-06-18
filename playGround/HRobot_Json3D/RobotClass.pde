@@ -69,9 +69,11 @@ enum RunCMD {
   
 }
 class HRobot {
+  
   boolean ALL_PATH_OK=true;
-  String MotStatus="";
+  JSONObject RobotINFOJ;
   boolean RK_fatalError=false;
+  boolean atHome=false;
   AtomicBoolean RK_ColliError=new AtomicBoolean(false);
   //PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);
   //PVector SAFEx1y1z1=new PVector(Window_W/2, Window_D/2, Window_H/2);
@@ -80,7 +82,11 @@ class HRobot {
   final boolean isCheckSAFE_XYZ=false;
   private PVector realXYZ=new PVector();
   private PVector XYZ=new PVector(0, 0, 0);
+  private PVector ackXYZ=new PVector(0, 0, 0);
+  private PVector ackABC=new PVector(0, 0, 0);
+  String ackXYZABCstr="";
   private PVector normalizeXYZ=new PVector();
+  String[] ackINFO=new String[10];
   PVector fXYZ=new PVector();
   String strXYZ="";
   String sX="";
@@ -107,7 +113,7 @@ class HRobot {
     float xx=0, yy=0, zz=0;
     float aa=0,bb=0,cc=0;
     globalNowSin=millis()*(TWO_PI/globalCRICLE_Time);
-    //println("RM"+RM);
+    //DEBUG("RM"+RM);
     
     switch(RM) {
       case MOVIE:
@@ -134,9 +140,9 @@ class HRobot {
       ABC_PI.y=ascArr[ID].RYP.x;
       ABC_PI.z=-ascArr[ID].RYP.y;
       
-      //println("ABC_PI.x="+ABC_PI.x);
-      //println("ABC_PI.y="+ABC_PI.y);
-      //println("ABC_PI.z="+ABC_PI.z);
+      //DEBUG("ABC_PI.x="+ABC_PI.x);
+      //DEBUG("ABC_PI.y="+ABC_PI.y);
+      //DEBUG("ABC_PI.z="+ABC_PI.z);
       
       break;
     case STOP:
@@ -208,7 +214,7 @@ class HRobot {
   }
 
   void setXYZ(PVector in) {
-    //println("setXYZ="+in);
+    //DEBUG("setXYZ="+in);
     XYZ=checkSAFE(in);
   }
   void addXYZ(PVector in) {
@@ -247,7 +253,7 @@ class LEDPanel {
     HR=hr;
     boxPosOffset=bPO;
     dotSize=size;
-    println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
+    DEBUG("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
   }
 
   void drawR() {

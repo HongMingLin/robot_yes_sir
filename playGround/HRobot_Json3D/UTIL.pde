@@ -199,7 +199,7 @@ boolean triangleCollision(
 float rayIntersectsTriangle(PVector p, PVector d, 
   PVector v0, PVector v1, PVector v2) {
     
-       //println("----\n"+p+" "+d+" "+v0+" "+v1+" "+v2);
+       //DEBUG("----\n"+p+" "+d+" "+v0+" "+v1+" "+v2);
   float t =java.lang.Float.NaN;
   PVector e1=v1.copy();
   e1.sub(v0);
@@ -414,7 +414,7 @@ class ascreen_info
     
     float roll = atan2(G.y-B.y,G.x-B.x);
     //The x y is for image coordnate, x axis is upside down, ie, positive angle is CW
-    //println(roll*180/PI);
+    //DEBUG(roll*180/PI);
     ret_RYP.x = roll;
     
     float Ry = -R.y;
