@@ -612,7 +612,20 @@ void RK(ascreen_info []asc_arr) {
 
 
     //>X ^y  @Z (toward you) Kinematics world
-    PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+600, 700*XYZ.y+300);
+    //PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+300, 700*XYZ.y+300);
+    float robotSafeY=map(XYZ.z,0,0.5,(550+150),(550+150+600)); //700-1300
+    if(robotSafeY>1300){
+      robotSafeY=1300;
+      STOP_STOP_STOP(i);
+    }
+    if(robotSafeY<700){
+      robotSafeY=700;
+      STOP_STOP_STOP(i);
+    }
+    PVector pXYZ=new PVector(-700*XYZ.x, robotSafeY, 700*XYZ.y+300);
+    
+    //println("robotSafeY="+robotSafeY);
+    //println("(XYZ.z)="+(XYZ.z));
 
     //float period=4;
     //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
@@ -855,11 +868,11 @@ void drawMovie() {
   switch(M_S) {
   case Movie:
     if (myMovie!=null)
-      image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
+      image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/320.0));
     break;
   case ShareImage:
 
-    image(canvas.get(), 0, 0, 300, canvas.height/(canvas.width/300.0));
+    image(canvas.get(), 0, 0, 300, canvas.height/(canvas.width/320.0));
     break;
   }
 
@@ -900,6 +913,7 @@ void draw2() {
     break;
     case ShareImage:
       sectionFinding(canvas.get(), ascArr);
+      //println("canvas.width="+canvas.width);
     break;
   }
 
