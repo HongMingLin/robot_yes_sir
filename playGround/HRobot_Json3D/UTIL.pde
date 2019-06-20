@@ -390,7 +390,10 @@ class ascreen_info
     for(int i=0;i<angles.length;i++)
     {
       AX[i]=angles[i];
-      simAngles[i]+=(AX[i]-simAngles[i])*0.05;
+      if(simAngles[i]!=simAngles[i])
+        simAngles[i]=AX[i];
+      else
+        simAngles[i]+=(AX[i]-simAngles[i])*0.05;
     }
   }
   int setRGBInfo(PVector R,PVector G,PVector B)
@@ -404,12 +407,13 @@ class ascreen_info
   
   
   void CorrdTrans( PVector R,PVector G,PVector B,PVector ret_XYZ,PVector ret_RYP)
-  {
+  {//R,G,B are between -1~1
     ret_XYZ.x = (G.x+B.x)/2;
     ret_XYZ.y = (G.y+B.y)/2;
     
-    
-    ret_XYZ.z = (float)Math.hypot(G.x-B.x,G.y-B.y)-0.5;
+    //Since B and G are between -1~1 which means the theoretical z range is between 0~2 
+    //So normalize it with div 2
+    ret_XYZ.z = (float)Math.hypot(G.x-B.x,G.y-B.y)/2;
     
     
     float roll = atan2(G.y-B.y,G.x-B.x);

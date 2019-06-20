@@ -51,16 +51,16 @@ PVector[] identityBoxV;
  |                        
  |                               
  [o]__R/J1{Z}  ^                   
- |    /        |                 
+ |    /        |               
  |  [v0]       |                    
- |  /          |                  
- R/J0{Y}       |height "525mm"         
- |   |         |                         
- |___|         V                          
- |@@@|Support  ^                              ____
- |@@@|structure|                              |//|
- |@@@|         |                              |//|
- |@@@|         |                              |//|
+ |  /          | height_robotBase2J2(J2 here is in Hiwin joint order, starts from 1)                
+ R/J0{Y}       | "525mm"        
+ |   |         |                      
+ |___|         v                        
+ |@@@|Support  ^                        
+ |@@@|structure|  height_robotBase2windowFrameBottom                            
+ |@@@|         v  "577.4167mm"                           
+ |@@@|         |                              ____
  |@@@|         |                              |//|
  |@@@|         |                              |//|
  |@@@|         |                              |//|
@@ -205,6 +205,31 @@ void draw3Axis(float size)
 float board_WH=1000;
 float board_thickness=100;
 
+
+
+/*
+    Robot Arm
+ _______
+ |   |   |base
+ |   |   |
+ _|   |   |__
+ |    |      |
+ <----->
+ length_robotBaseCenter2BaseFeetFrontEnd
+ */
+float length_robotBaseCenter2BaseFeetFrontEnd=160;
+float depth_robotBaseFeetFrontEnd2WindowBackSide=550;
+
+
+
+
+float depth_robotBaseCenter2WindowCenter=
+  depth_robotBaseFeetFrontEnd2WindowBackSide+
+  board_thickness/2+length_robotBaseCenter2BaseFeetFrontEnd;
+float height_robotBase2J2=525;
+float height_robotBase2windowFrameBottom=577.4167;
+float height_robotJ2_2windowFrameCenter=-height_robotBase2windowFrameBottom-height_robotBase2J2+frameH/2;
+
 /*  flange2BoardCenter_distance
  <--------->
  \          |=|
@@ -302,7 +327,7 @@ boolean CollisionDetection(Vector<PVector> obj1_v, Vector<PVector> obj2_v, Vecto
     CollisionDetection(obj2_v, obj3_v);
 }
 //import java.util.concurrent.atomic.AtomicBoolean;
-double[] drawRobotWorld(double[] angles,AtomicBoolean isCollided)
+double[] drawRobotWorld(double[] angles, AtomicBoolean isCollided)
 {
   //isCollided.setValue(false);
   obj1v.clear();
@@ -384,8 +409,9 @@ double[] drawRobotWorld(double[] angles,AtomicBoolean isCollided)
   popMatrix();
 
   pushMatrix();
-
-  translate(0, 880, 739-200);
+  translate(0, 
+    depth_robotBaseCenter2WindowCenter, 
+    frameH/2-height_robotBase2windowFrameBottom-height_robotBase2J2);
   rotateX(PI/2);
 
 
@@ -455,7 +481,6 @@ double[] drawRobotWorld(double[] angles,AtomicBoolean isCollided)
   {
     box(1000, 1000, 1000);
     isCollided.set(true);
-    
   }
 
   popMatrix();
@@ -478,23 +503,23 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
   int SectH=myImage.height/YSectNum;
 
   textAlign(CENTER, CENTER);
-  
+
   int gridDirtyCount = GridEdgeDirtyCount(myImage, SectW, SectH);
   //DEBUG("gridDirtyCount:"+gridDirtyCount);
-  if(gridDirtyCount>5)
+  if (gridDirtyCount>5)
   {
     //R.set(Float.NaN,Float.NaN,Float.NaN);
     //R.set(Float.NaN,Float.NaN,Float.NaN);
     //R.set(Float.NaN,Float.NaN,Float.NaN);
     for (int i=0; i<asc_arr.length; i++)
     {
-      
+
       asc_arr[i].setRGBInfo( R, R, R);
     }
     return;
   }
-  
-  
+
+
   for (int i=0; i<asc_arr.length; i++)
   {
     int idx_x=(int)asc_arr[i].getIdx().x;
@@ -543,10 +568,9 @@ void J4StepDown(double []angles, int step)
   if (step<0)//angles[3]-P_angle3>HALF_PI )
   {
     angles[3]-=PI;
-    
+
     angles[5]-=PI;
-  } 
-  else if (step>0)
+  } else if (step>0)
   {
     angles[3]+=PI;
     angles[5]+=PI;
@@ -555,9 +579,9 @@ void J4StepDown(double []angles, int step)
   angles[4]%=2*PI;
 
   /*for (int k=0; k<angles.length; k++)
-  {
-    angles[k]%=2*PI;
-  }*/
+   {
+   angles[k]%=2*PI;
+   }*/
 
   {
     angles[4]+=HALF_PI;
@@ -566,14 +590,13 @@ void J4StepDown(double []angles, int step)
     if (angles[4]>HALF_PI )
     {
       angles[4]=2*PI-angles[4];
-    } 
-    else if (angles[4]<-HALF_PI )
+    } else if (angles[4]<-HALF_PI )
     {
       angles[4]=2*PI+angles[4];
     }
 
     float J46_sum=(float)(angles[3]-angles[5]);
-    while(abs(J46_sum)>PI*3/2)
+    while (abs(J46_sum)>PI*3/2)
     { 
       J46_sum=(float)(angles[5]-angles[3]);
       if (J46_sum>PI*3/2 )
@@ -592,7 +615,7 @@ double maxDiff=0;
 void RK(ascreen_info []asc_arr) {
   count++;
   boolean fatalError=false;
-  
+
   if (count<10)maxDiff=0;
   PVector XYZ=new PVector();
   PVector RYP=new PVector();
@@ -603,6 +626,11 @@ void RK(ascreen_info []asc_arr) {
     if (asc_arr[i].getR().z*asc_arr[i].getG().z*asc_arr[i].getB().z==0)continue;
     XYZ.set(asc_arr[i].getXYZ());
     RYP.set(asc_arr[i].getRYP());
+    //RYP.set(asc_arr[i].getRYP());
+    //RYP.x*=1;
+    //RYP.y*=0.5;
+    //RYP.z*=0.5;
+    //RYP.set(asc_arr[i].getRYP().x,asc_arr[i].getRYP().y*0.5,asc_arr[i].getRYP().z*0.5);
     pushMatrix();
 
     final PVector origin = asc_arr[i].getOrigin();
@@ -613,19 +641,57 @@ void RK(ascreen_info []asc_arr) {
 
     //>X ^y  @Z (toward you) Kinematics world
     //PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+300, 700*XYZ.y+300);
-    float robotSafeY=map(XYZ.z,0,0.5,(550+150),(550+150+600)); //700-1300
-    if(robotSafeY>1300){
-      robotSafeY=1300;
-      STOP_STOP_STOP(i);
-    }
-    if(robotSafeY<700){
-      robotSafeY=700;
-      STOP_STOP_STOP(i);
-    }
-    PVector pXYZ=new PVector(-700*XYZ.x, robotSafeY, 700*XYZ.y+300);
+    float videoFrameSectionW=240;
     
-    //println("robotSafeY="+robotSafeY);
-    //println("(XYZ.z)="+(XYZ.z));
+    float GB_Box_max_WindowSize=100;
+    float GB_Box_middleonWindowSize=80;
+    float GB_Box_min_WindowSize=60;
+    
+    //float GB_Box_max_WindowSize=50;
+    //float GB_Box_middleonWindowSize=40;
+    //float GB_Box_min_WindowSize=60;
+    
+    float innerMostDepthRatio=(GB_Box_min_WindowSize/2)/videoFrameSectionW;
+    float middleDepthRatio=(GB_Box_middleonWindowSize/2)/videoFrameSectionW;
+    float outMostDepthRatio=(GB_Box_max_WindowSize/2)/videoFrameSectionW;
+    float robotSafeY=depth_robotBaseCenter2WindowCenter; //700-1300
+    
+    
+    float robotOutMotion_MostDist=600;
+    float robotInsideMotion_MostDist=-50;
+    // XY -1 ~ 1
+    // Z 0-1
+    if (XYZ.z>middleDepthRatio)
+      robotSafeY+=map(XYZ.z, middleDepthRatio, outMostDepthRatio, 0, robotOutMotion_MostDist);
+    else// if(XYZ.z<outMostDepthRatio)
+      robotSafeY+=map(XYZ.z, innerMostDepthRatio,middleDepthRatio, robotInsideMotion_MostDist, 0);
+    //if(robotSafeY>1300){
+    //  robotSafeY=1300;
+    //  STOP_STOP_STOP(i);
+    //}
+    //if(robotSafeY<700){
+    //  robotSafeY=700;
+    //  STOP_STOP_STOP(i);
+    //}
+    
+    /*
+    
+    |                   |
+    |                   |
+    |       |....@@@@|  |
+    |       |....@@@@|  |
+    |       |....@@@@|  |
+    |       |....@@@@|  |
+    |                   |
+    */
+    //(240-80)/240
+    //(frameW-board_WH)/2
+    
+    float XY_multiplier=((frameW-board_WH)/2f)/((videoFrameSectionW-GB_Box_middleonWindowSize)/videoFrameSectionW);
+    PVector pXYZ=new PVector(-XY_multiplier*XYZ.x, robotSafeY, XY_multiplier*XYZ.y+height_robotJ2_2windowFrameCenter);
+
+    println("robotSafeY="+robotSafeY+"  "+middleDepthRatio);
+    println("(XYZ.z)="+(XYZ.z));
 
     //float period=4;
     //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
@@ -657,91 +723,84 @@ void RK(ascreen_info []asc_arr) {
     double[] flangePose =  boardPose2FlangePose(pose);
 
     //if (i==2 || i==3)DEBUG(pose[2]);  
-    
+
     double[] angles =kinma.inverse(flangePose);
 
 
     {
       double []P_angles = asc_arr[i].getAngles();
 
-      if(true)
+      if (true)
       {
         double DIFF6 = (angles[5]-P_angles[5]);
-        while(abs((float)DIFF6)>PI)
+        while (abs((float)DIFF6)>PI)
         { 
           DIFF6 = (angles[5]-P_angles[5]);
-          if(DIFF6>PI)
+          if (DIFF6>PI)
           {
             angles[5]-=TWO_PI;
-          }
-          else if(DIFF6<-PI)
+          } else if (DIFF6<-PI)
           {
             angles[5]+=TWO_PI;
           }
         }
       }
-      
+
       double P_angle3 = P_angles[3];
-      
+
       double pDIFF4 = (angles[3]-P_angle3);
-      
-      if(pDIFF4>PI)
+
+      if (pDIFF4>PI)
       {
         angles[3]-=2*PI;
-      }
-      else if(pDIFF4<-PI)
+      } else if (pDIFF4<-PI)
       {
         angles[3]+=2*PI;
       }
-      
-      
-      
+
+
+
       boolean needFix=true;
       double angle3_zero_tendency=20;//if the 
-      while(needFix)
+      while (needFix)
       {
         needFix=false;
-        
+
         if (angles[3]-P_angle3>HALF_PI )//Check PI/2 diff
         {
           J4StepDown(angles, -1);
           needFix=true;
-        } 
-        else if (angles[3]-P_angle3<-HALF_PI )
+        } else if (angles[3]-P_angle3<-HALF_PI )
         {
           J4StepDown(angles, 1);
           needFix=true;
         }
-        
       }
 
 
 
-      if(abs((float)angles[4]-HALF_PI)<30*PI/180)//The joint5 closes to straight (+-30degree)
+      if (abs((float)angles[4]-HALF_PI)<30*PI/180)//The joint5 closes to straight (+-30degree)
       {//Flip joint4 to be straight HIWIN logo in natural position
         if (angles[3]>HALF_PI)
         {
           J4StepDown(angles, -1);
-        }
-        else if(angles[3]<-HALF_PI)
+        } else if (angles[3]<-HALF_PI)
         {
           J4StepDown(angles, 1);
         }
-        
       }
 
 
       if (angles[3]>PI)
       {
-        
+
         J4StepDown(angles, -1);
         //J4StepDown(angles, -1);
         DEBUG("......Turn over-!!!");
         fatalError=true;
         HRs[i].RK_fatalError=true;
         //HRs[i].RM=RunMODE.HOME;
-      } 
-      else if (angles[3]<-PI)
+      } else if (angles[3]<-PI)
       {
         J4StepDown(angles, 1);
         //J4StepDown(angles, 1);
@@ -753,24 +812,23 @@ void RK(ascreen_info []asc_arr) {
 
 
       double DIFF4 = (angles[3]-P_angles[3])*180/PI;
-      
-      
+
+
       if (Math.abs(maxDiff)<Math.abs(DIFF4))
       {
         maxDiff = DIFF4;
       }
 
 
-      drawRobotWorld(asc_arr[i].getSimAngles(),HRs[i].RK_ColliError);
-  
-      if(HRs[i].RK_ColliError.get())
+      drawRobotWorld(asc_arr[i].getSimAngles(), HRs[i].RK_ColliError);
+
+      if (HRs[i].RK_ColliError.get())
       {
         HRs[i].RM=RunMODE.HOME;
         fatalError=true;
         HRs[i].RK_ColliError.set(true);
-        
       }
-    
+
 
       //if (i==0)DEBUG("angles:"+angles[0]+","+angles[1]+","+angles[2]+","+angles[3]+","+angles[4]+","+angles[5]);
       //if (i==0)DEBUG("angles:"+angles[5]*180/PI+" P_angles:"+P_angles[5]*180/PI);
@@ -783,9 +841,9 @@ void RK(ascreen_info []asc_arr) {
         float angV = (float)(angles[k]-P_angles[k])*frameRate;
         float ratio = abs(round((float)(angV/jointAngularV[k]*10000))/10000f);
         //print("["+k+"]"+ratio+" ");
-        if (ratio>1){
+        if (ratio>1) {
           //DEBUG("Motor[J"+(k+1)+"] speed overload= "+ratio*100);
-          if(ratio*100>500)
+          if (ratio*100>500)
           {
             //DEBUG("*****SUPER OVERLOAD OVERSPEED*****");
             //HRs[i].RM=RunMODE.HOME;
@@ -800,16 +858,16 @@ void RK(ascreen_info []asc_arr) {
     }
 
     float ffff=(float)(angles[4]-PI/2)*180/PI;
-    
+
     //DEBUG("(PI+angles[4])="+ffff+">>"+angles[5]);
-    if( abs(ffff) >120){ //AXIS +- 110
-      if(abs(ffff) >130||abs((float)angles[5])*180/PI>30) // ByHIWIN/Eason. 
+    if ( abs(ffff) >120) { //AXIS +- 110
+      if (abs(ffff) >130||abs((float)angles[5])*180/PI>30) // ByHIWIN/Eason. 
       {
         STOP_STOP_STOP(i);
         fatalError=true;
       }
     }
-    
+
     for (int k=0; k<angles.length; k++)
     {
       float angle = (float)angles[k];
@@ -906,14 +964,14 @@ void draw2() {
     line(0, 0, 0, 0, 0, 10000);
   }
   //sectionFinding(myMovie, ascArr);
-    switch(M_S){
-    case Movie:
-    if(myMovie!=null)
+  switch(M_S) {
+  case Movie:
+    if (myMovie!=null)
       sectionFinding(myMovie, ascArr);
     break;
-    case ShareImage:
-      sectionFinding(canvas.get(), ascArr);
-      //println("canvas.width="+canvas.width);
+  case ShareImage:
+    sectionFinding(canvas.get(), ascArr);
+    //println("canvas.width="+canvas.width);
     break;
   }
 
