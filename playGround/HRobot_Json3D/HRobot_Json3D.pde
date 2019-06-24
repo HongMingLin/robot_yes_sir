@@ -42,7 +42,7 @@ PVector windowSize=new PVector(Window_W, Window_D, Window_H);
 float CRICLE_R=1;
 float globalCRICLE_Time=5000.0;
 float globalNowSin=0;
-int appH=750;
+int appH=700;
 int appW=1000;
 UDP u, u2;
 boolean REALTIME=false;
@@ -55,9 +55,13 @@ float Bpercent=0.5;
 int TX_mS=33;
 java.text.DecimalFormat df=new java.text.DecimalFormat("#.###");
 PFont font;
-
+boolean FlashStatus=false;
 java.util.Timer TX_TIMER =new java.util.Timer("TXTIMER");
 statusTimer33 t33=new statusTimer33();
+boolean skip_calcAckApproved=true;
+boolean logSaveTx=false;
+  
+PrintWriter output;
 void fakeGraphics(PGraphics pg) {
   pg.beginDraw();
   pg.background(0);
@@ -73,12 +77,13 @@ void setup() {
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("HIWIN_LOGO.png");
+    
   }
   catch(Exception e) {
     DEBUG(e.toString());
   }
 
-  canvas= createGraphics(300, 300);
+  canvas= createGraphics(320, 240);
   fakeGraphics(canvas);
   client = new SyphonClient(this);
 
@@ -152,8 +157,8 @@ void draw() {
 
   //beginHUD();
   //drawToolBox();
-  //for (int i=0; i<HRs.length; i++)
-  //  HRs[i].UPDATE();
+  for (int i=0; i<HRs.length; i++)
+    HRs[i].UPDATE();
   pushMatrix();
   translate(0, 0, 1000);
   rotateX(-HALF_PI);
@@ -189,7 +194,7 @@ void setup_cp5() {
     .addItems(split("1 2 3 4 5 6 7 8 9 10 11 12", " "))
     .setFont(font)
     ;
-  
+
   //DEBUG(b.getItem("a"));
   //b.changeItem("a","text","REALTIME "+(REALTIME?"ON":"OFF"));
   //b.changeItem("b","text","ESTOP");
@@ -202,26 +207,29 @@ void setup_cp5() {
   }
   );
   SLL=cp5.addScrollableList("ROBOT LOG")
+    .setFont(font)
     .setPosition(360, 0)
     .setSize(640, 500)
-    .setItemHeight(13)
+    .setItemHeight(16)
     .setBarHeight(20)
     .setItemHeight(30)
+    .close()
     //.setColorBackground(color(255, 128))
-    .setColorBackground(color(0,45,90, 128))
+    .setColorBackground(color(0, 45, 90, 128))
+    
     //.setColorActive(color(0))
     //.setColorForeground(color(255, 100))
-    
-.setFont(font)
+
+
     //.setType(ScrollableList.LIST) // currently supported DROPDOWN and LIST
     ;
 
-
+  //SLL.captionLabel().toUpperCase(false);
+  //SLL.valueLabel().toUpperCase(false);
   for (int i=0; i<12; i++) {
-    //cp5.get(ScrollableList.class, "dropdown").getItem(n)
+
     SLL.addItem("R"+i, i);
 
-    
     //list.getItem("log "+i).put("color", new CColor().setBackground(0xffff0000).setBackground(0xffff88aa));
     //HRs[i].ackXYZABCstr
   }

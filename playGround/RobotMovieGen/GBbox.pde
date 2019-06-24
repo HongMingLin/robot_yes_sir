@@ -1,36 +1,30 @@
+
 class GBbox {
+  int[] minMidMax={60, 80, 100};
   int ID=0;
   private PVector boxSize;//=new PVector(100, 100);
-  private PVector XYOffset; 
+  private PVector minBoxSize;//=new PVector(60*scale.x, 60*scale.y);
+  private PVector XYOffset;
+  private PVector nowBoxSize;
   private PVector nowXY=new PVector(0, 0);
   private PVector fromXY=new PVector(0, 0);
   private PVector targetXY=new PVector(0, 0);
-  private float scale=1.0f;
+  float scale=1.0f;
   private float rotate=00f;
   long startMillis=0;
   float movingPercent=1;
   float movingDurition=0;
 
   void handleMouseEvent(MouseEvent e) {
-    switch(ALLMODE) {
-    case SCALE:
-      scale+= e.getCount()*0.001;
-    if (scale<0.5)scale=0.5;
-    if (scale>1.5)scale=1.5;
-      break;
-    case ROTATE:
-    case CIRCLE_RED:
-    case MOUSE_GB:
-    case MOUSE_RED:
-    case CIRCLE_XY:
-     rotate+= e.getCount()*0.001;
-    if (rotate<-HALF_PI)rotate=-HALF_PI;
-    if (rotate>HALF_PI)rotate=HALF_PI;
-      break;
-    default:
-      break;
+    if (SCALE_ROTATE) {
+      scale+= e.getCount()*0.0001;
+      if (scale<0.6)scale=0.6f;
+      if (scale>2)scale=2f;
+    } else {
+      rotate+= e.getCount()*0.001;
+      if (rotate<-QUARTER_PI)rotate=-QUARTER_PI;
+      if (rotate>QUARTER_PI)rotate=QUARTER_PI;
     }
-    
   }
   void goXY(float x, float y, float t) {
     goXY(new PVector(x, y), t);
@@ -67,35 +61,36 @@ class GBbox {
   }
   void drawx() {
     updatePOI();
-
+    blendMode(ADD);
     noStroke(); 
     pushMatrix();
-    translate(-boxSize.x/2, -boxSize.y/2);
+    translate(-boxSize.x/2.0, -boxSize.y/2.0);
     translate(XYOffset.x, XYOffset.y);    
-    translate(windowSize.x/2, windowSize.y/2);
+    translate(windowSize.x/2.0, windowSize.y/2.0);
     translate(nowXY.x, nowXY.y);
     fill(255);
-    translate(boxSize.x/2, boxSize.y/2);
+    translate(boxSize.x/2.0, boxSize.y/2.0);
     rotate(rotate);
     scale(scale);
-    translate(-boxSize.x/2,- boxSize.y/2);
+    nowBoxSize=PVector.mult(boxSize, scale);
+    translate(-boxSize.x/2.0, - boxSize.y/2.0);
     rectMode(CORNER);
     fill(0, 0, 255);
     scale(scale);
-    rect(0, 0, boxSize.x/2, boxSize.y);
+    rect(0, 0, boxSize.x/2.0, boxSize.y);
     fill(0, 255, 0);
-    translate(boxSize.x/2, 0);
-    rect(0, 0, boxSize.x/2, boxSize.y);
-    
-    popMatrix();
+    translate(boxSize.x/2.0, 0);
+    rect(0, 0, boxSize.x/2.0, boxSize.y);
 
-    
+    popMatrix();
   }
   GBbox(int id, PVector bPO, PVector scale) {
     ID=id;
     XYOffset=bPO;
-    boxSize=new PVector(100*scale.x, 100*scale.y);
-    println("XYOffset.x"+XYOffset.x+", XYOffset.y"+XYOffset.y);
+    boxSize=new PVector(minMidMax[2]*scale.x, minMidMax[2]*scale.y);
+    minBoxSize=new PVector(minMidMax[0]*scale.x, minMidMax[0]*scale.y);
+    nowBoxSize=new PVector(0, 0);
+    println("boxSize.x"+boxSize.x+", boxSize.y"+boxSize.y);
   }
   void set_XYOffset(float x, float y) {
     XYOffset.x=x;

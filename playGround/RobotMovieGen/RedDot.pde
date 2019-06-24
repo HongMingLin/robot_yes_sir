@@ -24,8 +24,8 @@ class RedDot {
   }
   void setXY(PVector in) {
 
-    float xx=map(in.x, 0, 1, -windowHalfSize.x+ledSizeHalf.x, windowHalfSize.x-ledSizeHalf.x);
-    float yy=map(in.y, 0, 1, -windowHalfSize.y+ledSizeHalf.y, windowHalfSize.y-ledSizeHalf.y);
+    float xx=map(in.x, 0, 1, -windowHalfSize.x/2.0, windowHalfSize.x/2.0);
+    float yy=map(in.y, 0, 1, -windowHalfSize.y/2.0, windowHalfSize.y/2.0);
     nowXY.lerp(xx, yy, 0, 0.018);
     //println(nowXY);
   }
@@ -66,6 +66,6 @@ class RedDot {
     dotSize=size;
     eye=new Eye( (int)(bPO.x+windowSize.x/2), (int)(bPO.y+windowSize.y/2), 50);
 
-    println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
+    //println("dotOffset.x"+boxPosOffset.x+", dotOffset.y"+boxPosOffset.y);
   }
 }

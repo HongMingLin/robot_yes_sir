@@ -327,6 +327,10 @@ class ascreen_info
     idx_on_video.y = idx_y;
     AX=new double[6];
     simAngles=new double[6];
+    for(int i=0;i<simAngles.length;i++)
+    {
+      simAngles[i]=Float.NaN;
+    }
     this.pos_in_world.set(pos_in_world);
   }
   

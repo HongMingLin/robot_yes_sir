@@ -1,15 +1,16 @@
-final PVector HOMEXYZ=new PVector(0f, 25f, -65f);
-final PVector HOMEABC=new PVector(0, 100, 0);
+final float[] HOME_A1A6={0f, 25f, -65f,0, 100, 0};
+
 JSONObject TXJSONObj;
 JSONObject RXJSONObj;
 String TXJSONStr="";
 String RXJSONStr="";
-void isAtHome(int i,PVector XYZ,PVector ABC){
-  float d1 = PVector.dist(XYZ, HOMEXYZ);
-  float d2 = PVector.dist(ABC, HOMEABC);
-  
-  if(d1<10&&d2<10){
-    HRs[i].atHome=true;
+void isAtHome(int w,float[] j1j6){
+  float diff=0;
+  for(int i=0;i<6;i++){
+    diff+=j1j6[i]-HOME_A1A6[i];
+  }
+  if(diff<1){
+    HRs[w].atHome=true;
   }
 
 }

@@ -12,7 +12,14 @@ void mousePressed() {
     
   }
 }
+ boolean SCALE_ROTATE=true;
 void keyPressed() {
+   if (key == CODED) {
+     if (keyCode == SHIFT) {
+        SCALE_ROTATE=!SCALE_ROTATE;
+        
+     }
+   }
   switch(key) {
     case '+':
     circleTime+=500;

@@ -1,5 +1,5 @@
 
-String pattern  = "MM/dd HH:mm:ss.SSS";
+String pattern  = "MMdd_HHmmss.SSS";
 boolean RXLED2=false;
 int RX_LOST_COUNT=0;
 boolean RX_OFFLINE=true;
@@ -35,9 +35,9 @@ void receive(byte[] bb, String ip, int port) {
             HRs[ID].ackABC.x=inJArr.getJSONObject(i).getInt("A");
             HRs[ID].ackABC.y=inJArr.getJSONObject(i).getInt("B");
             HRs[ID].ackABC.z=inJArr.getJSONObject(i).getInt("C");
+            HRs[ID].ServoOn=inJArr.getJSONObject(i).getBoolean("ServoOn");
             
-            isAtHome(i,new PVector(HRs[ID].ackXYZ.x,HRs[ID].ackXYZ.y,HRs[ID].ackXYZ.z)
-            ,new PVector(HRs[ID].ackABC.x,HRs[ID].ackABC.y,HRs[ID].ackABC.z));
+            
             //HRs[ID].ackINFO[0]=inJArr.getJSONObject(i).getInt("CmdCount");
             //HRs[ID].ackINFO[1]=inJArr.getJSONObject(i).getString("SafetyCheck");
             //HRs[ID].ackINFO[2]=inJArr.getJSONObject(i).getString("ECode");
@@ -48,7 +48,11 @@ void receive(byte[] bb, String ip, int port) {
             LINEStr+=" ECode="+HRs[ID].ackINFO[2];
             LINEStr+=" XYZ="+HRs[ID].ackXYZ.x+","+HRs[ID].ackXYZ.y+","+HRs[ID].ackXYZ.z;
             LINEStr+=" ABC="+HRs[ID].ackABC.x+","+HRs[ID].ackABC.y+","+HRs[ID].ackABC.z;
-
+            for (int j=0; j<6; j++) {
+              HRs[ID].ackJ1J6[j]=inJArr.getJSONObject(i).getFloat("A"+(j+1));
+              //LINEStr+=" A"+(j+1)+"="+inJArr.getJSONObject(i).getFloat("T"+(j+1));
+            }
+            isAtHome(i,HRs[ID].ackJ1J6);
             for (int j=0; j<6; j++) {
               LINEStr+=" T"+j+"="+inJArr.getJSONObject(i).getFloat("T"+(j+1));
             }
@@ -102,6 +106,7 @@ void send2robot12() {
   sendX(TXJSONStr+"\n");
 }
 void sendX(String s) {
+  TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
   u.send(s, R_IP, R_PORT);
 }
 void wsSend(String s) {

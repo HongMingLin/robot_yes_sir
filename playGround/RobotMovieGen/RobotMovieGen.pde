@@ -13,11 +13,10 @@ MODE ALLMODE=MODE.QLAB;
 PVector movieSize=new PVector(640, 480);
 Movie myMovie;
 PVector robotArray=new PVector(4, 3);
-PVector windowSize=new PVector(260, 274);
+PVector windowSize=new PVector(240, 274);
 PVector ledSize=new PVector(100, 100);
 PVector ledSizeHalf=new PVector(ledSize.x/2, ledSize.y/2);
 PVector windowHalfSize=new PVector(windowSize.x/2, windowSize.y/2);
-
 PVector SCALE_MOVIE=new PVector(movieSize.x/(windowSize.x*robotArray.x), movieSize.y/(windowSize.y*robotArray.y));
 
 //PVector movieSize=new PVector(windowSize.x*robotArray.x*SCALE_MOVIE.x, windowSize.y*robotArray.y*SCALE_MOVIE.y);
@@ -102,7 +101,7 @@ void draw() {
   //popMatrix();
   fill(255);
   textSize(12);
-  text(" FPS:"+ nfc(frameRate, 2)+" Mode="+ALLMODE, 10, 10);
+  text(" FPS:"+ nfc(frameRate, 2)+" Mode="+ALLMODE+" M-Wheel="+(SCALE_ROTATE?"scale ":"rotate ") + (gbBoxs[0].nowBoxSize), 10, 10);
   text(mouseX+","+mouseY, mouseX, mouseY);
 }
 
@@ -121,8 +120,8 @@ void effect() {
 
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(
-        (mouseX/movieSize.x)*((1+sin(TWO_PI/12*i))/2.0), 
-        (mouseY/movieSize.y)*((1+sin(TWO_PI/12*i))/2.0));
+        ((float)mouseX/movieSize.x)*((1+sin(TWO_PI/12*i))/2.0), 
+        ((float)mouseY/movieSize.y)*((1+sin(TWO_PI/12*i))/2.0));
     }
     break;
   case MOUSE_RED:
@@ -131,17 +130,16 @@ void effect() {
       //int dist=mouseP.dist(redDots[i].boxPosOffset);
       mouseP.sub(redDots[i].boxPosOffset);
       redDots[i].setXY(
-        (mouseX/movieSize.x), 
-        (mouseY/movieSize.y));
+        ((float)mouseX/movieSize.x), 
+        ((float)mouseY/movieSize.y));
     }
     break;
-  case SCALE:
-  case ROTATE:
+  
   case MOUSE_GB:
     for (int i=0; i<gbBoxs.length; i++) {
       gbBoxs[i].setXY(
-        (mouseX/movieSize.x), 
-        (mouseY/movieSize.y));
+        ((float)mouseX/movieSize.x), 
+        ((float)mouseY/movieSize.y));
     }
     break;
   case CIRCLE_RED:
@@ -150,8 +148,8 @@ void effect() {
         (1+sin(millis()*TWO_PI/circleTime))/2, 
         (1+cos(millis()*TWO_PI/circleTime))/2);
       gbBoxs[i].setXY(
-        (mouseX/movieSize.x), 
-        (mouseY/movieSize.y));
+        ((float)mouseX/movieSize.x), 
+        ((float)mouseY/movieSize.y));
     }
     break;
   case CIRCLE_XY:

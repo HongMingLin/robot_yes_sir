@@ -12,7 +12,7 @@ void beginHUD() {
   int START_Y=25;
 
   //text("C_Distance:" +cam.getDistance()+" FPS:"+ nfc(frameRate, 2), 10, START_Y+=OFFSET_Y);
-  text("C_Distance:" +nfc((float)cam.getDistance(),2)+" FPS:"+ nfc(frameRate, 2)+"M_S="+M_S, 10, START_Y+=OFFSET_Y);
+  text("C_Distance:" +nfc((float)cam.getDistance(), 2)+" FPS:"+ nfc(frameRate, 2)+"M_S="+M_S, 10, START_Y+=OFFSET_Y);
 
   float[] xyz = cam.getRotations();
   text("rX="+nf(xyz[0], 1, 3)+" rY="+nf(xyz[1], 1, 3)+" rZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
@@ -76,23 +76,29 @@ void beginHUD() {
     //text((HRs[i].ALL_PATH_OK?"Y":"N"), 5 + 1 + textWidth(s1), tY );
 
     fill(255, 255, 0, 128);
-    
-    
+
+
     try {
       if (RXJSONObj!=null) {
         JSONObject tempJ=RXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
-        String s ="RbtState"+tempJ.getString("RbtState");
-        s+=" ServoOn"+tempJ.getBoolean("ServoOn");
-        s+=" SafetyCheck"+tempJ.getString("SafetyCheck");
-        s+=" MotStatus"+tempJ.getString("MotStatus");
-        s+=" Level"+tempJ.getString("Level");
-        s+=" ECode"+tempJ.getString("ECode");
-        s+=" HrssMode"+tempJ.getString("HrssMode");
-        text("RB>"+s, 5, tY+135 );
+        String s  ="";
+        s+="Servo="+(HRs[i].ServoOn?"O":"X");
+        s+=" |RState="+tempJ.getString("RbtState");
+        s+=" |HRSS="+tempJ.getString("HrssMode");
+        s+=" |ECode="+tempJ.getString("ECode");
+        s+=" |Motion="+tempJ.getString("MotStatus");
+        s+=" |Safety="+tempJ.getString("SafetyCheck");
+        s+=" |Level="+tempJ.getString("Level");
         
+        
+
+        HRs[i].ackXYZABCstr=s;
+        SLL.getItem(i).put("text", s);
+        SLL.update();
+
         s="";
         s+=(1+i)+". XYZ="+HRs[i].ackXYZ.x+","+HRs[i].ackXYZ.y+","+HRs[i].ackXYZ.z+
-        " ABC="+
+          " ABC="+
           HRs[i].ackABC.x+","+HRs[i].ackABC.y+","+HRs[i].ackABC.z;
         s+=" A1-6=";
         for (int r=1; r<=6; r++)
@@ -100,10 +106,9 @@ void beginHUD() {
         //s+=" T1-6=";
         //for (int r=1; r<=6; r++)
         //  s+=tempJ.getFloat("T"+r);
-        HRs[i].ackXYZABCstr=s;
+
         //text("RB>"+s, 5, tY+135+15 );
-        SLL.getItem(i).put("text", s);
-        SLL.update();
+        text("RB>"+s, 5, tY+135 );
       } else
         text("RB>Notyet", 5, tY+135 );
     }
@@ -120,7 +125,7 @@ void beginHUD() {
   stroke(255);
   strokeWeight(1);
   line(0, appH-20, appW, appH-20);
-  text("REALTIME(R)  TX/RX     | TX_mS="+TX_mS, 6, appH-5);
+  text("REALTIME(R)  TX/RX     | TX_mS="+TX_mS+"  | HOME= ", 6, appH-5);
   //text("ALL_PATH_OK", 6, appH-25);
   fill(REALTIME?0:255, REALTIME?255:0, 0);
   ellipse(88, appH-10, 8, 8);
@@ -130,8 +135,16 @@ void beginHUD() {
   fill(RXLED?0:255, RXLED?255:0, 0);
   ellipse(155, appH-10, 8, 8);
 
+  for (int i=0; i<12; i++) {
+    if (HRs[i].atHome)
+      fill(0, 255, 0);
+    else
+      fill(255, FlashStatus?255:0, 0);
+    rect(305+(i*10)+(i%3==0?5:0), appH-13, 8, 8);
+  }
 
-BB.update();
+
+  BB.update();
   drawMovie();
   cp5.draw();
   showRobotStatusHUD();
@@ -156,18 +169,22 @@ void showRobotStatusHUD() {
   fill(HRs[0].Aligned?color(0, 255, 0):color(255, 0, 0));
 
 
+  int startX=3;
+  int startY=200;
 
+  for (int xx=0; xx<12; xx++) {
+    text(HRs[xx].RM+" SOn="+(HRs[xx].ServoOn?"O":"X"), startX+(xx%4*80),startY+(xx/4*80) );
+  }
 
-  text(HRs[0].RM+"", 10, 205);
-  text(HRs[1].RM+"", 85, 205);
-  text(HRs[2].RM+"", 160, 205);
-  text(HRs[3].RM+"", 230, 205);
-  text(HRs[4].RM+"", 10, 280);
-  text(HRs[5].RM+"", 85, 280);
-  text(HRs[6].RM+"", 160, 280);
-  text(HRs[7].RM+"", 230, 280);
-  text(HRs[8].RM+"", 10, 350);
-  text(HRs[9].RM+"", 85, 350);
-  text(HRs[10].RM+"", 160, 350);
-  text(HRs[11].RM+"", 230, 350);
+  //text(HRs[1].RM+"", 85, 205);
+  //text(HRs[2].RM+"", 160, 205);
+  //text(HRs[3].RM+"", 230, 205);
+  //text(HRs[4].RM+"", 10, 280);
+  //text(HRs[5].RM+"", 85, 280);
+  //text(HRs[6].RM+"", 160, 280);
+  //text(HRs[7].RM+"", 230, 280);
+  //text(HRs[8].RM+"", 10, 350);
+  //text(HRs[9].RM+"", 85, 350);
+  //text(HRs[10].RM+"", 160, 350);
+  //text(HRs[11].RM+"", 230, 350);
 }

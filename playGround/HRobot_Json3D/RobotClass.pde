@@ -69,7 +69,7 @@ enum RunCMD {
   
 }
 class HRobot {
-  
+  boolean ServoOn=false;
   boolean ALL_PATH_OK=true;
   JSONObject RobotINFOJ;
   boolean RK_fatalError=false;
@@ -84,6 +84,7 @@ class HRobot {
   private PVector XYZ=new PVector(0, 0, 0);
   private PVector ackXYZ=new PVector(0, 0, 0);
   private PVector ackABC=new PVector(0, 0, 0);
+  private float[] ackJ1J6=new float[6];
   String ackXYZABCstr="";
   private PVector normalizeXYZ=new PVector();
   String[] ackINFO=new String[10];
@@ -110,6 +111,7 @@ class HRobot {
     mouseWheele_e=0;
   }
   void UPDATE() {
+    if(skip_calcAckApproved)return;
     float xx=0, yy=0, zz=0;
     float aa=0,bb=0,cc=0;
     globalNowSin=millis()*(TWO_PI/globalCRICLE_Time);

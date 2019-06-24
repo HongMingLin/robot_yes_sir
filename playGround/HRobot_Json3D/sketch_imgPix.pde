@@ -113,32 +113,37 @@ Vector<PVector> obj2v=new Vector<PVector>();
 PMatrix invCameraMat;
 PMatrix CameraMat;
 Kinematics kinma;
+File mf;
 
-
+void loadMovie(String mFile) {
+  if(myMovie!=null){
+    myMovie.stop();
+    myMovie=null;
+  }
+  try {
+    ///Users/xlinx/Movies/robotTest/Test 11-1.mp4
+    mf = new File(System.getProperty("user.dir")+"/Movies/"+mFile);
+    if (mf.exists())
+    {
+      myMovie = new Movie(this, mf.getAbsolutePath());
+      myMovie.loop();
+    }
+  }
+  catch(Exception e) {
+    myMovie=null;
+    e.printStackTrace();
+  }
+}
 
 void setup2() {
-  //setupJson();
-  //u = new UDP( this, 1313 );
-  //u.log( false );
-  //u.listen( true );
-
-  //new java.util.Timer().scheduleAtFixedRate(statusTimer500, 0, 100);
-
-
-
   identityBoxV=boxVertices(1, 1, 1);
   kinma=new Kinematics(geometries[0]);
-
-  //size(600, 600,P3D);
-  //cam = new PeasyCam(this, 100);
-  //cam.setMinimumDistance(10);
-  //cam.setMaximumDistance(5000);
   cam.setWheelScale(0.1);
-  //cam.lookAt(0, 0, 0,1600,0);
-  myMovie = new Movie(this, "0.mp4");
+
+
+
   //hint(DISABLE_DEPTH_TEST);
 
-  myMovie.loop();
   ascArr=new ascreen_info[12];
   /*for(int i=0;i<ascArr.length;i++)
    {
@@ -213,7 +218,7 @@ float board_thickness=100;
  |   |   |base
  |   |   |
  _|   |   |__
- |    |      |
+ |     |      |
  <----->
  length_robotBaseCenter2BaseFeetFrontEnd
  */
@@ -552,6 +557,9 @@ void sectionFinding( PImage myImage, ascreen_info []asc_arr )
     R.y*=-1;
     G.y*=-1;
     B.y*=-1;
+
+
+    R.y-=0.5;//HACK: make R point offset down a bit to give J5 more angle margin.
     asc_arr[i].setRGBInfo( R, G, B);
   }
 
@@ -642,21 +650,21 @@ void RK(ascreen_info []asc_arr) {
     //>X ^y  @Z (toward you) Kinematics world
     //PVector pXYZ=new PVector(-700*XYZ.x, 700*(XYZ.z)+780+300, 700*XYZ.y+300);
     float videoFrameSectionW=240;
-    
-    float GB_Box_max_WindowSize=100;
-    float GB_Box_middleonWindowSize=80;
-    float GB_Box_min_WindowSize=60;
-    
+
+    float GB_Box_max_WindowSize=80;
+    float GB_Box_middleonWindowSize=50;
+    float GB_Box_min_WindowSize=40;
+
     //float GB_Box_max_WindowSize=50;
     //float GB_Box_middleonWindowSize=40;
     //float GB_Box_min_WindowSize=60;
-    
+
     float innerMostDepthRatio=(GB_Box_min_WindowSize/2)/videoFrameSectionW;
     float middleDepthRatio=(GB_Box_middleonWindowSize/2)/videoFrameSectionW;
     float outMostDepthRatio=(GB_Box_max_WindowSize/2)/videoFrameSectionW;
     float robotSafeY=depth_robotBaseCenter2WindowCenter; //700-1300
-    
-    
+
+
     float robotOutMotion_MostDist=600;
     float robotInsideMotion_MostDist=-50;
     // XY -1 ~ 1
@@ -664,7 +672,7 @@ void RK(ascreen_info []asc_arr) {
     if (XYZ.z>middleDepthRatio)
       robotSafeY+=map(XYZ.z, middleDepthRatio, outMostDepthRatio, 0, robotOutMotion_MostDist);
     else// if(XYZ.z<outMostDepthRatio)
-      robotSafeY+=map(XYZ.z, innerMostDepthRatio,middleDepthRatio, robotInsideMotion_MostDist, 0);
+      robotSafeY+=map(XYZ.z, innerMostDepthRatio, middleDepthRatio, robotInsideMotion_MostDist, 0);
     //if(robotSafeY>1300){
     //  robotSafeY=1300;
     //  STOP_STOP_STOP(i);
@@ -673,25 +681,25 @@ void RK(ascreen_info []asc_arr) {
     //  robotSafeY=700;
     //  STOP_STOP_STOP(i);
     //}
-    
+
     /*
     
-    |                   |
-    |                   |
-    |       |....@@@@|  |
-    |       |....@@@@|  |
-    |       |....@@@@|  |
-    |       |....@@@@|  |
-    |                   |
-    */
+     |                   |
+     |                   |
+     |       |....@@@@|  |
+     |       |....@@@@|  |
+     |       |....@@@@|  |
+     |       |....@@@@|  |
+     |                   |
+     */
     //(240-80)/240
     //(frameW-board_WH)/2
-    
+
     float XY_multiplier=((frameW-board_WH)/2f)/((videoFrameSectionW-GB_Box_middleonWindowSize)/videoFrameSectionW);
     PVector pXYZ=new PVector(-XY_multiplier*XYZ.x, robotSafeY, XY_multiplier*XYZ.y+height_robotJ2_2windowFrameCenter);
 
-    println("robotSafeY="+robotSafeY+"  "+middleDepthRatio);
-    println("(XYZ.z)="+(XYZ.z));
+    //println("robotSafeY="+robotSafeY+"  "+middleDepthRatio);
+    //println("(XYZ.z)="+(XYZ.z));
 
     //float period=4;
     //pXYZ.x=+0*sin(inc_X*2*PI/1000/period);
@@ -761,7 +769,6 @@ void RK(ascreen_info []asc_arr) {
 
 
       boolean needFix=true;
-      double angle3_zero_tendency=20;//if the 
       while (needFix)
       {
         needFix=false;
@@ -778,7 +785,7 @@ void RK(ascreen_info []asc_arr) {
       }
 
 
-
+      //small butterfly
       if (abs((float)angles[4]-HALF_PI)<30*PI/180)//The joint5 closes to straight (+-30degree)
       {//Flip joint4 to be straight HIWIN logo in natural position
         if (angles[3]>HALF_PI)
@@ -790,7 +797,7 @@ void RK(ascreen_info []asc_arr) {
         }
       }
 
-
+      //Big butterfly
       if (angles[3]>PI)
       {
 
@@ -809,6 +816,20 @@ void RK(ascreen_info []asc_arr) {
         HRs[i].RK_fatalError=true;
         //HRs[i].RM=RunMODE.HOME;
       }
+
+
+
+      angles[5]%=2*PI;
+      if (angles[5]>PI)
+      {
+        angles[5]-=2*PI;
+      } else if (angles[5]<-PI)
+      {
+        angles[5]+=2*PI;
+      }
+
+      if (abs((float)angles[5])>PI/2)
+        println("ERR:"+angles[5]*180/PI);
 
 
       double DIFF4 = (angles[3]-P_angles[3])*180/PI;
@@ -879,15 +900,15 @@ void RK(ascreen_info []asc_arr) {
       //HIWIN J6(index 5) rotates diffetent direction
       if (k==5)
         angle=-angle;
+      synchronized(TXJSONObj) {
+        float fff=round((float)((angle)*180/PI*1000))/1000f;
+        {
+          //print(fff+" ");
 
-      float fff=round((float)((angle)*180/PI*1000))/1000f;
-      //DEBUG(fff+" ");
-      //if(i==0)
-      {
-        //print(fff+" ");
-        TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
-        float dgree=fff/TWO_PI*360.0;
-        //jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
+          TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
+          //float dgree=fff/TWO_PI*360.0;
+          //jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
+        }
       }
     }
 
@@ -905,7 +926,7 @@ void RK(ascreen_info []asc_arr) {
     popMatrix();
   }
 
-  TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
+  //TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
   //outJ=clearAllASCII(json.toString());
 
 

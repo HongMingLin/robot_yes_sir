@@ -9,19 +9,58 @@ void mouseWheel(MouseEvent event) {
   //float e = event.getCount();
   HRs[whichRobot].handleMouseEvent(event);
 }
+
+
+boolean HACK_videoPlayToggle=false;
 void keyPressed() {
   motorWalk();
   JSONObject jTemp=null;
   switch(key) {
+  case '6':
+    loadMovie("0623_dreams.mp4");
+    break;
+  case '7':
+    loadMovie("7.mp4");
+    break;
+  case '8':
+    loadMovie("8.mp4");
+    break;
+  case '9':
+    loadMovie("9.mp4");
+    break;
+  case 'W':
+    skip_calcAckApproved=!skip_calcAckApproved;
+    break;
+  case 'L':
+    if (output==null) {
+      output = createWriter("RGOD_TX_RBOSS.POI."+logHeader()+".txt"); 
+      logSaveTx=true;
+    } else {
+      logSaveTx=false;
+      output.flush(); 
+      output.close();
+      output=null;
+    }
+    break;
   case 'd':
-  GlobalDebug=!GlobalDebug;
+    GlobalDebug=!GlobalDebug;
     break;
   case 'V':
     M_S=M_S.next();
     if (M_S==MOVIE_or_SHAREIAMGE.Movie)
       myMovie.play();
     else
-      myMovie.stop();
+      if (myMovie!=null)
+        myMovie.stop();
+    break;
+  case 'p':
+    if (myMovie!=null)
+      myMovie.pause();
+    break;
+  case 'P':
+    if (myMovie!=null){
+      myMovie.play();
+    }
     break;
 
   case 'J':
@@ -42,7 +81,7 @@ void keyPressed() {
   case 'R':
     REALTIME=!REALTIME;
     exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
-    
+
     break;
   case 'A':
     HRs[0].RM=HRs[0].RM.next();
