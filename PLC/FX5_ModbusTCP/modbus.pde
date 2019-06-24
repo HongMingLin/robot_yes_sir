@@ -5,10 +5,11 @@ byte VAL=(byte)0xff;
 int whichMPx=2;
 int SEQ_MAX=0xffff;
 int SEQ=0;
-byte[] set1Mval(int offset) {
+byte[] set1Mval(int offset,boolean onoff) {
   byte funCode=0x5;
   byte bb []={00, 00, 00, 00, 00, 06, 0, funCode, 8, 9, (byte)0xff, 0};
-
+  if(!onoff)
+  bb[10]=0;
   bb[8]=(byte)(((offset+SW_M_START_ADDR) >>8) &0xff);
   bb[9]=(byte)((offset+SW_M_START_ADDR)&0xff );
 

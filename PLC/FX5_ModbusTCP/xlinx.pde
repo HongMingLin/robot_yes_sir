@@ -226,7 +226,7 @@ void hashmapYWalker(HashMap<Integer, IO> map) {
     int key = (int)entry.getKey(); 
     IO val = (IO)entry.getValue();
     ss+=key+"."+val.name+"="+(val.on_off?"1 ":"0 ");
-    toggles[key].setValue(val.on_off);
+    toggles[key].setValue(!val.on_off);
     //print(ss);
   }
   YNamestr=ss;

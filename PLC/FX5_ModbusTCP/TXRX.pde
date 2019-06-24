@@ -3,8 +3,10 @@ byte[] byteBuffer = new byte[32];
 void tx(byte[] bb, String ip, int port) {
   if (udp!=null)
     udp.send(bb, ip, port);
-  if (tcp!=null)
-    tcp.write(printBBb(true, "TXTCP", bb));
+  if (tcp!=null){
+    
+    tcp.write(bb);
+  }
   SEQ++;
   if (SEQ>=0xffff)
     SEQ=0;
