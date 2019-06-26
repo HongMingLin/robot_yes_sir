@@ -126,7 +126,11 @@ void loadMovie(String mFile) {
     if (mf.exists())
     {
       myMovie = new Movie(this, mf.getAbsolutePath());
-      myMovie.loop();
+      //myMovie.pause();
+      
+      println("[DECADE][LoadMovie]OK="+mf.toString());
+    }else{
+     println("[DECADE][LoadMovie]Not found="+mf.toString());
     }
   }
   catch(Exception e) {

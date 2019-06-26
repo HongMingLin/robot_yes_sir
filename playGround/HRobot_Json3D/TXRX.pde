@@ -13,11 +13,12 @@ void parseFile(String fname) {
   String line = null;
   try {
     while ((line = reader.readLine()) != null) {
-      
+
       JSONObject txtIn1Json = parseJSONObject(line);
     }
     reader.close();
-  } catch (IOException e) {
+  } 
+  catch (IOException e) {
     e.printStackTrace();
   }
 } 
@@ -25,9 +26,14 @@ void receive(byte[] bb, String ip, int port) {
   rxStr=new String(bb); 
   //DEBUG("RX="+inJstr);
   switch(port) {
+  case 33333:
+    if (rxStr.startsWith("/cue/")) {
+      processCUE(rxStr);
+    }
+    break;
   case 9999:
     if (RX_OFFLINE) {
-      exec("/usr/bin/say", "HI WIN Robot Balls Online");//Boss
+      exec("/usr/bin/say", "HI WIN Robot Boss Online");//Boss
       RX_OFFLINE=false;
     }
     RXLED=!RXLED;
@@ -52,8 +58,8 @@ void receive(byte[] bb, String ip, int port) {
             HRs[ID].ackABC.y=inJArr.getJSONObject(i).getInt("B");
             HRs[ID].ackABC.z=inJArr.getJSONObject(i).getInt("C");
             HRs[ID].ServoOn=inJArr.getJSONObject(i).getBoolean("ServoOn");
-            
-            
+
+
             //HRs[ID].ackINFO[0]=inJArr.getJSONObject(i).getInt("CmdCount");
             //HRs[ID].ackINFO[1]=inJArr.getJSONObject(i).getString("SafetyCheck");
             //HRs[ID].ackINFO[2]=inJArr.getJSONObject(i).getString("ECode");
@@ -68,7 +74,7 @@ void receive(byte[] bb, String ip, int port) {
               HRs[ID].ackJ1J6[j]=inJArr.getJSONObject(i).getFloat("A"+(j+1));
               //LINEStr+=" A"+(j+1)+"="+inJArr.getJSONObject(i).getFloat("T"+(j+1));
             }
-            isAtHome(i,HRs[ID].ackJ1J6);
+            isAtHome(i, HRs[ID].ackJ1J6);
             for (int j=0; j<6; j++) {
               LINEStr+=" T"+j+"="+inJArr.getJSONObject(i).getFloat("T"+(j+1));
             }

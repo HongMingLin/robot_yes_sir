@@ -1,4 +1,9 @@
 PVector ROBOT_XYZ_Cxyz=new PVector(0, 0, 0);
+void STOP_STOP_STOP_ALL() {
+  for (int i=0; i<12; i++)
+    STOP_STOP_STOP(i);
+  exec("/usr/bin/say", "Robot Stop");
+}
 void STOP_STOP_STOP(int i) {
   TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
   HRs[i].ALL_PATH_OK=false;
@@ -23,7 +28,7 @@ void keyPressed() {
   JSONObject jTemp=null;
   switch(key) {
   case '`':
-  disableMovie=!disableMovie;
+    disableMovie=!disableMovie;
     break;
   case '6':
     loadMovie("6.mp4");
@@ -122,16 +127,7 @@ void keyPressed() {
 
     break;
   case ' ':
-    jTemp=null;
-    for (int i=0; i<12; i++) {
-      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
-      jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
-      HRs[i].RM=HRs[i].RM.STOP;
-    }
-    cueQLAB("/cue/p1/pause");
-    cueQLAB("/cue/f2/start");
-    //cueQLAB("/cue/m1/stop");
-    exec("/usr/bin/say", "Robot Stop");
+    STOP_STOP_STOP_ALL();
     break;
   case 'G':
     jTemp=null;
@@ -147,16 +143,7 @@ void keyPressed() {
 
     break;
   case 'H':
-    jTemp=null;
-    for (int i=0; i<12; i++) {
-      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
-      jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
-      HRs[i].RM=RunMODE.HOME;
-      HRs[i].ALL_PATH_OK=true;
-      HRs[i].atHome=false;
-    }
-    //sendX(clearAllASCII(json.toString()+"\n") );
-    exec("/usr/bin/say", "Robot 全部 回家");
+    R_home();
 
     break;
 
@@ -175,6 +162,18 @@ void keyPressed() {
     }
     break;
   }
+}
+void R_home() {
+  JSONObject jTemp=null;
+  for (int i=0; i<12; i++) {
+    jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+    jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
+    HRs[i].RM=RunMODE.HOME;
+    HRs[i].ALL_PATH_OK=true;
+    HRs[i].atHome=false;
+  }
+  //sendX(clearAllASCII(json.toString()+"\n") );
+  exec("/usr/bin/say", "Robot 全部 回家");
 }
 void motorWalk() {
   PVector walkXYZ=new PVector(0, 0, 0);
