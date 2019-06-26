@@ -10,14 +10,23 @@ void mouseWheel(MouseEvent event) {
   HRs[whichRobot].handleMouseEvent(event);
 }
 
+void cueQLAB(String cue) {
+  //OscMessage myMessage = new OscMessage(cue);
+  u3.send(encoderOSC(cue), "10.10.10.33", 53000);
+  //oscP5.send(myMessage, myRemoteLocation);
+}
 
 boolean HACK_videoPlayToggle=false;
+
 void keyPressed() {
   motorWalk();
   JSONObject jTemp=null;
   switch(key) {
+  case '`':
+  disableMovie=!disableMovie;
+    break;
   case '6':
-    loadMovie("0623_dreams.mp4");
+    loadMovie("6.mp4");
     break;
   case '7':
     loadMovie("7.mp4");
@@ -48,17 +57,18 @@ void keyPressed() {
   case 'V':
     M_S=M_S.next();
     if (M_S==MOVIE_or_SHAREIAMGE.Movie)
-      myMovie.play();
-    else
       if (myMovie!=null)
-        myMovie.stop();
+        myMovie.play();
+      else
+        if (myMovie!=null)
+          myMovie.stop();
     break;
   case 'p':
     if (myMovie!=null)
       myMovie.pause();
     break;
   case 'P':
-    if (myMovie!=null){
+    if (myMovie!=null) {
       myMovie.play();
     }
     break;
@@ -80,7 +90,7 @@ void keyPressed() {
     break;
   case 'R':
     REALTIME=!REALTIME;
-    exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
+    //exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
 
     break;
   case 'A':
@@ -118,6 +128,9 @@ void keyPressed() {
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
       HRs[i].RM=HRs[i].RM.STOP;
     }
+    cueQLAB("/cue/p1/pause");
+    cueQLAB("/cue/f2/start");
+    //cueQLAB("/cue/m1/stop");
     exec("/usr/bin/say", "Robot Stop");
     break;
   case 'G':
@@ -127,7 +140,11 @@ void keyPressed() {
       jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
     }
+    cueQLAB("/cue/f1/start");
+    cueQLAB("/cue/p1/start");
+
     exec("/usr/bin/say", "Robot Go");
+
     break;
   case 'H':
     jTemp=null;

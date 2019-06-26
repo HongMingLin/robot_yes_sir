@@ -116,7 +116,7 @@ Kinematics kinma;
 File mf;
 
 void loadMovie(String mFile) {
-  if(myMovie!=null){
+  if (myMovie!=null) {
     myMovie.stop();
     myMovie=null;
   }
@@ -486,6 +486,8 @@ double[] drawRobotWorld(double[] angles, AtomicBoolean isCollided)
   {
     box(1000, 1000, 1000);
     isCollided.set(true);
+    for (int i=0; i<12; i++)
+      STOP_STOP_STOP(i);
   }
 
   popMatrix();
@@ -935,7 +937,9 @@ void RK(ascreen_info []asc_arr) {
 String clearAllASCII(String in) {
   return in.toString().replaceAll("[/ /g]", "").replaceAll("[^\\x20-\\x7e]", "");
 }
+boolean disableMovie=true;
 void drawMovie() {
+  if(disableMovie)return;
   pushMatrix();
   imageMode(CORNER);
   rectMode(CORNER);
@@ -945,12 +949,14 @@ void drawMovie() {
 
   //image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
   switch(M_S) {
+  case TXT:
+
+    break;
   case Movie:
     if (myMovie!=null)
       image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/320.0));
     break;
   case ShareImage:
-
     image(canvas.get(), 0, 0, 300, canvas.height/(canvas.width/320.0));
     break;
   }
@@ -985,16 +991,32 @@ void draw2() {
     line(0, 0, 0, 0, 0, 10000);
   }
   //sectionFinding(myMovie, ascArr);
+  double[] tempAng={12.784, -50, -20, 10, 116, -4};
   switch(M_S) {
+  case TXT:
+    //"A1":"-0.093","A2":"-29.387","A3":"-21.126","A4":"0.357","A5":"95.661","A6":"0.437",
+    //"A1":"-0.093","A2":"-29.388","A3":"-21.125","A4":"0.357","A5":"95.661","A6":"0.437"
+    //"A1":"12.784","A2":"-50.676","A3":"-20.285","A4":"10.537","A5":"116.486","A6":"-4.201"
+
+    for (int i=0; i<ascArr.length; i++) {
+      pushMatrix();
+      final PVector origin = ascArr[i].getOrigin();
+      translate(-origin.x, origin.z, -origin.y);
+      //drawRobotWorld( tempAng.getSimAngles(), HRs[i].RK_ColliError);
+      drawRobotWorld( tempAng, HRs[i].RK_ColliError);
+      popMatrix();
+    }
+
+    break;
   case Movie:
     if (myMovie!=null)
       sectionFinding(myMovie, ascArr);
+    RK(ascArr);  
     break;
   case ShareImage:
     sectionFinding(canvas.get(), ascArr);
+    RK(ascArr);  
     //println("canvas.width="+canvas.width);
     break;
   }
-
-  RK(ascArr);
 }

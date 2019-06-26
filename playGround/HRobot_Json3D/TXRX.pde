@@ -5,6 +5,22 @@ int RX_LOST_COUNT=0;
 boolean RX_OFFLINE=true;
 byte logSeq=0;
 String rxStr="";
+
+
+StringBuffer inTXTSB=new StringBuffer("");
+void parseFile(String fname) {
+  BufferedReader reader = createReader(fname);
+  String line = null;
+  try {
+    while ((line = reader.readLine()) != null) {
+      
+      JSONObject txtIn1Json = parseJSONObject(line);
+    }
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+} 
 void receive(byte[] bb, String ip, int port) {
   rxStr=new String(bb); 
   //DEBUG("RX="+inJstr);

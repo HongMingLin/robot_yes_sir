@@ -1,7 +1,7 @@
 TXRATE TXms=TXRATE.s33;
 MOVIE_or_SHAREIAMGE M_S=MOVIE_or_SHAREIAMGE.Movie;
 enum MOVIE_or_SHAREIAMGE {
-  Movie,ShareImage;
+  Movie,ShareImage,TXT;
   private static MOVIE_or_SHAREIAMGE[] vals = values();
   public MOVIE_or_SHAREIAMGE next()
   {

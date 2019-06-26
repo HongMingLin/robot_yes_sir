@@ -20,7 +20,12 @@ void beginHUD() {
   text("cX="+nf(xyz[0], 1, 3)+" cY="+nf(xyz[1], 1, 3)+" cZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   text("MinD"+MinD+", MaxD="+MaxD+", CamD"+CamD, 10, START_Y+=OFFSET_Y);
   xyz=cam.getLookAt();
-  text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
+  //if (disableMovie)
+  //  text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);  
+  //else
+  if(myMovie!=null)
+    text("Movie="+nf(myMovie.time(),3,1)+"/"+myMovie.duration(), 10, START_Y+=OFFSET_Y);
+
 
   START_Y=550;
   //text("{q w e r} = 4F ", 315, 40);
@@ -89,8 +94,8 @@ void beginHUD() {
         s+=" |Motion="+tempJ.getString("MotStatus");
         s+=" |Safety="+tempJ.getString("SafetyCheck");
         s+=" |Level="+tempJ.getString("Level");
-        
-        
+
+
 
         HRs[i].ackXYZABCstr=s;
         SLL.getItem(i).put("text", s);
@@ -125,7 +130,7 @@ void beginHUD() {
   stroke(255);
   strokeWeight(1);
   line(0, appH-20, appW, appH-20);
-  text("REALTIME(R)  TX/RX     | TX_mS="+TX_mS+"  | HOME= ", 6, appH-5);
+  text("REALTIME(R)  TX/RX     | TX_mS="+TX_mS+"  | HOME=               ", 6, appH-5);
   //text("ALL_PATH_OK", 6, appH-25);
   fill(REALTIME?0:255, REALTIME?255:0, 0);
   ellipse(88, appH-10, 8, 8);
@@ -134,13 +139,14 @@ void beginHUD() {
   ellipse(145, appH-10, 8, 8);
   fill(RXLED?0:255, RXLED?255:0, 0);
   ellipse(155, appH-10, 8, 8);
-
+  int offsetHomeIcon=0;
   for (int i=0; i<12; i++) {
     if (HRs[i].atHome)
       fill(0, 255, 0);
     else
       fill(255, FlashStatus?255:0, 0);
-    rect(305+(i*10)+(i%3==0?5:0), appH-13, 8, 8);
+    offsetHomeIcon+=(i%4==0?5:0);
+    rect(305+(i*10)+offsetHomeIcon, appH-13, 8, 8);
   }
 
 
@@ -173,7 +179,7 @@ void showRobotStatusHUD() {
   int startY=200;
 
   for (int xx=0; xx<12; xx++) {
-    text(HRs[xx].RM+" SOn="+(HRs[xx].ServoOn?"O":"X"), startX+(xx%4*80),startY+(xx/4*80) );
+    text(HRs[xx].RM+" SOn="+(HRs[xx].ServoOn?"O":"X"), startX+(xx%4*80), startY+(xx/4*80) );
   }
 
   //text(HRs[1].RM+"", 85, 205);

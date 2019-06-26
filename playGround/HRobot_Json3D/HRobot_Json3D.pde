@@ -44,7 +44,7 @@ float globalCRICLE_Time=5000.0;
 float globalNowSin=0;
 int appH=700;
 int appW=1000;
-UDP u, u2;
+UDP u, u2,u3;
 boolean REALTIME=false;
 
 HRobot[] HRs; 
@@ -72,6 +72,8 @@ void settings() {
   size(appW, appH, P3D);
 }
 void setup() {
+  
+
   font = loadFont("Monospaced-12.vlw");
   textFont(font, 12);
   try {
@@ -105,6 +107,9 @@ void setup() {
   u2 = new UDP( this, 9999 );
   u2.log( false );
   u2.listen( true );
+  u3 = new UDP( this, 33333 );
+  u3.log( false );
+  u3.listen( true );
   HRs=new HRobot[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<HRs.length; i++) {
     HRs[i]=new HRobot(i);
@@ -123,7 +128,8 @@ void setup() {
   new java.util.Timer().scheduleAtFixedRate(statusTimer999, 1000, 999);
   exec("/usr/bin/say", "Robot God online");
 
-
+  //oscP5 = new OscP5(this,55000);
+  //myRemoteLocation = new NetAddress("10.10.10.33",53000);
   setup2();
 }
 
