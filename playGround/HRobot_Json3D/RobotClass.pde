@@ -1,5 +1,5 @@
 TXRATE TXms=TXRATE.s33;
-MOVIE_or_SHAREIAMGE M_S=MOVIE_or_SHAREIAMGE.Movie;
+MOVIE_or_SHAREIAMGE M_S=MOVIE_or_SHAREIAMGE.ShareImage;
 enum MOVIE_or_SHAREIAMGE {
   Movie,ShareImage,TXT;
   private static MOVIE_or_SHAREIAMGE[] vals = values();
@@ -70,9 +70,11 @@ enum RunCMD {
 }
 class HRobot {
   boolean ServoOn=false;
-  boolean ALL_PATH_OK=true;
+  boolean ALL_PATH_OK=false;
   JSONObject RobotINFOJ;
-  boolean RK_fatalError=false;
+  boolean RK_fatalError=true;
+  boolean RK_fatalErrorWhich[]={true,true,true,true};
+  
   boolean atHome=false;
   AtomicBoolean RK_ColliError=new AtomicBoolean(false);
   //PVector SAFEx0y0z0=new PVector(-Window_W/2, 5, -Window_H/2);

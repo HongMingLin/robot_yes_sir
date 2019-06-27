@@ -7,7 +7,7 @@ import java.lang.Math.*;
 import codeanticode.syphon.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import websockets.*;
-
+PImage initPOI;
 WebsocketClient wsc;
 PGraphics canvas;
 SyphonClient client;
@@ -79,6 +79,7 @@ void setup() {
   try {
     photo = loadImage("HRobot_small.png");
     HIWIN_LOGO= loadImage("HIWIN_LOGO.png");
+    //initPOI= loadImage("init.png");
     
   }
   catch(Exception e) {
@@ -107,7 +108,7 @@ void setup() {
   u2 = new UDP( this, 9999 );
   u2.log( false );
   u2.listen( true );
-  u3 = new UDP( this, 33333 );
+  u3 = new UDP( this, 44444 );
   u3.log( false );
   u3.listen( true );
   HRs=new HRobot[(int)(robotArray.x*robotArray.y)];

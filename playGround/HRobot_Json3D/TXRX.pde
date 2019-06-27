@@ -26,7 +26,7 @@ void receive(byte[] bb, String ip, int port) {
   rxStr=new String(bb); 
   //DEBUG("RX="+inJstr);
   switch(port) {
-  case 33333:
+  case 44444:
     if (rxStr.startsWith("/cue/")) {
       processCUE(rxStr);
     }
@@ -125,7 +125,7 @@ void send2robot12() {
 
   //TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
 
-  sendX(TXJSONStr+"\n");
+  sendX(TXJSONStr);
 }
 void sendX(String s) {
   TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");

@@ -2,13 +2,15 @@ import processing.video.*;
 import com.hamoid.*;
 import codeanticode.syphon.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 //boolean recording = false;
+File mf;
 String videoFilename;
 SimpleDateFormat SDF= new SimpleDateFormat("MMdd_HHmmss.S");
 PGraphics canvas;
 SyphonServer server;
 VideoExport videoExport;
-MODE ALLMODE=MODE.QLAB;
+MODE ALLMODE=MODE.MOVIE;
 //PVector SCALE_MOVIE=new PVector(0.5, 0.5);
 PVector movieSize=new PVector(640, 480);
 Movie myMovie;
@@ -18,7 +20,7 @@ PVector ledSize=new PVector(100, 100);
 PVector ledSizeHalf=new PVector(ledSize.x/2, ledSize.y/2);
 PVector windowHalfSize=new PVector(windowSize.x/2, windowSize.y/2);
 PVector SCALE_MOVIE=new PVector(movieSize.x/(windowSize.x*robotArray.x), movieSize.y/(windowSize.y*robotArray.y));
-
+UDP u3;
 //PVector movieSize=new PVector(windowSize.x*robotArray.x*SCALE_MOVIE.x, windowSize.y*robotArray.y*SCALE_MOVIE.y);
 
 GBbox[] gbBoxs;//=new gbBoxs[robotArray.x*robotArray.y];
@@ -31,6 +33,9 @@ void settings() {
   size((int)movieSize.x, (int)movieSize.y, P2D);
 }
 void setup() {
+  u3 = new UDP( this, 33333 );
+  u3.log( false );
+  u3.listen( true );
   println("SCALE_WH.x"+SCALE_MOVIE.x+", SCALE_WH.y"+SCALE_MOVIE.y);
   println("mSize.x"+movieSize.x+", mSize.y"+movieSize.y);
   println("windowSize.x"+windowSize.x+", windowSize.y"+windowSize.y);
@@ -42,20 +47,26 @@ void setup() {
   gbBoxs=new GBbox[(int)(robotArray.x*robotArray.y)];
   for (int i=0; i<gbBoxs.length; i++)
     gbBoxs[i]=new GBbox(i, new PVector(windowSize.x*(i%robotArray.x), windowSize.y*((int)(i/robotArray.x))), SCALE_MOVIE);
-  try {
-    ///Users/xlinx/Movies/robotTest/Test 11-1.mp4
-    File mf = new File(System.getProperty("user.dir")+"/Movies/robotTest/Test 11-1.mp4");
-    if (mf.exists())
-    {
-      myMovie = new Movie(this, mf.getAbsolutePath());
-      myMovie.loop();
-    }
-    ///Users/xlinx/Movies/robotTest/Test 3-2.mp4
-  }
-  catch(Exception e) {
-    myMovie=null;
-    e.printStackTrace();
-  }
+    
+    //loadMovie("8.mp4");
+    //if(myMovie!=null){
+    //  myMovie.pause();
+      
+    //}
+  //try {
+  //  ///Users/xlinx/Movies/robotTest/Test 11-1.mp4
+  //  File mf = new File(System.getProperty("user.home")+"8.mp4");
+  //  if (mf.exists())
+  //  {
+  //    myMovie = new Movie(this, mf.getAbsolutePath());
+  //    myMovie.loop();
+  //  }
+  //  ///Users/xlinx/Movies/robotTest/Test 3-2.mp4
+  //}
+  //catch(Exception e) {
+  //  myMovie=null;
+  //  e.printStackTrace();
+  //}
 
 
   server = new SyphonServer(this, "RobotSyphon");
@@ -79,8 +90,10 @@ void draw() {
 
   case MOVIE:
     //image(myMovie, 0, 0, 300, myMovie.height/(myMovie.width/300.0));
-    if (myMovie!=null)
+    if (myMovie!=null){
       image(myMovie, 0, 0, movieSize.x, movieSize.y);
+          
+    }
     break;
   default:
     notMovie();
@@ -88,8 +101,10 @@ void draw() {
   }
   drawBlock();
   //server.sendImage(get());
-  server.sendScreen();  
-
+  if(get()!=null)
+      server.sendScreen();
+    
+  //saveFrame("init.png");
 
 
   if (videoExport!=null) {

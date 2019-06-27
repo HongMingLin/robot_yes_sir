@@ -21,6 +21,16 @@ void keyPressed() {
      }
    }
   switch(key) {
+    case 'p':
+    if (myMovie!=null)
+      myMovie.pause();
+    break;
+  case 'P':
+    if (myMovie!=null) {
+      myMovie.play();
+    }
+    break;
+
     case '+':
     circleTime+=500;
     println("circleTime="+circleTime);
@@ -55,8 +65,11 @@ void keyPressed() {
   case 'q':
     
     break;
-  case '1':
-
+  case '8':
+    loadMovie("8.mp4");
+    break;
+  case '9':
+    loadMovie("9.mp4");
     break;
   }
 }

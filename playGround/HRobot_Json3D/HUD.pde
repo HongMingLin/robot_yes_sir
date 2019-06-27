@@ -23,8 +23,10 @@ void beginHUD() {
   //if (disableMovie)
   //  text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);  
   //else
-  if(myMovie!=null)
-    text("Movie="+nf(myMovie.time(),3,1)+"/"+myMovie.duration(), 10, START_Y+=OFFSET_Y);
+  if (myMovie!=null)
+    text("Movie="+nf(myMovie.time(), 3, 1)+"/"+myMovie.duration()+"@"+mf.toString(), 10, START_Y+=OFFSET_Y);
+  else
+    text("Movie Not load"+"@"+((mf!=null)?mf.toString():"Null"), 10, START_Y+=OFFSET_Y);
 
 
   START_Y=550;
@@ -62,22 +64,36 @@ void beginHUD() {
     fill(255, 255, 0, 128);
     text(s1, 5, tY+=10);
     fill((HRs[i].RK_fatalError?255:0), (HRs[i].RK_fatalError?0:255), 0);
-    text((HRs[i].RK_fatalError?"NG":"OK"), 5 + 1 + textWidth(s1), tY );
-    s1+=(HRs[i].RK_fatalError?"NG":"OK");
+    text((HRs[i].RK_fatalError?"NG     ":"OK     "), 5 + 1 + textWidth(s1), tY );
+    s1+=(HRs[i].RK_fatalError?"NG     ":"OK     ");
+    
+    stroke(200);
+    strokeWeight(1);
+    for(int j=0;j<HRs[i].RK_fatalErrorWhich.length;j++){
+        fill((HRs[i].RK_fatalErrorWhich[j]?255:0), (HRs[i].RK_fatalErrorWhich[j]?0:255), 0);
+        rect(5 + 1 + textWidth(s1)-35+(j*7)+7, tY-8, 5, 8);
+      }
+    
+    
     fill(255, 255, 0, 128);
-    text(" CD=", 5 + 1 + textWidth(s1), tY );
-    s1+=" CD=";
+    text(", CD=", 5 + 1 + textWidth(s1), tY );
+    s1+=", CD=";
     fill((HRs[i].RK_ColliError.get()?255:0), (HRs[i].RK_ColliError.get()?0:255), 0);
     text((HRs[i].RK_ColliError.get()?"Y":"N"), 5 + 1 + textWidth(s1), tY );
     s1+=(HRs[i].RK_ColliError.get()?"Y":"N");
 
-    stroke(200);
-    strokeWeight(1);
+    
     fill(200);
     text(", ALL=", 5 + 1 + textWidth(s1), tY );
     s1+=", ALL=";
     fill((HRs[i].ALL_PATH_OK?0:255), (HRs[i].ALL_PATH_OK?255:0), 0);
     rect(5 + 1 + textWidth(s1), tY-8, 5, 8);
+    
+    
+      
+    
+    
+    
     //text((HRs[i].ALL_PATH_OK?"Y":"N"), 5 + 1 + textWidth(s1), tY );
 
     fill(255, 255, 0, 128);
@@ -179,7 +195,7 @@ void showRobotStatusHUD() {
   int startY=200;
 
   for (int xx=0; xx<12; xx++) {
-    text(HRs[xx].RM+" SOn="+(HRs[xx].ServoOn?"O":"X"), startX+(xx%4*80), startY+(xx/4*80) );
+    text(HRs[xx].RM+"", startX+(xx%4*80), startY+(xx/4*80) );
   }
 
   //text(HRs[1].RM+"", 85, 205);

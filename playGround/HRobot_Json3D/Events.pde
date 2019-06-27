@@ -2,13 +2,23 @@ PVector ROBOT_XYZ_Cxyz=new PVector(0, 0, 0);
 void STOP_STOP_STOP_ALL() {
   for (int i=0; i<12; i++)
     STOP_STOP_STOP(i);
-  exec("/usr/bin/say", "Robot Stop");
+  //exec("/usr/bin/say", "Robot Stop");
 }
 void STOP_STOP_STOP(int i) {
   TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
   HRs[i].ALL_PATH_OK=false;
   HRs[i].RM=HRs[i].RM.STOP;
-  HRs[i].RK_fatalError=true;
+
+}
+void robotGo() {
+  JSONObject jTemp=null;
+  for (int i=0; i<12; i++) {
+    HRs[i].RM=RunMODE.MOVIE;
+    jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+    jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
+  }
+
+  exec("/usr/bin/say", "Robot Go");
 }
 void mouseWheel(MouseEvent event) {
   //float e = event.getCount();
@@ -61,10 +71,7 @@ void keyPressed() {
     break;
   case 'V':
     M_S=M_S.next();
-    if (M_S==MOVIE_or_SHAREIAMGE.Movie)
-      if (myMovie!=null)
-        myMovie.play();
-      else
+    if (M_S!=MOVIE_or_SHAREIAMGE.Movie)
         if (myMovie!=null)
           myMovie.stop();
     break;
@@ -130,16 +137,7 @@ void keyPressed() {
     STOP_STOP_STOP_ALL();
     break;
   case 'G':
-    jTemp=null;
-    for (int i=0; i<12; i++) {
-      HRs[i].RM=RunMODE.MOVIE;
-      jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
-      jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
-    }
-    cueQLAB("/cue/f1/start");
-    cueQLAB("/cue/p1/start");
-
-    exec("/usr/bin/say", "Robot Go");
+    robotGo();
 
     break;
   case 'H':
@@ -170,7 +168,10 @@ void R_home() {
     jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
     HRs[i].RM=RunMODE.HOME;
     HRs[i].ALL_PATH_OK=true;
+    
     HRs[i].atHome=false;
+    for(int j=0;j<HRs[i].RK_fatalErrorWhich.length;j++)
+      HRs[i].RK_fatalErrorWhich[j]=false;
   }
   //sendX(clearAllASCII(json.toString()+"\n") );
   exec("/usr/bin/say", "Robot 全部 回家");

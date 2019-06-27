@@ -114,7 +114,9 @@ PMatrix invCameraMat;
 PMatrix CameraMat;
 Kinematics kinma;
 File mf;
-
+//boolean movieReady=false;
+void openMovie() {
+}
 void loadMovie(String mFile) {
   if (myMovie!=null) {
     myMovie.stop();
@@ -122,15 +124,18 @@ void loadMovie(String mFile) {
   }
   try {
     ///Users/xlinx/Movies/robotTest/Test 11-1.mp4
-    mf = new File(System.getProperty("user.dir")+"/Movies/"+mFile);
-    if (mf.exists())
-    {
+    mf = new File(System.getProperty("user.home")+"/Movies/"+mFile);
+    if (mf.exists()) {
+      myMovie=null;
       myMovie = new Movie(this, mf.getAbsolutePath());
-      //myMovie.pause();
-      
+      myMovie.loop();
+      //myMovie.play();
       println("[DECADE][LoadMovie]OK="+mf.toString());
-    }else{
-     println("[DECADE][LoadMovie]Not found="+mf.toString());
+      //myMovie.play();
+      //myMovie.stop();
+      
+    } else {
+      println("[DECADE][LoadMovie]Not found="+mf.toString());
     }
   }
   catch(Exception e) {
@@ -490,8 +495,7 @@ double[] drawRobotWorld(double[] angles, AtomicBoolean isCollided)
   {
     box(1000, 1000, 1000);
     isCollided.set(true);
-    for (int i=0; i<12; i++)
-      STOP_STOP_STOP(i);
+    STOP_STOP_STOP_ALL();
   }
 
   popMatrix();
@@ -811,6 +815,7 @@ void RK(ascreen_info []asc_arr) {
         //J4StepDown(angles, -1);
         DEBUG("......Turn over-!!!");
         fatalError=true;
+        HRs[i].RK_fatalErrorWhich[0]=true;
         HRs[i].RK_fatalError=true;
         //HRs[i].RM=RunMODE.HOME;
       } else if (angles[3]<-PI)
@@ -818,6 +823,7 @@ void RK(ascreen_info []asc_arr) {
         J4StepDown(angles, 1);
         //J4StepDown(angles, 1);
         DEBUG("......Turn over+!!!");
+        HRs[i].RK_fatalErrorWhich[0]=true;
         fatalError=true;
         HRs[i].RK_fatalError=true;
         //HRs[i].RM=RunMODE.HOME;
@@ -852,6 +858,7 @@ void RK(ascreen_info []asc_arr) {
       if (HRs[i].RK_ColliError.get())
       {
         HRs[i].RM=RunMODE.HOME;
+        HRs[i].RK_fatalErrorWhich[1]=true;
         fatalError=true;
         HRs[i].RK_ColliError.set(true);
       }
@@ -874,6 +881,7 @@ void RK(ascreen_info []asc_arr) {
           {
             //DEBUG("*****SUPER OVERLOAD OVERSPEED*****");
             //HRs[i].RM=RunMODE.HOME;
+            HRs[i].RK_fatalErrorWhich[2]=true;
             HRs[i].RK_fatalError=true;
             fatalError=true;
           }
@@ -890,7 +898,8 @@ void RK(ascreen_info []asc_arr) {
     if ( abs(ffff) >120) { //AXIS +- 110
       if (abs(ffff) >130||abs((float)angles[5])*180/PI>30) // ByHIWIN/Eason. 
       {
-        STOP_STOP_STOP(i);
+        STOP_STOP_STOP_ALL();
+        HRs[i].RK_fatalErrorWhich[3]=true;
         fatalError=true;
       }
     }
@@ -943,7 +952,7 @@ String clearAllASCII(String in) {
 }
 boolean disableMovie=true;
 void drawMovie() {
-  if(disableMovie)return;
+  if (disableMovie)return;
   pushMatrix();
   imageMode(CORNER);
   rectMode(CORNER);
@@ -995,26 +1004,28 @@ void draw2() {
     line(0, 0, 0, 0, 0, 10000);
   }
   //sectionFinding(myMovie, ascArr);
-  double[] tempAng={12.784, -50, -20, 10, 116, -4};
+  double[] tempAng={0, -30, -20, 0, 95, 0};
   switch(M_S) {
   case TXT:
     //"A1":"-0.093","A2":"-29.387","A3":"-21.126","A4":"0.357","A5":"95.661","A6":"0.437",
     //"A1":"-0.093","A2":"-29.388","A3":"-21.125","A4":"0.357","A5":"95.661","A6":"0.437"
     //"A1":"12.784","A2":"-50.676","A3":"-20.285","A4":"10.537","A5":"116.486","A6":"-4.201"
 
-    for (int i=0; i<ascArr.length; i++) {
-      pushMatrix();
-      final PVector origin = ascArr[i].getOrigin();
-      translate(-origin.x, origin.z, -origin.y);
-      //drawRobotWorld( tempAng.getSimAngles(), HRs[i].RK_ColliError);
-      drawRobotWorld( tempAng, HRs[i].RK_ColliError);
-      popMatrix();
-    }
+    //for (int i=0; i<ascArr.length; i++) {
+    //  pushMatrix();
+    //  final PVector origin = ascArr[i].getOrigin();
+    //  translate(-origin.x, origin.z, -origin.y);
+    //  //drawRobotWorld( tempAng.getSimAngles(), HRs[i].RK_ColliError);
+    //  drawRobotWorld( tempAng, HRs[i].RK_ColliError);
+    //  popMatrix();
+    //}
 
     break;
   case Movie:
     if (myMovie!=null)
       sectionFinding(myMovie, ascArr);
+    //else if (myMovie==null)
+    //  sectionFinding(initPOI, ascArr);
     RK(ascArr);  
     break;
   case ShareImage:
