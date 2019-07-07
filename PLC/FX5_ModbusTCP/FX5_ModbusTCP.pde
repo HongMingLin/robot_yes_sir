@@ -1,5 +1,14 @@
 import controlP5.*;
 import processing.net.*;
+import java.util.Date.*;
+import java.util.Timer.*;
+import java.util.TimerTask.*;
+import java.util.Calendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public static final String PLC_IP1 = "10.10.10.222";
 public static final int PLC_PORT1 = 501;
@@ -9,8 +18,11 @@ UDP udp;
 ControlP5 cp5;
 Toggle toggles[],togglesAll;
 Client tcp;
+
 void setup() {
   //initNet();
+
+  
   thread("initNet");
   size(500, 250);
   frameRate(30);
@@ -48,6 +60,7 @@ togglesAll=cp5.addToggle("ALL")
 
 
 
+  new java.util.Timer().scheduleAtFixedRate(statusTimer1000, 1111, 999);
 
   new java.util.Timer().scheduleAtFixedRate(statusTimer500, 1111, 500);
 }

@@ -1,15 +1,15 @@
 
 byte MODBUSSERIAL=0;
-byte ID=1;
+//byte ID=1;
 byte VAL=(byte)0xff;
 int whichMPx=2;
 int SEQ_MAX=0xffff;
 int SEQ=0;
-byte[] set1Mval(int offset,boolean onoff) {
+byte[] set1Mval(int offset, boolean onoff) {
   byte funCode=0x5;
-  byte bb []={00, 00, 00, 00, 00, 06, 0, funCode, 8, 9, (byte)0xff, 0};
-  if(!onoff)
-  bb[10]=0;
+  byte bb []={00, 00, 00, 00, 00, 06, 1, funCode, 8, 9, (byte)0xff, 0};
+  if (!onoff)
+    bb[10]=0;
   bb[8]=(byte)(((offset+SW_M_START_ADDR) >>8) &0xff);
   bb[9]=(byte)((offset+SW_M_START_ADDR)&0xff );
 
@@ -23,6 +23,7 @@ byte[] setMval(byte[] datas) {
   byte bb []={SEQH, SEQL, 00, 00, 00, 06, 1, funCode, 8, 9, (byte)(0xff), (byte)0xff, 0x0};
 
   int ADDR=SW_M_START_ADDR;
+  //int ADDR=100;
 
   bb[8]=(byte)(ADDR>>8&0xff);
   bb[9]=(byte)(ADDR&0xff);
@@ -60,9 +61,11 @@ byte[] MP_READ0103(int NUM) {
   byte SEQH=(byte)((SEQ>>8)&0xff);
   byte SEQL=(byte)((SEQ)&0xff);
   byte bb []={SEQH, SEQL, 00, 00, 00, 06, 1, funCode, 8, 9, 0, 1};
+  int ADDR=SW_Y_START_ADDR;
+  //int ADDR=100;
 
-  bb[8]=(byte)((SW_Y_START_ADDR>>8)&0xff);
-  bb[9]=(byte)(SW_Y_START_ADDR&0xff);
+  bb[8]=(byte)((ADDR>>8)&0xff);
+  bb[9]=(byte)(ADDR&0xff);
   bb[10]=(byte)((NUM>>8)&0xff);
   bb[11]=(byte)(NUM&0xff);
   return bb;
