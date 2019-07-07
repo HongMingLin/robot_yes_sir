@@ -8,7 +8,6 @@ void STOP_STOP_STOP(int i) {
   TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
   HRs[i].ALL_PATH_OK=false;
   HRs[i].RM=HRs[i].RM.STOP;
-
 }
 void robotGo() {
   JSONObject jTemp=null;
@@ -40,6 +39,10 @@ void keyPressed() {
   case '`':
     disableMovie=!disableMovie;
     break;
+  case '1':
+
+    break;
+
   case '6':
     loadMovie("6.mp4");
     break;
@@ -72,8 +75,8 @@ void keyPressed() {
   case 'V':
     M_S=M_S.next();
     if (M_S!=MOVIE_or_SHAREIAMGE.Movie)
-        if (myMovie!=null)
-          myMovie.stop();
+      if (myMovie!=null)
+        myMovie.stop();
     break;
   case 'p':
     if (myMovie!=null)
@@ -168,9 +171,9 @@ void R_home() {
     jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.HOME);
     HRs[i].RM=RunMODE.HOME;
     HRs[i].ALL_PATH_OK=true;
-    
+
     HRs[i].atHome=false;
-    for(int j=0;j<HRs[i].RK_fatalErrorWhich.length;j++)
+    for (int j=0; j<HRs[i].RK_fatalErrorWhich.length; j++)
       HRs[i].RK_fatalErrorWhich[j]=false;
   }
   //sendX(clearAllASCII(json.toString()+"\n") );

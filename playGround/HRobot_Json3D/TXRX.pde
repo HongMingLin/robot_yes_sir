@@ -5,7 +5,7 @@ int RX_LOST_COUNT=0;
 boolean RX_OFFLINE=true;
 byte logSeq=0;
 String rxStr="";
-
+Queue<String> TXTqueue = new LinkedList<String>();
 
 StringBuffer inTXTSB=new StringBuffer("");
 void parseFile(String fname) {
@@ -83,10 +83,10 @@ void receive(byte[] bb, String ip, int port) {
         } else {
           DEBUG("[inJ]Len!=12");
         }
-        if (millis()%5==0) {
-          String msg="[RB]"+RXJSONObj.toString();
-          String cmd="curl -X POST -H 'Authorization: Bearer [1aqZBluKbLlpdzdye5Dit16h2HZN3qTZu5Q9BuYhZfj]' -F 'message="+msg+"' https://notify-api.line.me/api/notify";
-        }
+        //if (millis()%5000==0) {
+        //  String msg="[RB]"+RXJSONObj.toString();
+        //  String cmd="curl -X POST -H 'Authorization: Bearer [1aqZBluKbLlpdzdye5Dit16h2HZN3qTZu5Q9BuYhZfj]' -F 'message="+msg+"' https://notify-api.line.me/api/notify";
+        //}
         DEBUG(RXJSONObj.toString());
       }
     }
@@ -120,12 +120,11 @@ void LINE(JSONObject JO) {
   }
   DEBUG(logHeader()+LINEStr );
 }
-void send2robot12() {
+void send2robot12(String s) {
   TXLED=!TXLED;
-
   //TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");
 
-  sendX(TXJSONStr);
+  sendX(s);
 }
 void sendX(String s) {
   TXJSONObj.setString(JSONKEYWORD.TIMESTAMP, millis()+"");

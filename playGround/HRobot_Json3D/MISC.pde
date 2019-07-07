@@ -9,7 +9,7 @@ void isAtHome(int w,float[] j1j6){
   for(int i=0;i<6;i++){
     diff+=abs(j1j6[i]-HOME_A1A6[i]);
   }
-  if(diff<1){
+  if(diff<10){
     HRs[w].atHome=true;
   }
 

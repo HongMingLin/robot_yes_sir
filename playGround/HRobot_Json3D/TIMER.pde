@@ -1,8 +1,10 @@
+Queue<String> queue = new LinkedList<String>();
+
 class statusTimer33 extends java.util.TimerTask {
   public void run() {
     TXJSONStr=clearAllASCII(TXJSONObj.toString());
     if (REALTIME) {
-      send2robot12();
+      send2robot12(TXJSONStr);
       //justOne=false;
     }
     if (logSaveTx) {
