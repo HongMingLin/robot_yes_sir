@@ -31,7 +31,9 @@ void readLargeTxt_ScannerStream(String path) {
   }
   catch(Exception e) {
     if (inputStream != null) {
+      try{
       inputStream.close();
+      }catch(Exception ee){}
     }
     if (sc != null) {
       sc.close();
@@ -39,6 +41,7 @@ void readLargeTxt_ScannerStream(String path) {
     e.printStackTrace();
   }
 }
+
 void RGBtoHSV( PVector rgb, PVector hsv )
 {
   float r=rgb.x, g=rgb.y, b=rgb.z;

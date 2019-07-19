@@ -133,7 +133,6 @@ void loadMovie(String mFile) {
       println("[DECADE][LoadMovie]OK="+mf.toString());
       //myMovie.play();
       //myMovie.stop();
-      
     } else {
       println("[DECADE][LoadMovie]Not found="+mf.toString());
     }
@@ -903,39 +902,34 @@ void RK(ascreen_info []asc_arr) {
         fatalError=true;
       }
     }
-
-    for (int k=0; k<angles.length; k++)
-    {
-      float angle = (float)angles[k];
-
-      //HIWIN J5(index 4) has PI/2 offset
-      if (k==4)
-        angle-=HALF_PI;
-
-      //HIWIN J6(index 5) rotates diffetent direction
-      if (k==5)
-        angle=-angle;
-      synchronized(TXJSONObj) {
+    synchronized(TXJSONObj) {
+      JSONObject tempJ=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      for (int k=0; k<angles.length; k++) {
+        float angle = (float)angles[k];
+        if (k==4)//HIWIN J5(index 4) has PI/2 offset
+          angle-=HALF_PI;
+        if (k==5)//HIWIN J6(index 5) rotates diffetent direction
+          angle=-angle;
         float fff=round((float)((angle)*180/PI*1000))/1000f;
         {
           //print(fff+" ");
-
-          TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString("A"+(k+1), df.format(fff)+"");
+          tempJ.setString("A"+(k+1), df.format(fff)+"");
           //float dgree=fff/TWO_PI*360.0;
           //jsonHUD.setString("360A"+(k+1), nf(fff,2,1)+"º"+"^"+nf(dgree/360,2,2));
         }
       }
+      for (int k=0; k<flangePose.length; k++)
+        pose[k]=flangePose[k];
+      axisSwap(pose, 2, 0, 1, false, false, false);
+      //JSONObject jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
+      tempJ.setString("X", df.format(pose[0])+"");
+      tempJ.setString("Y", df.format(pose[1])+"");
+      tempJ.setString("Z", df.format(pose[2])+"");
+      tempJ.setString("A", df.format(pose[3]/TWO_PI*360.0)+"");
+      tempJ.setString("B", df.format(pose[4]/TWO_PI*360.0)+"");
+      tempJ.setString("C", df.format(pose[5]/TWO_PI*360.0)+"");
     }
 
-    for (int k=0; k<flangePose.length; k++)pose[k]=flangePose[k];
-    axisSwap(pose, 2, 0, 1, false, false, false);
-    JSONObject jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
-    jTemp.setString("X", df.format(pose[0])+"");
-    jTemp.setString("Y", df.format(pose[1])+"");
-    jTemp.setString("Z", df.format(pose[2])+"");
-    jTemp.setString("A", df.format(pose[3]/TWO_PI*360.0)+"");
-    jTemp.setString("B", df.format(pose[4]/TWO_PI*360.0)+"");
-    jTemp.setString("C", df.format(pose[5]/TWO_PI*360.0)+"");
 
 
     popMatrix();
