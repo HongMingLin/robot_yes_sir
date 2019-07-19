@@ -2,7 +2,7 @@ PVector ROBOT_XYZ_Cxyz=new PVector(0, 0, 0);
 void STOP_STOP_STOP_ALL() {
   for (int i=0; i<12; i++)
     STOP_STOP_STOP(i);
-  //exec("/usr/bin/say", "Robot Stop");
+  //if(isMacOs) exec("/usr/bin/say", "Robot Stop");
 }
 void STOP_STOP_STOP(int i) {
   TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i).setString(JSONKEYWORD.CMD, JSONKEYWORD.STOP);
@@ -17,7 +17,7 @@ void robotGo() {
     jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.ptp_axis);
   }
 
-  exec("/usr/bin/say", "Robot Go");
+  if(isMacOs) exec("/usr/bin/say", "Robot Go");
 }
 void mouseWheel(MouseEvent event) {
   //float e = event.getCount();
@@ -105,7 +105,7 @@ void keyPressed() {
     break;
   case 'R':
     REALTIME=!REALTIME;
-    //exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
+    //if(isMacOs) exec("/usr/bin/say", "real time "+(REALTIME?"On":"Off"));
 
     break;
   case 'A':
@@ -123,7 +123,7 @@ void keyPressed() {
       jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.SEVO_ON);
     }
-    exec("/usr/bin/say", "Robot Servo on");
+    if(isMacOs) exec("/usr/bin/say", "Robot Servo on");
 
     break;
   case 'O':
@@ -133,7 +133,7 @@ void keyPressed() {
       jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       jTemp.setString(JSONKEYWORD.CMD, JSONKEYWORD.SEVO_OFF);
     }
-    exec("/usr/bin/say", "Robot Servo off");
+    if(isMacOs) exec("/usr/bin/say", "Robot Servo off");
 
     break;
   case ' ':
@@ -155,9 +155,9 @@ void keyPressed() {
       if (key == WR.hotKey()) {
         whichRobot=WR.ID();
         DEBUG("whichRobot="+whichRobot);
-        exec("/usr/bin/say", "Robot "+whichRobot+" ");
-        //exec("/usr/bin/say","-v","Victoria","Im Victoria");
-        //  exec("/usr/bin/say","-v","Zarvox"," and Robot.");
+        if(isMacOs) exec("/usr/bin/say", "Robot "+whichRobot+" ");
+        //if(isMacOs) exec("/usr/bin/say","-v","Victoria","Im Victoria");
+        //  if(isMacOs) exec("/usr/bin/say","-v","Zarvox"," and Robot.");
         break;
       }
     }
@@ -177,7 +177,7 @@ void R_home() {
       HRs[i].RK_fatalErrorWhich[j]=false;
   }
   //sendX(clearAllASCII(json.toString()+"\n") );
-  exec("/usr/bin/say", "Robot 全部 回家");
+  if(isMacOs) exec("/usr/bin/say", "Robot 全部 回家");
 }
 void motorWalk() {
   PVector walkXYZ=new PVector(0, 0, 0);

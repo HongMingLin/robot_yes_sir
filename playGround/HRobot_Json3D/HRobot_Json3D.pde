@@ -7,6 +7,10 @@ import java.lang.Math.*;
 import codeanticode.syphon.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import websockets.*;
+
+String osName = System.getProperty("os.name").toLowerCase();
+boolean isMacOs = osName.contains("mac");
+
 PImage initPOI;
 WebsocketClient wsc;
 PGraphics canvas;
@@ -127,7 +131,7 @@ void setup() {
   TX_TIMER.scheduleAtFixedRate(t33, 0, TX_mS);
   new java.util.Timer().scheduleAtFixedRate(statusTimer500, 1000, 500);
   new java.util.Timer().scheduleAtFixedRate(statusTimer999, 1000, 999);
-  exec("/usr/bin/say", "Robot God online");
+  if(isMacOs) exec("/usr/bin/say", "Robot God online");
 
   //oscP5 = new OscP5(this,55000);
   //myRemoteLocation = new NetAddress("10.10.10.33",53000);

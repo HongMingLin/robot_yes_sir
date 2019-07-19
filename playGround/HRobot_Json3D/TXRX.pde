@@ -33,7 +33,7 @@ void receive(byte[] bb, String ip, int port) {
     break;
   case 9999:
     if (RX_OFFLINE) {
-      exec("/usr/bin/say", "HI WIN Robot Boss Online");//Boss
+      if(isMacOs) exec("/usr/bin/say", "HI WIN Robot Boss Online");//Boss
       RX_OFFLINE=false;
     }
     RXLED=!RXLED;
