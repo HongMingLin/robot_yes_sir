@@ -1,11 +1,14 @@
 void keyPressed() {
-  if (key=='c') {
+  if (key=='o') {
     println("isOrtho="+isOrtho);
     if (isOrtho) {
       toPerspetive();
     } else {
       toOrtho();
     }
+  }else if(key=='c'){
+    for(int i=0;i<Rs.length;i++)
+    Rs[i].clearDiff();
   }
 }
 void mouseWheel(MouseEvent event) {

@@ -5,10 +5,13 @@ class Robot extends PApplet {
   final int maxPoint=1000;
   private PVector max_XYZ=new PVector(0, 0, 0);
   private PVector min_XYZ=new PVector(0, 0, 0);
+  private PVector last_XYZ=new PVector(0, 0, 0);
   private PVector diff_XYZ=new PVector(0, 0, 0);
+
   private PVector max_RYP=new PVector(0, 0, 0);
   private PVector min_RYP=new PVector(0, 0, 0);
   private PVector diff_RYP=new PVector(0, 0, 0);
+  private PVector last_RYP=new PVector(0, 0, 0);
   private PVector XYZ=new PVector(0, 0, 0);
   private PVector RYP=new PVector(0, 0, 0);
 
@@ -16,6 +19,16 @@ class Robot extends PApplet {
   Robot(PApplet p) {
     PAPA=p;
     g=p.g;
+  }
+  void clearDiff() {
+    max_XYZ=new PVector(0, 0, 0);
+    min_XYZ=new PVector(0, 0, 0);
+    diff_XYZ=new PVector(0, 0, 0);
+    max_RYP=new PVector(0, 0, 0);
+    min_RYP=new PVector(0, 0, 0);
+    diff_RYP=new PVector(0, 0, 0);
+    XYZ=new PVector(0, 0, 0);
+    RYP=new PVector(0, 0, 0);
   }
   void updateDraw() {
     paitPath3D();
@@ -48,21 +61,26 @@ class Robot extends PApplet {
     currentLine_XYZ.add(new PVector(XYZ.x, XYZ.y, XYZ.z));
     if (currentLine_XYZ.size() > maxPoint)
       currentLine_XYZ.remove(0);
-    paintLine(currentLine_XYZ, color(255, 255, 0), max_XYZ, min_XYZ, diff_XYZ);
+    paintLine(currentLine_XYZ, color(255, 255, 0), max_XYZ, min_XYZ, diff_XYZ, last_XYZ);
     dotXYZ(XYZ, color(255, 255, 0));
 
-
     currentLine_RYP.add(new PVector(RYP.x, RYP.y, RYP.z));
-    if (currentLine_RYP.size() > maxPoint)
+    if (currentLine_RYP.size() > 10)
       currentLine_RYP.remove(0);
-    paintLine(currentLine_RYP, color( 255, 0, 255), max_RYP, min_RYP, diff_RYP);
+    paintLine(currentLine_RYP, color( 255, 0, 255), max_RYP, min_RYP, diff_RYP, last_RYP);
     dotXYZ(RYP, color(255, 0, 255));
   }
-  void paintLine(ArrayList<PVector> pv, color c, PVector max_p, PVector min_p, PVector diff_p) {
+  void paintLine(ArrayList<PVector> pv, color c, PVector max_p, PVector min_p, PVector diff_p, PVector last_p) {
 
     beginShape();
     float theta = 0f;
     strokeWeight(1);
+    
+    
+    diff_p.x=abs(v.x-lastP.x);
+    diff_p.y=abs(v.y-lastP.y);
+    diff_p.z=abs(v.z-lastP.z);
+    //lastP=v.copy();
     for (PVector v : pv) {
 
       //stroke(255, (255 * (0.5f + 0.5f * sin(theta))), 0,(255 * (0.5f +0.5f * sin( theta++))));
@@ -82,9 +100,7 @@ class Robot extends PApplet {
       min_p.y=min(min_p.y, v.y);
       min_p.z=min(min_p.z, v.z);
 
-      diff_p.x=abs(max_p.x-min_p.x);
-      diff_p.y=abs(max_p.y-min_p.y);
-      diff_p.z=abs(max_p.z-min_p.z);
+
       stroke(c);
       vertex(v.x, v.y, v.z);
     }
