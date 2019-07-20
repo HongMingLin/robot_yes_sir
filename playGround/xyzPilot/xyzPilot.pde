@@ -8,7 +8,7 @@ int MinD=0;
 int MaxD=(int)ROOM.x*100*M_SCALE;
 float CamD=(int)ROOM.x*2*M_SCALE;
 int appH=600;
-int appW=800;
+int appW=1000;
 //PeasyCam cam;
 Robot[] Rs=new Robot[12];
 final int NX = 2;
@@ -30,41 +30,29 @@ void setup() {
   }
 }
 void setupCam() {
+  for (int i=0; i<cameras.length-1; i++) {
+    cameras[i] = new PeasyCam(this, 400);
+    cameras[i].setDistance(50);
+    cameras[i].setViewport((width/3)*i, 0, width/3, height/2);
+  }
+  cameras[3] = new PeasyCam(this, 400);
+  cameras[3].setViewport(0, height/2, width, height/2);
+  setupCam2();
+}
+void setupCam2() {
 
-  int gap = 5;
+  for (int id=0; id<cameras.length; id++) {
 
-  // tiling size
-  int tilex = floor((width  - gap) / NX);
-  int tiley = floor((height - gap) / NY);
-
-  // viewport offset ... corrected gap due to floor()
-  int offx = (width  - (tilex * NX - gap)) / 2;
-  int offy = (height - (tiley * NY - gap)) / 2;
-
-  // viewport dimension
-  int cw = tilex - gap;
-  int ch = tiley - gap;
-
-  // create new viewport for each camera
-  for (int y = 0; y < NY; y++) {
-    for (int x = 0; x < NX; x++) {
-      int id = y * NX + x;
-      int cx = offx + x * tilex;
-      int cy = offy + y * tiley;
-      cameras[id] = new PeasyCam(this, 400);
-      cameras[id].setDistance(50);
-      cameras[id].setViewport(cx, cy, cw, ch);
-      if (id==0)
-        cameras[id].setYawRotationMode();   
-      else if (id==1)
-        cameras[id].setPitchRotationMode(); 
-      else if (id==2)
-        cameras[id].setRollRotationMode();  
-      else if (id==3)
-        cameras[id].setSuppressRollRotationMode(); 
-      else
-        cameras[id].setFreeRotationMode();
-    }
+    if (id==0)
+      cameras[id].setYawRotationMode();   
+    else if (id==1)
+      cameras[id].setPitchRotationMode(); 
+    else if (id==2)
+      cameras[id].setRollRotationMode();  
+    else if (id==3)
+      cameras[id].setSuppressRollRotationMode(); 
+    else
+      cameras[id].setFreeRotationMode();
   }
 }
 void draw() {
@@ -90,25 +78,7 @@ void setGLGraphicsViewport(int x, int y, int w, int h) {
   pgl.scissor (x, y, w, h);
   pgl.viewport(x, y, w, h);
 }
-void processingJ(JSONObject J) {
-  JSONArray inJArr=J.getJSONArray(JSONKEYWORD.Robots);
-  if (inJArr!=null&&inJArr.size()==12) {
-    String LINEStr="";
-    for (int i=0; i<12; i++) {
-      int ID=inJArr.getJSONObject(i).getInt(JSONKEYWORD.ID)-1;
-      PVector p=new PVector(inJArr.getJSONObject(i).getFloat("X"), 
-        inJArr.getJSONObject(i).getFloat("Y"), 
-        inJArr.getJSONObject(i).getFloat("Z"));
-      Rs[ID].XYZ=p.normalize().mult(50);
-      PVector p2=new PVector(inJArr.getJSONObject(i).getFloat("A"), 
-        inJArr.getJSONObject(i).getFloat("B"), 
-        inJArr.getJSONObject(i).getFloat("C"));
-      Rs[ID].RYP=p2.normalize().mult(10);
-    }
-  } else {
-    println("[X]J12Arr Error");
-  }
-}
+
 void displayScene(PeasyCam cam, int ID) {
 
   int[] viewport = cam.getViewport();
@@ -153,15 +123,25 @@ void displayScene(PeasyCam cam, int ID) {
   rect(0, 0, 60, 23);
   fill(255, 128, 128);
   text("cam "+ID, 10, 15);
-  fill(255,255,0);
-  if (ID==0) {
-    text("MAX_XYZ= "+nf(Rs[0].max_XYZ.x, 2, 2)+", "+nf(Rs[0].max_XYZ.y, 2, 2)+", "+nf(Rs[0].max_XYZ.z, 2, 2)+"", 10, 35);
-    text("MIN_XYZ= "+nf(Rs[0].min_XYZ.x, 2, 2)+", "+nf(Rs[0].min_XYZ.y, 2, 2)+", "+nf(Rs[0].min_XYZ.z, 2, 2)+"", 10, 55);
-    text("DIF_XYZ= "+nf(Rs[0].diff_XYZ.x, 2, 2)+", "+nf(Rs[0].diff_XYZ.y, 2, 2)+", "+nf(Rs[0].diff_XYZ.z, 2, 2)+"", 10, 75);
-  } else if (ID==2) {
-    text("MAX_ABC= "+nf(Rs[0].max_RYP.x, 2, 2)+", "+nf(Rs[0].max_RYP.y, 2, 2)+", "+nf(Rs[0].max_RYP.z, 2, 2)+"", 10, 35);
-    text("MIN_ABC= "+nf(Rs[0].min_RYP.x, 2, 2)+", "+nf(Rs[0].min_RYP.y, 2, 2)+", "+nf(Rs[0].min_RYP.z, 2, 2)+"", 10, 55);
-    text("DIF_ABC= "+nf(Rs[0].diff_RYP.x, 2, 2)+", "+nf(Rs[0].diff_RYP.y, 2, 2)+", "+nf(Rs[0].diff_RYP.z, 2, 2)+"", 10, 75);
+  fill(255, 255, 0);
+  
+  int START_Y=100, OFFSET_Y=16;
+  if(ID==3){
+  text("MAX_XYZ= "+nf(Rs[0].max_XYZ.x, 2, 3)+", "+nf(Rs[0].max_XYZ.y, 2, 3)+", "+nf(Rs[0].max_XYZ.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
+  text("MIN_XYZ= "+nf(Rs[0].min_XYZ.x, 2, 3)+", "+nf(Rs[0].min_XYZ.y, 2, 3)+", "+nf(Rs[0].min_XYZ.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
+  text("DIF_XYZ= "+nf(Rs[0].diff_XYZ.x, 2, 3)+", "+nf(Rs[0].diff_XYZ.y, 2, 3)+", "+nf(Rs[0].diff_XYZ.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
+  text("MAX_ABC= "+nf(Rs[0].max_RYP.x, 2, 3)+", "+nf(Rs[0].max_RYP.y, 2, 3)+", "+nf(Rs[0].max_RYP.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
+  text("MIN_ABC= "+nf(Rs[0].min_RYP.x, 2, 3)+", "+nf(Rs[0].min_RYP.y, 2, 3)+", "+nf(Rs[0].min_RYP.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
+  text("DIF_ABC= "+nf(Rs[0].diff_RYP.x, 2, 3)+", "+nf(Rs[0].diff_RYP.y, 2, 3)+", "+nf(Rs[0].diff_RYP.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
   }
+  START_Y=20;
+  OFFSET_Y=16;
+  float[] xyz = cameras[ID].getRotations();
+  fill(255);
+  text("rX="+nf(xyz[0], 1, 3)+" rY="+nf(xyz[1], 1, 3)+" rZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
+  xyz=cameras[ID].getPosition();
+  text("cX="+nf(xyz[0], 1, 3)+" cY="+nf(xyz[1], 1, 3)+" cZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
+  xyz=cameras[ID].getLookAt();
+  text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   cam.endHUD();
 }
