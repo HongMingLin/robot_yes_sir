@@ -103,7 +103,7 @@ void processingJ(JSONObject J) {
       PVector p2=new PVector(inJArr.getJSONObject(i).getFloat("A"), 
         inJArr.getJSONObject(i).getFloat("B"), 
         inJArr.getJSONObject(i).getFloat("C"));
-      Rs[ID].RYP=p2.normalize().mult(100);
+      Rs[ID].RYP=p2.normalize().mult(10);
     }
   } else {
     println("[X]J12Arr Error");
@@ -153,9 +153,15 @@ void displayScene(PeasyCam cam, int ID) {
   rect(0, 0, 60, 23);
   fill(255, 128, 128);
   text("cam "+ID, 10, 15);
-  text("MAX_XYZ= "+nf(Rs[0].max_XYZ.x,2,2)+", "+nf(Rs[0].max_XYZ.y,2,2)+", "+nf(Rs[0].max_XYZ.z,2,2)+"", 10, 35);
-   
-  text("MIN_XYZ= "+nf(Rs[0].min_XYZ.x,2,2)+", "+nf(Rs[0].min_XYZ.y,2,2)+", "+nf(Rs[0].min_XYZ.z,2,2)+"", 10, 55);
-  text("DIF_XYZ= "+nf(Rs[0].diff_XYZ.x,2,2)+", "+nf(Rs[0].diff_XYZ.y,2,2)+", "+nf(Rs[0].diff_XYZ.z,2,2)+"", 10, 75);
+  fill(255,255,0);
+  if (ID==0) {
+    text("MAX_XYZ= "+nf(Rs[0].max_XYZ.x, 2, 2)+", "+nf(Rs[0].max_XYZ.y, 2, 2)+", "+nf(Rs[0].max_XYZ.z, 2, 2)+"", 10, 35);
+    text("MIN_XYZ= "+nf(Rs[0].min_XYZ.x, 2, 2)+", "+nf(Rs[0].min_XYZ.y, 2, 2)+", "+nf(Rs[0].min_XYZ.z, 2, 2)+"", 10, 55);
+    text("DIF_XYZ= "+nf(Rs[0].diff_XYZ.x, 2, 2)+", "+nf(Rs[0].diff_XYZ.y, 2, 2)+", "+nf(Rs[0].diff_XYZ.z, 2, 2)+"", 10, 75);
+  } else if (ID==2) {
+    text("MAX_ABC= "+nf(Rs[0].max_RYP.x, 2, 2)+", "+nf(Rs[0].max_RYP.y, 2, 2)+", "+nf(Rs[0].max_RYP.z, 2, 2)+"", 10, 35);
+    text("MIN_ABC= "+nf(Rs[0].min_RYP.x, 2, 2)+", "+nf(Rs[0].min_RYP.y, 2, 2)+", "+nf(Rs[0].min_RYP.z, 2, 2)+"", 10, 55);
+    text("DIF_ABC= "+nf(Rs[0].diff_RYP.x, 2, 2)+", "+nf(Rs[0].diff_RYP.y, 2, 2)+", "+nf(Rs[0].diff_RYP.z, 2, 2)+"", 10, 75);
+  }
   cam.endHUD();
 }
