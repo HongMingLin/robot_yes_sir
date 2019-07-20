@@ -77,11 +77,12 @@ double[][][] geometries = new double[][][]{
     //{150, 525, 0}, 
     //hiwin robot origin( the point along with J1 axis ...
     //subject to the closest points between J1 and J2 axis), ie, assume there is no height to J1
+    //update DH table for new kinematics.
     {150, 0, 0}, 
-    {0, 770, 0}, 
-    {232, 150, 0}, 
-    {454, 0, 0}, 
-    {0, -110, 0}, 
+    {0, 0, 770}, 
+    {0, 0, 150}, 
+    {685, 0, 0}, 
+    {110, 0, 0},
   }
 };
 
@@ -286,14 +287,14 @@ double [] boardPose2FlangePose(double []pose)
 
   //mat.translate(0,-flange2BoardCenter_distance*5,0);
   //mat.rotateX(-flange2Board_angle);
-  mat.translate((float)pose[0], (float)pose[1], (float)pose[2]);
+  mat.translate((float)pose[1], (float)-pose[0], (float)pose[2]);
   PVector RYP=new PVector((float)pose[3], (float)pose[4], (float)pose[5]);
   mat.rotateZ(RYP.z);
   mat.rotateY(RYP.y);
   mat.rotateX(RYP.x);
 
   mat.translate(-flange2BoardCenter_distance, 0, 0);
-  mat.rotateZ(flange2Board_angle);
+  mat.rotateY(flange2Board_angle);
   //
   //mat.invert();
   PVector origin = new PVector(0, 0, 0);
@@ -734,7 +735,8 @@ void RK(ascreen_info []asc_arr) {
 
     asc_arr[i].realWorld_XYZ.set(pXYZ);
 
-    axisSwap(pose, 1, 2, 0, false, false, false);
+    //not use for new kinematics.
+    //axisSwap(pose, 1, 2, 0, false, false, false);
     //525mm, base floor to hiwin robot origin()
 
     double[] flangePose =  boardPose2FlangePose(pose);
@@ -742,6 +744,9 @@ void RK(ascreen_info []asc_arr) {
     //if (i==2 || i==3)DEBUG(pose[2]);  
 
     double[] angles =kinma.inverse(flangePose);
+
+    //igone inverse result chechk.
+    double[] angles_temp =kinma.inverse(flangePose);
 
 
     {
@@ -906,10 +911,14 @@ void RK(ascreen_info []asc_arr) {
       JSONObject tempJ=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       for (int k=0; k<angles.length; k++) {
         float angle = (float)angles[k];
+
+        //igone inverse result chechk.
+        angle = (float)angles_temp[k];
+
         if (k==4)//HIWIN J5(index 4) has PI/2 offset
-          angle-=HALF_PI;
+          ;//igone inverse result chechk. //angle-=HALF_PI;
         if (k==5)//HIWIN J6(index 5) rotates diffetent direction
-          angle=-angle;
+          ;//igone inverse result chechk. //angle=-angle;
         float fff=round((float)((angle)*180/PI*1000))/1000f;
         {
           //print(fff+" ");
@@ -920,7 +929,8 @@ void RK(ascreen_info []asc_arr) {
       }
       for (int k=0; k<flangePose.length; k++)
         pose[k]=flangePose[k];
-      axisSwap(pose, 2, 0, 1, false, false, false);
+      //not use for new kinematics.
+      //axisSwap(pose, 2, 0, 1, false, false, false);
       //JSONObject jTemp=TXJSONObj.getJSONArray(JSONKEYWORD.Robots).getJSONObject(i);
       tempJ.setString("X", df.format(pose[0])+"");
       tempJ.setString("Y", df.format(pose[1])+"");

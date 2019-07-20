@@ -92,7 +92,7 @@ void setup() {
 
   canvas= createGraphics(320, 240);
   fakeGraphics(canvas);
-  client = new SyphonClient(this);
+  if(isMacOs) client = new SyphonClient(this);
 
   cp5 = new ControlP5(this);
   cp5.setAutoDraw(false);
@@ -140,10 +140,13 @@ void setup() {
 
 void draw() {
   background(10);
-  if (client.newFrame()) {
+  if(isMacOs) {
+    if (client.newFrame()) {
     canvas = client.getGraphics(canvas);
     //image(canvas, 0, 0, width, height);
-  } 
+    } 
+  }
+  
 
   fill(0, 255, 0, 50);
   rectMode(CENTER);
