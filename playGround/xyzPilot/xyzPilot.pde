@@ -32,12 +32,21 @@ void setup() {
 void setupCam() {
   for (int i=0; i<cameras.length-1; i++) {
     cameras[i] = new PeasyCam(this, 400);
-    cameras[i].setDistance(50);
+    
     cameras[i].setViewport((width/3)*i, 0, width/3, height/2);
   }
   cameras[3] = new PeasyCam(this, 400);
   cameras[3].setViewport(0, height/2, width, height/2);
   setupCam2();
+  //cameras[0].rotateX(-PI/2);
+  cameras[1].rotateX(-PI/2);
+  cameras[2].rotateX(-PI);
+  
+  cameras[3].rotateZ(PI/2/2);
+  cameras[3].rotateX(-PI/2/2);
+  for (int i=0; i<cameras.length; i++) {
+     cameras[i].setDistance(100);
+  }
 }
 void setupCam2() {
 
@@ -63,6 +72,7 @@ void draw() {
   for (int i = 0; i < cameras.length; i++) {
     pushStyle();
     pushMatrix();
+     
     displayScene(cameras[i], i);
     popMatrix();
     popStyle();
@@ -90,17 +100,18 @@ void displayScene(PeasyCam cam, int ID) {
   setGLGraphicsViewport(x, y_inv, w, h);
   cam.feed();
   //cam.rotateY(radians(1));
-  perspective(60 * PI/180, w/(float)h, 1, 3000);
+  toOrtho(viewport);
+  //perspective(60 * PI/180, w/(float)h, 1, 3000);
   //background(24);  
   stroke(0);
   strokeWeight(1);
 
   // scene objects
   pushMatrix();
-  Rs[0].updateDraw();
-  //for (int i=0; i<Rs.length; i++) {
-  //  Rs[i].updateDraw();
-  //}
+  //Rs[0].updateDraw();
+  for (int i=0; i<Rs.length; i++) {
+    Rs[i].updateDraw();
+  }
   //rotateX(PI/(ID+1));
   drawXYZ();
 
@@ -124,24 +135,27 @@ void displayScene(PeasyCam cam, int ID) {
   fill(255, 128, 128);
   text("cam "+ID, 10, 15);
   fill(255, 255, 0);
-  
+
   int START_Y=100, OFFSET_Y=16;
-  if(ID==3){
-  text("MAX_XYZ= "+nf(Rs[0].max_XYZ.x, 2, 3)+", "+nf(Rs[0].max_XYZ.y, 2, 3)+", "+nf(Rs[0].max_XYZ.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
-  text("MIN_XYZ= "+nf(Rs[0].min_XYZ.x, 2, 3)+", "+nf(Rs[0].min_XYZ.y, 2, 3)+", "+nf(Rs[0].min_XYZ.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
-  text("DIF_XYZ= "+nf(Rs[0].diff_XYZ.x, 2, 3)+", "+nf(Rs[0].diff_XYZ.y, 2, 3)+", "+nf(Rs[0].diff_XYZ.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
-  text("MAX_ABC= "+nf(Rs[0].max_RYP.x, 2, 3)+", "+nf(Rs[0].max_RYP.y, 2, 3)+", "+nf(Rs[0].max_RYP.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
-  text("MIN_ABC= "+nf(Rs[0].min_RYP.x, 2, 3)+", "+nf(Rs[0].min_RYP.y, 2, 3)+", "+nf(Rs[0].min_RYP.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
-  text("DIF_ABC= "+nf(Rs[0].diff_RYP.x, 2, 3)+", "+nf(Rs[0].diff_RYP.y, 2, 3)+", "+nf(Rs[0].diff_RYP.z, 2, 3)+"", 10, START_Y+=OFFSET_Y);
+  if (ID==3) {
+    text("XYZ= "+nf(Rs[0].XYZ.x, 3, 3)+", "+nf(Rs[0].XYZ.y, 3, 3)+", "+nf(Rs[0].XYZ.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("ABC= "+nf(Rs[0].RYP.x, 3, 3)+", "+nf(Rs[0].RYP.y, 3, 3)+", "+nf(Rs[0].RYP.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("MAX_XYZ= "+nf(Rs[0].max_XYZ.x, 3, 3)+", "+nf(Rs[0].max_XYZ.y, 3, 3)+", "+nf(Rs[0].max_XYZ.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("MIN_XYZ= "+nf(Rs[0].min_XYZ.x, 3, 3)+", "+nf(Rs[0].min_XYZ.y, 3, 3)+", "+nf(Rs[0].min_XYZ.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("DIF_XYZ= "+nf(Rs[0].diff_XYZ.x, 3, 3)+", "+nf(Rs[0].diff_XYZ.y, 3, 3)+", "+nf(Rs[0].diff_XYZ.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("MAX_ABC= "+nf(Rs[0].max_RYP.x, 3, 3)+", "+nf(Rs[0].max_RYP.y, 3, 3)+", "+nf(Rs[0].max_RYP.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("MIN_ABC= "+nf(Rs[0].min_RYP.x, 3, 3)+", "+nf(Rs[0].min_RYP.y, 3, 3)+", "+nf(Rs[0].min_RYP.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
+    text("DIF_ABC= "+nf(Rs[0].diff_RYP.x, 3, 3)+", "+nf(Rs[0].diff_RYP.y, 3, 3)+", "+nf(Rs[0].diff_RYP.z, 3, 3)+"", 10, START_Y+=OFFSET_Y);
   }
   START_Y=20;
   OFFSET_Y=16;
   float[] xyz = cameras[ID].getRotations();
-  fill(255);
+  fill(255,128);
   text("rX="+nf(xyz[0], 1, 3)+" rY="+nf(xyz[1], 1, 3)+" rZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   xyz=cameras[ID].getPosition();
   text("cX="+nf(xyz[0], 1, 3)+" cY="+nf(xyz[1], 1, 3)+" cZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
   xyz=cameras[ID].getLookAt();
   text("lookX="+nf(xyz[0], 1, 3)+" lookY="+nf(xyz[1], 1, 3)+" lookZ="+nf(xyz[2], 1, 3), 10, START_Y+=OFFSET_Y);
+  text("(O)rtho="+isOrtho, 10, START_Y+=OFFSET_Y);
   cam.endHUD();
 }
