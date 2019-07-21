@@ -1,4 +1,23 @@
-
+void processingJ(JSONObject J) {
+  JSONArray inJArr=J.getJSONArray(JSONKEYWORD.Robots);
+  if (inJArr!=null&&inJArr.size()==12) {
+    String LINEStr="";
+    for (int i=0; i<12; i++) {
+      int ID=inJArr.getJSONObject(i).getInt(JSONKEYWORD.ID)-1;
+      PVector p=new PVector(inJArr.getJSONObject(i).getFloat("X"), 
+        inJArr.getJSONObject(i).getFloat("Y"), 
+        inJArr.getJSONObject(i).getFloat("Z"));
+      Rs[ID].XYZ=p.normalize().mult(50);
+      PVector p2=new PVector(inJArr.getJSONObject(i).getFloat("A"), 
+        inJArr.getJSONObject(i).getFloat("B"), 
+        inJArr.getJSONObject(i).getFloat("C"));
+      Rs[ID].RYP=p2.normalize().mult(10);
+    }
+    println("Rs[0].XYZ="+Rs[0].XYZ+" Rs[0].RYP="+Rs[0].RYP);
+  } else {
+    println("[X]J12Arr Error");
+  }
+}
 void receive(byte[] bb, String ip, int port) {
   String rxStr=new String(bb);
   switch(port) {
